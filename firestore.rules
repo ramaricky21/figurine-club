@@ -1,0 +1,72 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+    function owner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+    function admin() {
+      return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+    function validProfile() {
+      return request.resource.data.keys().hasOnly(['displayName','email','shareTrades','createdAt'])
+        && request.resource.data.displayName is string
+        && request.resource.data.displayName.size() >= 2
+        && request.resource.data.displayName.size() <= 40
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.shareTrades is bool;
+    }
+    function validAlbum() {
+      return request.resource.data.keys().hasOnly(['counts','updatedAt'])
+        && request.resource.data.counts is map
+        && request.resource.data.counts.size() <= 15000;
+    }
+    function validTrade() {
+      return request.resource.data.keys().hasOnly(['active','displayName','duplicates','missing','updatedAt'])
+        && request.resource.data.active == true
+        && request.resource.data.displayName is string
+        && request.resource.data.displayName.size() >= 2
+        && request.resource.data.displayName.size() <= 40
+        && request.resource.data.duplicates is list
+        && request.resource.data.missing is list
+        && request.resource.data.duplicates.size() <= 5000
+        && request.resource.data.missing.size() <= 5000;
+    }
+    // La console Firebase (non il browser) crea admins/{UID} per autorizzare l'admin.
+    match /admins/{uid} {
+      allow get: if owner(uid);
+      allow list, write: if false;
+    }
+    // Catalogo uguale per tutti gli utenti registrati, modificabile solo dall'admin.
+    match /catalog/{sectionId} {
+      allow get, list: if signedIn();
+      allow create, update: if admin()
+        && request.resource.data.keys().hasOnly(['team','section','items','updatedAt'])
+        && request.resource.data.team is string
+        && request.resource.data.section is string
+        && request.resource.data.items is list
+        && request.resource.data.items.size() <= 80;
+      allow delete: if admin();
+    }
+    // Ogni album e profilo rimane strettamente privato.
+    match /users/{uid} {
+      allow get: if owner(uid);
+      allow create, update: if owner(uid) && validProfile();
+      allow list: if false;
+      allow delete: if owner(uid);
+      match /album/{albumId} {
+        allow get: if owner(uid);
+        allow create, update: if owner(uid) && albumId == 'main' && validAlbum();
+        allow list, delete: if false;
+      }
+    }
+    // Visibili agli iscritti SOLO i riepiloghi che l'utente pubblica volontariamente.
+    match /tradeSheets/{uid} {
+      allow get, list: if signedIn() && resource.data.active == true;
+      allow create, update: if owner(uid) && validTrade();
+      allow delete: if owner(uid);
+    }
+  }
+}
