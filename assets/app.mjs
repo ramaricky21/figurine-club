@@ -13,24 +13,25 @@ const $=(s,root=document)=>root.querySelector(s);
 const $$=(s,root=document)=>[...root.querySelectorAll(s)];
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const icon=(name)=>`<svg class="icon" aria-hidden="true"><use href="./assets/icons.svg#${name}"></use></svg>`;
-const state={user:null,profile:null,admin:false,items:[],counts:{},pending:{},peers:[],filters:{q:'',team:'',section:'',status:''},page:1,pageSize:24,loaded:{album:false,catalog:false},unsubs:[],peerUnsub:null,view:'dashboard',busy:false};
+const state={user:null,profile:null,admin:false,accessGranted:false,memberUnsub:null,accessRequests:[],memberships:[],items:[],counts:{},pending:{},peers:[],filters:{q:'',team:'',section:'',status:''},page:1,pageSize:24,loaded:{album:false,catalog:false},unsubs:[],peerUnsub:null,view:'dashboard',busy:false};
 let auth,db;
 let toastTimer;
 function toast(message,isError=false){const n=$('#toast');n.textContent=message;n.classList.toggle('error',isError);n.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>n.classList.remove('show'),3400);}
-function show(id){for(const name of ['boot-screen','setup-screen','auth-screen','app-screen'])$(`#${name}`).hidden=name!==id;document.body.classList.toggle('auth-body',id!=='app-screen');document.body.classList.toggle('app-body',id==='app-screen');}
+function show(id){for(const name of ['boot-screen','setup-screen','auth-screen','pending-screen','app-screen'])$(`#${name}`).hidden=name!==id;document.body.classList.toggle('auth-body',id!=='app-screen');document.body.classList.toggle('app-body',id==='app-screen');}
 function errorText(e){const errors={'auth/email-already-in-use':'Questa email è già registrata.','auth/invalid-email':'L’indirizzo email non è valido.','auth/weak-password':'Scegli una password più sicura.','auth/invalid-credential':'Email o password non corretti.','auth/wrong-password':'Password non corretta.','auth/too-many-requests':'Troppi tentativi. Riprova più tardi.','auth/unauthorized-domain':'Il dominio del sito non è autorizzato in Firebase Authentication.','permission-denied':'Accesso negato da Firestore: verifica le regole di sicurezza nella console.','failed-precondition':'Manca una configurazione del database. Controlla Firestore.'};return errors[e?.code]||errors[e?.code?.split('/').pop()]||e?.message||'Si è verificato un errore.';}
 function alertApp(message,err=true){const el=$('#site-alert');el.textContent=message;el.hidden=!message;el.classList.toggle('alert-error',err);el.classList.toggle('alert-success',!err);}
 function authError(message){const el=$('#auth-error');el.textContent=message;el.hidden=!message;}
 let registerMode=false;
-function authMode(register){registerMode=register;$('#auth-eyebrow').textContent=register?'IL TUO ALBUM COMINCIA QUI':'BENTORNATO, COLLEZIONISTA';$('#auth-title').innerHTML=register?'Crea il tuo album<span class="heading-period">.</span>':'Accedi al tuo album<span class="heading-period">.</span>';$('#auth-subtitle').textContent=register?'Un account gratuito per conservare i tuoi progressi.':'Riprendi da dove avevi lasciato.';$('#name-fields').hidden=!register;$('#display-name').required=register;$('#auth-password').autocomplete=register?'new-password':'current-password';$('#auth-submit').textContent=register?'Crea il mio account →':'Entra nel mio album →';$('#auth-switch').firstChild.textContent=register?'Hai già un account? ':'Non hai un account? ';$('#switch-auth').textContent=register?'Accedi ↗':'Registrati gratis ↗';authError('');}
+function authMode(register){registerMode=register;$('#auth-eyebrow').textContent=register?'IL TUO ALBUM COMINCIA QUI':'BENTORNATO, COLLEZIONISTA';$('#auth-title').innerHTML=register?'Crea il tuo album<span class="heading-period">.</span>':'Accedi al tuo album<span class="heading-period">.</span>';$('#auth-subtitle').textContent=register?'Registrati ora; potrai entrare dopo l’approvazione dell’amministratore.':'Riprendi da dove avevi lasciato.';$('#name-fields').hidden=!register;$('#display-name').required=register;$('#auth-password').autocomplete=register?'new-password':'current-password';$('#auth-submit').textContent=register?'Richiedi l’accesso →':'Entra nel mio album →';$('#auth-switch').firstChild.textContent=register?'Hai già un account? ':'Non hai un account? ';$('#switch-auth').textContent=register?'Accedi ↗':'Registrati gratis ↗';authError('');}
 const signedIn=()=>!!state.user;
 function clearListeners(){state.unsubs.forEach(fn=>fn());state.unsubs=[];if(state.peerUnsub){state.peerUnsub();state.peerUnsub=null;}}
-function resetState(){clearListeners();state.user=null;state.profile=null;state.admin=false;state.items=[];state.counts={};state.pending={};state.peers=[];state.loaded={album:false,catalog:false};}
+function clearMembershipListener(){if(state.memberUnsub){state.memberUnsub();state.memberUnsub=null;}}
+function resetState(){clearListeners();clearMembershipListener();state.user=null;state.profile=null;state.admin=false;state.accessGranted=false;state.accessRequests=[];state.memberships=[];state.items=[];state.counts={};state.pending={};state.peers=[];state.loaded={album:false,catalog:false};}
 function getProfileRef(){return doc(db,'users',state.user.uid);}
 function getAlbumRef(){return doc(db,'users',state.user.uid,'album','main');}
 function stats(){return computeStats(state.items, {...state.counts,...state.pending});}
 function qty(n){return clampQty(Number(Object.prototype.hasOwnProperty.call(state.pending,String(n))?state.pending[String(n)]:state.counts[String(n)]||0));}
-function route(){let v=(location.hash.slice(1)||'dashboard').split('?')[0];if(!['dashboard','album','scambi','impostazioni','admin'].includes(v))v='dashboard';if(v==='admin'&&!state.admin)v='dashboard';state.view=v;$$('[data-view]').forEach(el=>el.hidden=el.dataset.view!==v);$$('[data-route]').forEach(el=>el.classList.toggle('active',el.dataset.route===v));$('#breadcrumb').textContent={dashboard:'Panoramica',album:'Il mio album',scambi:'Scambi',impostazioni:'Impostazioni',admin:'Catalogo / Admin'}[v];document.documentElement.classList.remove('menu-open');if(v==='album')renderAlbum();if(v==='scambi')renderTrades();if(v==='admin')$('#catalog-info').textContent=`${state.items.length} figurine nel catalogo`;window.scrollTo({top:0,behavior:'instant'});}
+function route(){let v=(location.hash.slice(1)||'dashboard').split('?')[0];if(!['dashboard','album','scambi','impostazioni','admin','richieste'].includes(v))v='dashboard';if(['admin','richieste'].includes(v)&&!state.admin)v='dashboard';state.view=v;$$('[data-view]').forEach(el=>el.hidden=el.dataset.view!==v);$$('[data-route]').forEach(el=>el.classList.toggle('active',el.dataset.route===v));$('#breadcrumb').textContent={dashboard:'Panoramica',album:'Il mio album',scambi:'Scambi',impostazioni:'Impostazioni',admin:'Catalogo / Admin',richieste:'Richieste di accesso'}[v];document.documentElement.classList.remove('menu-open');if(v==='album')renderAlbum();if(v==='scambi')renderTrades();if(v==='richieste')renderRequests();if(v==='admin')$('#catalog-info').textContent=`${state.items.length} figurine nel catalogo`;window.scrollTo({top:0,behavior:'instant'});}
 function renderChrome(){const name=state.profile?.displayName||state.user?.displayName||'Collezionista';$$('[data-person-name]').forEach(n=>n.textContent=name.split(' ')[0]);$('#side-name').textContent=name;$('#side-email').textContent=state.user?.email||'';$('#side-initial').textContent=name[0]?.toUpperCase()||'F';$('#top-initial').textContent=name[0]?.toUpperCase()||'F';$('#profile-name').value=name;$('#profile-email').value=state.user?.email||'';$('#share-trades').checked=!!state.profile?.shareTrades;$('#admin-nav').hidden=!state.admin;$('#dashboard-edition').textContent=albumEdition;
 }
 function renderStats(){const s=stats();for(const key of ['total','found','missing','duplicates'])$$(`[data-stat="${key}"]`).forEach(el=>el.textContent=s[key]);$$('[data-percent]').forEach(el=>el.textContent=s.percentage);$('#hero-ring').style.setProperty('--progress',s.percentage);$('#album-ring').style.setProperty('--progress',s.percentage);$('#album-ring').textContent=`${s.percentage}%`;$('#progress-track').style.width=`${s.percentage}%`;}
@@ -48,10 +49,100 @@ function subscribePeers(){if(state.peerUnsub){state.peerUnsub();state.peerUnsub=
 function renderTrades(){const shared=!!state.profile?.shareTrades;$('#trade-disabled').hidden=shared;$('#trade-enabled').hidden=!shared;if(!shared)return;const select=$('#partner');const selected=select.value;select.innerHTML='<option value="">Seleziona un amico...</option>'+state.peers.map(p=>`<option value="${esc(p.id)}">${esc(p.displayName)}</option>`).join('');select.value=state.peers.some(p=>p.id===selected)?selected:'';if(!state.peers.length)$('#trade-results').innerHTML='<div class="section-card"><p class="muted-copy">Nessun altro amico ha ancora attivato la partecipazione agli scambi.</p></div>';
 else if(!select.value)$('#trade-results').innerHTML='<div class="empty-small">Seleziona un amico per confrontare i doppioni.</div>';}
 function compareTrades(){const peer=state.peers.find(p=>p.id===$('#partner').value);if(!peer){toast('Seleziona un amico.',true);return;}const match=exchangeMatch(state.items,{...state.counts,...state.pending},peer);const list=items=>items.length?items.map(s=>`<div class="match-item"><div class="match-number">#${String(s.number).padStart(3,'0')}</div><div><strong>${esc(s.title)}</strong><span>${esc(s.team)} · ${esc(s.section)}</span></div></div>`).join(''):'<div class="empty-small">Nessuna corrispondenza per il momento.</div>';$('#trade-results').innerHTML=`<div class="trade-match-header"><div class="avatar peer-avatar">${esc(peer.displayName?.[0]?.toUpperCase()||'F')}</div><div><span class="eyebrow">CONFRONTO CON</span><h2>${esc(peer.displayName)}</h2></div></div><div class="match-grid"><div class="section-card"><div class="section-heading"><div><span class="eyebrow">L’AMICO HA, TU CERCHI</span><h2>Puoi ricevere <span class="small-count">${match.receive.length}</span></h2></div></div><div class="match-list">${list(match.receive)}</div></div><div class="section-card"><div class="section-heading"><div><span class="eyebrow">TU HAI, L’AMICO CERCA</span><h2>Puoi offrire <span class="small-count">${match.offer.length}</span></h2></div></div><div class="match-list">${list(match.offer)}</div></div></div><p class="trade-footnote">I confronti indicano possibili scambi, senza trasferire automaticamente figurine. Accordatevi direttamente.</p>`;}
+function renderRequests(){
+  const pending=state.accessRequests.filter(x=>x.status==='pending');
+  const active=state.memberships.filter(x=>x.approved===true);
+  const removed=state.memberships.filter(x=>x.approved!==true);
+  $('#requests-count').textContent=pending.length;
+  $('#requests-nav-count').textContent=pending.length>0?String(pending.length):'';
+  $('#requests-nav-count').hidden=pending.length===0;
+  $('#members-count').textContent=active.length;
+  const badge=x=>`<span class="request-email">${esc(x.email||'')}</span>`;
+  $('#requests-list').innerHTML=pending.length?pending.map(x=>`<div class="request-row"><span class="request-avatar">${esc((x.displayName||'?')[0].toUpperCase())}</span><div class="request-user"><strong>${esc(x.displayName||'Collezionista')}</strong>${badge(x)}<small>Richiesta in attesa di approvazione</small></div><div class="request-actions"><button class="btn btn-primary" data-approval="approve" data-user-id="${esc(x.uid)}">Approva</button><button class="btn btn-outline" data-approval="reject" data-user-id="${esc(x.uid)}">Rifiuta</button></div></div>`).join(''):'<div class="request-empty">Nessuna richiesta in attesa. Le nuove iscrizioni compariranno qui.</div>';
+  $('#members-list').innerHTML=active.length?active.map(x=>`<div class="request-row"><span class="request-avatar approved-avatar">${esc((x.displayName||'?')[0].toUpperCase())}</span><div class="request-user"><strong>${esc(x.displayName||'Collezionista')}</strong>${badge(x)}<small>Accesso autorizzato</small></div><div class="request-actions"><button class="btn btn-outline btn-warning" data-approval="revoke" data-user-id="${esc(x.uid)}">Revoca accesso</button></div></div>`).join(''):'<div class="request-empty">Nessun iscritto approvato. Il tuo accesso Admin non viene conteggiato.</div>';
+  $('#revoked-list').innerHTML=removed.length?removed.map(x=>`<div class="request-row"><span class="request-avatar">${esc((x.displayName||'?')[0].toUpperCase())}</span><div class="request-user"><strong>${esc(x.displayName||'Collezionista')}</strong>${badge(x)}<small>Accesso non autorizzato</small></div><div class="request-actions"><button class="btn btn-outline" data-approval="restore" data-user-id="${esc(x.uid)}">Riattiva</button></div></div>`).join(''):'';
+  $('#revoked-panel').hidden=removed.length===0;
+}
+function subscribeApprovals(){
+  if(!state.admin)return;
+  state.unsubs.push(onSnapshot(collection(db,'joinRequests'),snap=>{state.accessRequests=snap.docs.map(x=>({uid:x.id,...x.data()}));renderRequests();},e=>alertApp('Richieste: '+errorText(e))));
+  state.unsubs.push(onSnapshot(collection(db,'memberships'),snap=>{state.memberships=snap.docs.map(x=>({uid:x.id,...x.data()}));renderRequests();},e=>alertApp('Autorizzazioni: '+errorText(e))));
+}
+async function changeApproval(uid,action){
+  if(!state.admin)throw new Error('Operazione riservata all’amministratore.');
+  const request=state.accessRequests.find(x=>x.uid===uid);
+  const member=state.memberships.find(x=>x.uid===uid);
+  const membershipRef=doc(db,'memberships',uid);
+  const requestRef=doc(db,'joinRequests',uid);
+  if((action==='approve'||action==='reject')&&(!request||request.status!=='pending'))throw new Error('Questa richiesta non è più in attesa.');
+  if((action==='restore'||action==='revoke')&&!member)throw new Error('Iscritto non trovato.');
+  const isApprove=action==='approve'||action==='restore';
+  if(action==='revoke'&&!confirm(`Revocare l'accesso di ${member?.displayName||'questo utente'}?`))return;
+  if(action==='reject'&&!confirm(`Rifiutare la registrazione di ${request?.displayName||'questo utente'}?`))return;
+  const source=request||member;
+  const batch=writeBatch(db);
+  batch.set(membershipRef,{email:source.email,displayName:source.displayName,approved:isApprove,updatedAt:serverTimestamp()});
+  if(request)batch.update(requestRef,{status:isApprove?'approved':action==='reject'?'rejected':'revoked',updatedAt:serverTimestamp()});
+  await batch.commit();
+  toast(isApprove?'Utente autorizzato.':'Accesso non autorizzato.');
+}
+async function ensureJoinRequest(user){
+  const ref=doc(db,'joinRequests',user.uid);
+  let snap=await getDoc(ref);
+  if(!snap.exists()){
+    const suggested=(user.displayName||user.email?.split('@')[0]||'Collezionista').trim().slice(0,40);
+    const name=suggested.length>=2?suggested:'Amico';
+    try{await setDoc(ref,{email:user.email,displayName:name,status:'pending',createdAt:serverTimestamp()});}
+    catch(e){ // Un altro avvio potrebbe aver creato la stessa richiesta nel frattempo.
+      snap=await getDoc(ref);if(!snap.exists())throw e;
+    }
+    if(!snap.exists())snap=await getDoc(ref);
+  }
+  return snap.data()||{status:'pending'};
+}
+function displayPending(status){
+  const rejected=status==='rejected',revoked=status==='revoked';
+  $('#pending-eyebrow').textContent=rejected?'RICHIESTA NON APPROVATA':revoked?'ACCESSO REVOCATO':'ISCRIZIONE IN ATTESA';
+  $('#pending-title').textContent=rejected?'Richiesta non approvata.':revoked?'Accesso sospeso.':'La tua richiesta è arrivata.';
+  $('#pending-description').textContent=rejected?'L’amministratore non ha approvato questa iscrizione. Se pensi che ci sia un errore, contattalo direttamente.':revoked?'Il tuo accesso è stato revocato dall’amministratore. Per chiarimenti, contattalo direttamente.':'Prima di accedere all’album, l’amministratore deve autorizzare il tuo account. Non dovrai richiedere nuovamente l’autorizzazione: quando sarà approvata, potrai entrare sempre con email e password.';
+  $('#pending-email').textContent=state.user?.email||'';
+  show('pending-screen');
+}
+async function enterClub(user){
+  if(!state.user||state.user.uid!==user.uid||!state.accessGranted)return;
+  try{
+    const profileRef=getProfileRef();let profileSnap=await getDoc(profileRef);
+    if(!state.user||!state.accessGranted)return;
+    if(!profileSnap.exists()){
+      const suggestion=(user.displayName||user.email?.split('@')[0]||'Collezionista').slice(0,40);
+      const name=suggestion.length>=2?suggestion:'Amico';
+      await setDoc(profileRef,{displayName:name,email:user.email,shareTrades:false,createdAt:serverTimestamp()});
+      profileSnap=await getDoc(profileRef);
+    }
+    if(!state.user||!state.accessGranted)return;
+    state.profile=profileSnap.data();renderChrome();liveData();subscribePeers();subscribeApprovals();show('app-screen');route();
+  }catch(e){show('pending-screen');$('#pending-title').textContent='Accesso momentaneamente non disponibile.';$('#pending-description').textContent='Non è stato possibile caricare il tuo profilo: '+errorText(e);}
+}
+async function onUser(user){
+  resetState();if(!user){show('auth-screen');authMode(registerMode);return;}
+  state.user=user;show('boot-screen');
+  try{
+    state.admin=(await getDoc(doc(db,'admins',user.uid))).exists();
+    if(!state.user||state.user.uid!==user.uid)return;
+    if(state.admin){state.accessGranted=true;await enterClub(user);return;}
+    state.memberUnsub=onSnapshot(doc(db,'memberships',user.uid),async snapshot=>{
+      if(!state.user||state.user.uid!==user.uid)return;
+      const granted=snapshot.data()?.approved===true;
+      if(granted){if(!state.accessGranted){state.accessGranted=true;show('boot-screen');await enterClub(user);}return;}
+      if(state.accessGranted){state.accessGranted=false;clearListeners();state.profile=null;state.items=[];state.counts={};}
+      try{const request=await ensureJoinRequest(user);if(state.user?.uid===user.uid&&!state.accessGranted)displayPending(request.status);}
+      catch(e){show('pending-screen');$('#pending-title').textContent='Richiesta non disponibile.';$('#pending-description').textContent=errorText(e);}
+    },e=>{show('pending-screen');$('#pending-title').textContent='Verifica accesso non riuscita.';$('#pending-description').textContent=errorText(e);});
+  }catch(e){show('pending-screen');$('#pending-title').textContent='Impossibile verificare il tuo account.';$('#pending-description').textContent=errorText(e);}
+}
 function liveData(){state.unsubs.push(onSnapshot(getProfileRef(),snap=>{if(!snap.exists())return;const previous=state.profile?.shareTrades;state.profile=snap.data();renderChrome();if(previous!==state.profile.shareTrades)subscribePeers();renderTrades();},e=>alertApp('Profilo: '+errorText(e))));
 state.unsubs.push(onSnapshot(getAlbumRef(),snap=>{state.counts=snap.data()?.counts||{};state.loaded.album=true;renderEverything();queueTradePublish();},e=>alertApp('Album: '+errorText(e))));
 state.unsubs.push(onSnapshot(collection(db,'catalog'),snap=>{const map=new Map();for(const sec of snap.docs){for(const s of sec.data().items||[])if(!map.has(s.number))map.set(s.number,s);}state.items=[...map.values()].sort((a,b)=>a.number-b.number);state.loaded.catalog=true;fillFilterOptions();renderEverything();queueTradePublish();},e=>alertApp('Catalogo: '+errorText(e))));}
-async function onUser(user){resetState();if(!user){show('auth-screen');authMode(registerMode);return;}state.user=user;show('boot-screen');try{const profileRef=getProfileRef();let profileSnap=await getDoc(profileRef);if(!profileSnap.exists()){const name=(user.displayName||user.email?.split('@')[0]||'Collezionista').slice(0,40);await setDoc(profileRef,{displayName:name.length>=2?name:'Amico',email:user.email,shareTrades:false,createdAt:serverTimestamp()});profileSnap=await getDoc(profileRef);}state.profile=profileSnap.data();state.admin=(await getDoc(doc(db,'admins',user.uid))).exists();renderChrome();liveData();subscribePeers();show('app-screen');route();}catch(e){show('app-screen');alertApp('Impossibile avviare il tuo account: '+errorText(e));}}
 async function importCatalog(items){const sections=sectionsFor(items);const old=await getDocs(collection(db,'catalog'));const keep=new Set(sections.map(s=>s.id));const toDelete=old.docs.map(s=>s.id).filter(id=>!keep.has(id));const operations=[...sections.map(s=>({op:'set',...s})),...toDelete.map(id=>({op:'delete',id}))];
 // Firestore ammette max 500 operazioni per batch; usiamo gruppi più piccoli.
 for(let i=0;i<operations.length;i+=350){const batch=writeBatch(db);for(const entry of operations.slice(i,i+350)){const r=doc(db,'catalog',entry.id);if(entry.op==='delete')batch.delete(r);else batch.set(r,{team:entry.team,section:entry.section,items:entry.items,updatedAt:serverTimestamp()});}await batch.commit();}
@@ -59,10 +150,11 @@ for(let i=0;i<operations.length;i+=350){const batch=writeBatch(db);for(const ent
 function demoItems(){const names=['Atalanta','Bologna','Como','Fiorentina','Genoa','Inter','Juventus','Lazio','Milan','Napoli','Roma','Torino'];const result=[];let n=1;for(const team of names){result.push({number:n++,team,section:'Simboli',title:`Scudetto ${team}`,subtitle:'Figurina dimostrativa · non ufficiale',kind:'Scudetto'});result.push({number:n++,team,section:'Squadra',title:`Foto squadra ${team}`,subtitle:'Figurina dimostrativa · non ufficiale',kind:'Squadra'});for(let i=1;i<=6;i++)result.push({number:n++,team,section:'Giocatori',title:`Giocatore demo ${i.toString().padStart(2,'0')}`,subtitle:'Figurina dimostrativa · non ufficiale',kind:'Giocatore'});}return result;}
 async function handleImport(items){if(!state.admin)throw new Error('Non hai permessi di amministratore.');if(!confirm(`Aggiornare il catalogo condiviso con ${items.length} figurine? Le figurine non presenti nel file scompariranno dalla lista, ma le quantità personali non verranno cancellate.`))return;$('#import-catalog').disabled=true;$('#load-demo').disabled=true;try{await importCatalog(items);toast(`Importate ${items.length} figurine. Catalogo aggiornato.`);}finally{$('#import-catalog').disabled=false;$('#load-demo').disabled=false;}}
 function exportCatalog(){if(!state.items.length){toast('Catalogo vuoto.',true);return;}const fields=['numero','squadra','sezione','titolo','sottotitolo','tipo'];const csv=[fields.join(','),...state.items.map(s=>[s.number,s.team,s.section,s.title,s.subtitle,s.kind].map(v=>'"'+String(v??'').replaceAll('"','""')+'"').join(','))].join('\r\n');const url=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='figurine_club_catalogo.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
-function wireUI(){window.addEventListener('hashchange',()=>{if(signedIn())route();});$('#menu-button').addEventListener('click',()=>document.documentElement.classList.toggle('menu-open'));$('#menu-overlay').addEventListener('click',()=>document.documentElement.classList.remove('menu-open'));document.addEventListener('keydown',e=>{if(e.key==='Escape')document.documentElement.classList.remove('menu-open');});
+function wireUI(){window.addEventListener('hashchange',()=>{if(signedIn()&&state.accessGranted)route();});$('#menu-button').addEventListener('click',()=>document.documentElement.classList.toggle('menu-open'));$('#menu-overlay').addEventListener('click',()=>document.documentElement.classList.remove('menu-open'));document.addEventListener('keydown',e=>{if(e.key==='Escape')document.documentElement.classList.remove('menu-open');});
 $('#switch-auth').addEventListener('click',()=>authMode(!registerMode));$('#toggle-password').addEventListener('click',()=>{const input=$('#auth-password');input.type=input.type==='password'?'text':'password';});
-$('#auth-form').addEventListener('submit',async e=>{e.preventDefault();authError('');const btn=$('#auth-submit');btn.disabled=true;try{const email=$('#auth-email').value.trim();const password=$('#auth-password').value;if(registerMode){const name=$('#display-name').value.trim();if(name.length<2)throw new Error('Inserisci un nome di almeno due caratteri.');const result=await createUserWithEmailAndPassword(auth,email,password);await updateProfile(result.user,{displayName:name});await setDoc(doc(db,'users',result.user.uid),{displayName:name,email,shareTrades:false,createdAt:serverTimestamp()},{merge:true});}else await signInWithEmailAndPassword(auth,email,password);}catch(err){authError(errorText(err));}finally{btn.disabled=false;}});
+$('#auth-form').addEventListener('submit',async e=>{e.preventDefault();authError('');const btn=$('#auth-submit');btn.disabled=true;try{const email=$('#auth-email').value.trim();const password=$('#auth-password').value;if(registerMode){const name=$('#display-name').value.trim();if(name.length<2)throw new Error('Inserisci un nome di almeno due caratteri.');const result=await createUserWithEmailAndPassword(auth,email,password);await updateProfile(result.user,{displayName:name});await ensureJoinRequest(result.user);const req=doc(db,'joinRequests',result.user.uid);const snap=await getDoc(req);if(snap.exists()&&snap.data().status==='pending'&&snap.data().displayName!==name)await updateDoc(req,{displayName:name});}else await signInWithEmailAndPassword(auth,email,password);}catch(err){authError(errorText(err));}finally{btn.disabled=false;}});
 $('#forgot-password').addEventListener('click',async()=>{const email=$('#auth-email').value.trim();if(!email){authError('Inserisci l’indirizzo email e poi riprova.');return;}try{await sendPasswordResetEmail(auth,email);toast('Se esiste un account, controlla la tua email per reimpostare la password.');}catch(err){authError(errorText(err));}});
+$('#pending-logout').addEventListener('click',async()=>{try{await signOut(auth);}catch(e){toast(errorText(e),true);}});
 $('#logout-button').addEventListener('click',async()=>{try{await signOut(auth);}catch(e){toast(errorText(e),true);}});
 for(const key of ['q','team','section','status']){const id={q:'search',team:'team-filter',section:'section-filter',status:'status-filter'}[key];$(`#${id}`).addEventListener(key==='q'?'input':'change',e=>{state.filters[key]=e.target.value;state.page=1;renderAlbum();});}
 $('#teams-grid').addEventListener('click',e=>{const card=e.target.closest('[data-team]');if(!card)return;state.filters.team=card.dataset.team;state.filters.q='';state.filters.status='';state.filters.section='';$('#team-filter').value=state.filters.team;$('#section-filter').value='';$('#status-filter').value='';$('#search').value='';state.page=1;location.hash='#album';if(state.view==='album')renderAlbum();});
@@ -75,6 +167,11 @@ $('#compare-button').addEventListener('click',compareTrades);$('#partner').addEv
 $('#load-demo').addEventListener('click',async()=>{try{await handleImport(demoItems());}catch(e){toast(errorText(e),true);}});
 $('#import-catalog').addEventListener('click',async()=>{const file=$('#catalog-file').files?.[0];if(!file){toast('Seleziona un file CSV.',true);return;}try{const contents=await file.text();const rows=parseCSV(contents);await handleImport(rows);}catch(e){toast(errorText(e),true);}});
 $('#export-catalog').addEventListener('click',exportCatalog);
+$('#view-richieste').addEventListener('click',async e=>{
+  const btn=e.target.closest('[data-approval]');if(!btn||btn.disabled)return;
+  btn.disabled=true;
+  try{await changeApproval(btn.dataset.userId,btn.dataset.approval);}catch(err){toast(errorText(err),true);}finally{btn.disabled=false;}
+});
 }
 wireUI();
 if(!firebaseConfig.apiKey||firebaseConfig.apiKey.includes('INSERISCI')||firebaseConfig.projectId.includes('INSERISCI'))show('setup-screen');

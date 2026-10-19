@@ -1,0 +1,100 @@
+/* Figurine Club 2026/27 — redesign approvato. Solo presentazione. */
+:root{--ink:#1b3125;--dark:#14291f;--dark2:#203b2c;--lime:#c5f477;--lime-light:#edf8dc;--canvas:#f5f7f2;--border:#e5ebe2;--muted:#758377;--shadow:0 14px 42px rgba(24,52,32,.055);--radius:20px}
+body{background:var(--canvas)}
+.sidebar{background:linear-gradient(155deg,#13271d 0%,#142b20 65%,#1a3525 100%);border-right:1px solid #37503b44}
+.brand-mark{border-radius:13px;box-shadow:0 8px 24px #c5f4771c;transform:rotate(-6deg)}
+.nav-link{border-radius:12px;min-height:48px}
+.nav-link.active{box-shadow:0 5px 18px #c5f47716}
+.tip-box{background:linear-gradient(135deg,#304b35,#1c3829);border-color:#47684855;position:relative;overflow:hidden}
+.tip-box:after{content:'✳';position:absolute;right:-14px;bottom:-40px;font-size:125px;color:#dcffbe09;pointer-events:none}
+.topbar{background:#ffffffed;backdrop-filter:blur(16px);border-bottom-color:#e3e9e1}
+.page-container{max-width:1600px;margin:0 auto}
+.page-head h1{letter-spacing:-.065em;font-weight:900}
+.page-head p{color:#748378}
+.eyebrow{color:#6a926b;font-weight:900;letter-spacing:.17em}
+.eyebrow-dot{background:#86b954}
+.btn{border-radius:11px;font-weight:800;transition:transform .16s,box-shadow .16s,background .16s}
+.btn-primary{background:var(--lime);color:#1b3222;border-color:var(--lime)}
+.btn-primary:hover{background:#b4e568;box-shadow:0 6px 20px rgba(133,187,82,.16);transform:translateY(-1px)}
+.btn-outline{background:#fff;border-color:#e0e8dd}
+.btn-outline:hover{border-color:#a5cb88;background:#f8fbf4}
+.hero-panel{background:radial-gradient(circle at 67% 38%,#315743 0%,transparent 46%),linear-gradient(125deg,#132b20,#1b3c2d 76%,#244735);border:1px solid #35594155;border-radius:23px;overflow:hidden;box-shadow:0 20px 50px #19372818}
+.hero-panel:before{content:'';position:absolute;width:530px;height:530px;border:1px solid #ffffff12;border-radius:50%;right:-84px;top:-128px;box-shadow:0 0 0 53px #ffffff06,0 0 0 105px #ffffff04;pointer-events:none}
+.hero-copy h2{font-weight:900;letter-spacing:-.065em}
+.hero-kicker{color:#d3ffb0;letter-spacing:.18em}
+.hero-copy em{color:var(--lime)}
+.hero-progress{position:relative;z-index:1}
+.ring{filter:drop-shadow(0 12px 26px #10271822)}
+.stats-grid{gap:14px}
+.stat-card{background:#fff;border:1px solid #e7ece4;border-radius:17px;box-shadow:0 10px 28px #19372807;position:relative;overflow:hidden}
+.stat-card:before{content:'';position:absolute;inset:0 0 auto;height:3px;background:linear-gradient(90deg,#b8de8a,transparent);opacity:.6}
+.stat-value{font-weight:900;letter-spacing:-.055em}
+.section-card{background:#fff;border:1px solid #e4ebe1;border-radius:20px;box-shadow:0 10px 30px #19372807}
+.section-heading h2{font-weight:850}
+.team-card{background:#fff;border:1px solid #e4ebe2;box-shadow:0 8px 20px #19372806;border-radius:14px}
+.team-card:hover{border-color:#a6cda0;box-shadow:0 15px 30px #1937280c}
+.team-logo{border-radius:12px}
+.album-summary{border-radius:20px;border:1px solid #e1e9df;box-shadow:var(--shadow)}
+.filters-panel{border-radius:18px;border:1px solid #e5ebe3;box-shadow:0 7px 25px #19372809}
+.sticker-card{border-radius:18px;overflow:hidden;border:1px solid #e4e9e0;box-shadow:0 8px 23px #152f2210;transition:box-shadow .2s,transform .2s}
+.sticker-card:hover{box-shadow:0 18px 35px #19372818;transform:translateY(-3px)}
+.sticker-visual{border-bottom:3px solid #ffffff88}
+.sticker-visual:after{content:'✳';position:absolute;right:12px;bottom:4px;color:#ffffff25;font-size:76px;pointer-events:none}
+.sticker-art{position:relative;z-index:1}
+.sticker-details h3{font-weight:900}
+.sticker-status{border-radius:10px}
+.trade-intro{border-radius:20px;background:radial-gradient(circle at 80% 120%,#3e714c 0%,transparent 42%),linear-gradient(125deg,#173326,#1f422e)}
+.trade-intro-icon{background:var(--lime);border-radius:14px}
+.settings-card{border-radius:20px}
+.profile-mini{padding-bottom:3px}
+.auth-art{background:radial-gradient(circle at 65% 40%,#2c533c 0%,transparent 42%),linear-gradient(150deg,#14291f,#213d2c)}
+.auth-art:before{content:'✳';position:absolute;right:-50px;top:0;color:#f4ffed0b;font-size:370px;pointer-events:none}
+.auth-promo h1{font-weight:900}
+.auth-form-area{background:linear-gradient(155deg,#fff,#f9fcf7)}
+.auth-form-wrap h2{font-weight:900}
+.auth-subtitle{line-height:1.65}
+.field-control{background:#f6f9f4;border-radius:12px;min-height:52px}
+.auth-trust{font-weight:600}
+/* Pannello di richieste: risultato UI piu' ricco, senza dipendenze esterne */
+.access-overview{display:grid;grid-template-columns:1fr 1fr 1.25fr;gap:14px;margin:17px 0 22px}
+.access-metric{background:#fff;border:1px solid #e4e9e2;border-radius:17px;padding:22px;box-shadow:0 8px 27px #172e2008;display:flex;flex-direction:column;gap:5px}
+.access-metric>span{font-size:11px;letter-spacing:.045em;font-weight:800;color:#657c6c}
+.access-metric>strong{font-size:39px;letter-spacing:-.06em;color:#20392a;line-height:1.2}
+.access-metric>small{color:#829083;font-size:11px}
+.access-guidance{background:linear-gradient(120deg,#193b29,#2b5436);border-radius:17px;color:#d0ecd1;padding:22px;line-height:1.8;display:flex;flex-direction:column;justify-content:center;gap:8px;font-size:12px}
+.access-guidance strong{font-weight:850;color:#fff}
+.access-panel{margin-top:18px}
+.requests-list{display:grid;gap:0}
+.request-row{display:flex;gap:15px;align-items:center;padding:17px 0;border-top:1px solid #edf1ea}
+.request-row:first-child{border-top:0}
+.request-avatar{width:45px;height:45px;display:grid;place-items:center;background:#ebf1e5;color:#3e704c;border-radius:13px;flex:0 0 auto;font-weight:900;font-size:18px}
+.request-avatar.approved-avatar{background:#e5f7d6;color:#35753f}
+.request-user{display:grid;gap:4px;min-width:0;flex:1}
+.request-user strong{font-size:14px;color:#203629;overflow-wrap:anywhere}
+.request-email{font-size:12px;color:#586c5f;overflow-wrap:anywhere}
+.request-user small{font-size:10px;color:#8b9689}
+.request-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.request-actions .btn{padding:11px 15px;min-height:39px;font-size:11px}
+.btn-warning{color:#a5533b;border-color:#edd7c9}
+.btn-warning:hover{background:#fff3ee;border-color:#df987e}
+.request-empty{border:1px dashed #d5e3d2;border-radius:13px;background:#f7faf5;padding:27px;color:#738675;font-size:12px;text-align:center}
+.access-note{color:#859184;font-size:11px;margin:18px 3px 4px}
+.access-note code{background:#e9f1e5;border-radius:4px;padding:2px 5px}
+/* Porta di ingresso: schermata indipendente da Firestore catalog */
+.pending-shell{min-height:100vh;background:radial-gradient(circle at 20% -30%,#3f644b 0%,transparent 55%),linear-gradient(135deg,#10271b,#183a29);display:flex;align-items:center;justify-content:center;padding:25px;color:#243829}
+.pending-card{background:#fff;max-width:660px;width:100%;padding:clamp(26px,5vw,58px);border-radius:26px;text-align:center;box-shadow:0 33px 90px #07190d80;position:relative;overflow:hidden}
+.pending-card:before{content:'';height:6px;background:linear-gradient(90deg,#a8d769,#d3fa89);position:absolute;top:0;left:0;right:0}
+.pending-logo{display:flex;justify-content:center;align-items:center;gap:5px;font-weight:950;font-size:18px;letter-spacing:-.07em;margin-bottom:34px}
+.pending-logo span:not(.pending-logo-icon){color:#85bb4f}
+.pending-logo-icon{display:inline-grid;place-items:center;height:38px;width:38px;border-radius:11px;background:#c5f477;color:#1a3b27;margin-right:7px;font-size:25px}
+.pending-symbol{height:86px;width:86px;border-radius:24px;background:#ebf8dc;display:grid;place-items:center;margin:0 auto 25px;color:#427545;font-size:39px}
+.pending-card h1{font-size:clamp(27px,4vw,39px);margin:14px 0 13px;line-height:1.14;font-weight:900}
+.pending-card p{line-height:1.8;color:#687e6e;font-size:14px;max-width:490px;margin:0 auto 22px}
+.pending-email{display:inline-block;border:1px solid #dfe9d9;border-radius:11px;background:#f8fbf6;padding:11px 17px;font-weight:800;font-size:12px;color:#416148;overflow-wrap:anywhere;max-width:100%}
+.pending-foot{border-top:1px solid #edf1eb;margin-top:32px;padding-top:23px;display:flex;align-items:center;justify-content:space-between;gap:14px;text-align:left}
+.pending-foot span{font-size:11px;color:#839184;max-width:310px}
+.pending-foot .btn{font-size:11px;white-space:nowrap}
+@media(max-width:1100px){.access-overview{grid-template-columns:1fr 1fr}.access-guidance{grid-column:1/-1}}
+@media(max-width:700px){.access-overview{grid-template-columns:1fr 1fr;gap:9px}.access-metric{padding:16px}.access-guidance{padding:17px}.request-row{align-items:flex-start;flex-wrap:wrap}.request-user{flex:1 1 calc(100% - 65px)}.request-actions{margin-left:60px;flex:1 1 100%}.pending-foot{align-items:stretch;flex-direction:column;text-align:center}.pending-foot span{max-width:none}.pending-card{padding:34px 23px}.pending-logo{margin-bottom:27px}}
+@media(max-width:420px){.access-metric>strong{font-size:32px}.request-actions{margin-left:0}.request-actions>.btn{flex:1}.pending-card h1{font-size:28px}}
+@media(prefers-reduced-motion:reduce){.sticker-card:hover,.team-card:hover,.btn-primary:hover{transform:none}}
