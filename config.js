@@ -2,9 +2,11 @@
    Questi dati sono pubblici per definizione: NON inserire password, token privati
    o chiavi di account di servizio. Le protezioni stanno nelle regole Firestore. */
 export const firebaseConfig = {
-  apiKey: "INSERISCI_API_KEY",
-  authDomain: "INSERISCI_PROJECT_ID.firebaseapp.com",
-  projectId: "INSERISCI_PROJECT_ID",
-  appId: "INSERISCI_APP_ID",
+  apiKey: "AIzaSyDZ5ABIA8zR4tiX3erCGPGBomWa03nkFW0",
+  authDomain: "figurine-club-5efbe.firebaseapp.com",
+  projectId: "figurine-club-5efbe",
+  storageBucket: "figurine-club-5efbe.firebasestorage.app",
+  messagingSenderId: "1008170238070",
+  appId: "1:1008170238070:web:c025515cbf4cdec6d35f57"
 };
 export const albumEdition = "Album da configurare";
