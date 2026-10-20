@@ -6,7 +6,7 @@ body{background:var(--canvas)}
 .nav-link{border-radius:12px;min-height:48px}
 .nav-link.active{box-shadow:0 5px 18px #c5f47716}
 .tip-box{background:linear-gradient(135deg,#304b35,#1c3829);border-color:#47684855;position:relative;overflow:hidden}
-.tip-box:after{content:'✳';position:absolute;right:-14px;bottom:-40px;font-size:125px;color:#dcffbe09;pointer-events:none}
+.tip-box:after{content:'';position:absolute;right:-14px;bottom:-40px;width:125px;height:125px;background-color:#dcffbe09;pointer-events:none}
 .topbar{background:#ffffffed;backdrop-filter:blur(16px);border-bottom-color:#e3e9e1}
 .page-container{max-width:1600px;margin:0 auto}
 .page-head h1{letter-spacing:-.065em;font-weight:900}
@@ -39,7 +39,7 @@ body{background:var(--canvas)}
 .sticker-card{border-radius:18px;overflow:hidden;border:1px solid #e4e9e0;box-shadow:0 8px 23px #152f2210;transition:box-shadow .2s,transform .2s}
 .sticker-card:hover{box-shadow:0 18px 35px #19372818;transform:translateY(-3px)}
 .sticker-visual{border-bottom:3px solid #ffffff88}
-.sticker-visual:after{content:'✳';position:absolute;right:12px;bottom:4px;color:#ffffff25;font-size:76px;pointer-events:none}
+.sticker-visual:after{content:'';position:absolute;right:12px;top:auto;bottom:4px;width:76px;height:76px;border:0;border-radius:0;background-color:#ffffff25;pointer-events:none}
 .sticker-art{position:relative;z-index:1}
 .sticker-details h3{font-weight:900}
 .sticker-status{border-radius:10px}
@@ -48,7 +48,7 @@ body{background:var(--canvas)}
 .settings-card{border-radius:20px}
 .profile-mini{padding-bottom:3px}
 .auth-art{background:radial-gradient(circle at 65% 40%,#2c533c 0%,transparent 42%),linear-gradient(150deg,#14291f,#213d2c)}
-.auth-art:before{content:'✳';position:absolute;right:-50px;top:0;color:#f4ffed0b;font-size:370px;pointer-events:none}
+.auth-art:before{content:'';position:absolute;right:-50px;top:0;width:370px;height:370px;background-color:#f4ffed0b;pointer-events:none}
 .auth-promo h1{font-weight:900}
 .auth-form-area{background:linear-gradient(155deg,#fff,#f9fcf7)}
 .auth-form-wrap h2{font-weight:900}
@@ -98,3 +98,32 @@ body{background:var(--canvas)}
 @media(max-width:700px){.access-overview{grid-template-columns:1fr 1fr;gap:9px}.access-metric{padding:16px}.access-guidance{padding:17px}.request-row{align-items:flex-start;flex-wrap:wrap}.request-user{flex:1 1 calc(100% - 65px)}.request-actions{margin-left:60px;flex:1 1 100%}.pending-foot{align-items:stretch;flex-direction:column;text-align:center}.pending-foot span{max-width:none}.pending-card{padding:34px 23px}.pending-logo{margin-bottom:27px}}
 @media(max-width:420px){.access-metric>strong{font-size:32px}.request-actions{margin-left:0}.request-actions>.btn{flex:1}.pending-card h1{font-size:28px}}
 @media(prefers-reduced-motion:reduce){.sticker-card:hover,.team-card:hover,.btn-primary:hover{transform:none}}
+
+/* Mobile-safe symbols (no Unicode emoji glyphs). Both masks are local SVG assets.
+   They display consistently on desktop, iOS Safari and Android browsers. */
+.asterisk-mark,.sparkle-mark{display:inline-block;width:1em;height:1em;vertical-align:-.12em;background-color:currentColor;flex-shrink:0}
+.asterisk-mark,.tip-box::after,.sticker-visual::after,.auth-art::before{
+  -webkit-mask-image:url('./asterisk.svg');mask-image:url('./asterisk.svg');
+  -webkit-mask-position:center;mask-position:center;
+  -webkit-mask-size:contain;mask-size:contain;
+  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat
+}
+.sparkle-mark{
+  -webkit-mask-image:url('./sparkle.svg');mask-image:url('./sparkle.svg');
+  -webkit-mask-position:center;mask-position:center;
+  -webkit-mask-size:contain;mask-size:contain;
+  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat
+}
+/* Fixed icon sizes prevent system text and emoji scaling from changing the layout. */
+.boot-logo.asterisk-mark{width:57px;height:57px}
+.setup-mark.asterisk-mark{width:32px;height:32px}
+.pending-logo .pending-logo-icon .asterisk-mark{width:25px;height:25px;color:inherit}
+.wave.asterisk-mark{width:24px;height:24px;vertical-align:-.05em;margin-left:4px}
+.hero-ring-caption .asterisk-mark{width:12px;height:12px;color:var(--lime);vertical-align:-.1em}
+.hero-deco-one.asterisk-mark{width:75px;height:75px}
+.hero-deco-two.sparkle-mark{width:45px;height:45px}
+.hero-kicker .sparkle-mark{width:1em;height:1em;vertical-align:0}
+.auth-promo-footer .sparkle-mark{width:1em;height:1em}
+.art-sparks.sparkle-mark{width:21px;height:21px}
+.results-help .asterisk-mark{width:15px;height:15px}
+.access-guidance .asterisk-mark{width:17px;height:17px}
