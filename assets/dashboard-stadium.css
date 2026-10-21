@@ -1,0 +1,132 @@
+/* Stadium 2.0 — esclusivamente Panoramica. Gli altri pannelli non cambiano. */
+#view-dashboard.stadium-dashboard{--stadium-lime:#c4f77d;--stadium-ink:#152a20;--stadium-muted:#849586;--stadium-stroke:#e1e9df;min-width:0}
+#view-dashboard .stadium-welcome{align-items:end;margin-bottom:22px;gap:12px}
+#view-dashboard .stadium-welcome h1{letter-spacing:-.065em}
+#view-dashboard .stadium-welcome p{font-size:12px;color:#7e8e80}
+#view-dashboard .stadium-edition{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--stadium-stroke);background:#fff;border-radius:11px;padding:10px 13px;color:#728d74;font-size:10px;font-weight:800;white-space:nowrap;letter-spacing:.025em;margin-bottom:4px}
+#view-dashboard .stadium-edition .icon{width:15px;height:15px;color:#77b44a}
+#view-dashboard .stadium-hero{position:relative;isolation:isolate;overflow:hidden;border-radius:22px;box-shadow:0 19px 44px #0a231727;color:#fff;background:#09221e;min-height:340px;display:flex;flex-direction:column;justify-content:space-between;margin-bottom:17px}
+#view-dashboard .stadium-hero::before{content:"";position:absolute;inset:0;z-index:-2;background:#0b201b url('./stadium-night.jpg') center 56%/cover no-repeat}
+#view-dashboard .stadium-hero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(5,26,22,.93) 0%,rgba(5,29,25,.76) 35%,rgba(3,29,28,.20) 83%),linear-gradient(0deg,rgba(2,23,18,.63),transparent 53%)}
+#view-dashboard .stadium-hero-top{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:27px 32px 4px}
+#view-dashboard .stadium-hero-kicker{display:inline-flex;align-items:center;gap:9px;color:#d8ffa9;font-size:10px;font-weight:900;letter-spacing:.18em}
+#view-dashboard .stadium-hero-kicker .sparkle-mark{width:16px;height:16px;flex-shrink:0}
+#view-dashboard .stadium-matchday{border:1px solid #b7d3b46b;color:#c4dfca;font-size:9px;font-weight:850;letter-spacing:.12em;padding:7px 11px;border-radius:40px;white-space:nowrap;background:#122b2599}
+#view-dashboard .stadium-hero-main{display:flex;align-items:center;justify-content:space-between;gap:25px;padding:18px 32px 25px;min-height:250px}
+#view-dashboard .stadium-hero-copy{flex:1;min-width:0;max-width:530px}
+#view-dashboard .stadium-hero-copy h2{font-size:clamp(33px,4vw,55px);font-weight:950;line-height:1.025;letter-spacing:-.075em;color:#fff;margin:0 0 14px;text-wrap:balance}
+#view-dashboard .stadium-hero-copy h2 em{font-style:normal;color:var(--stadium-lime)}
+#view-dashboard .stadium-hero-copy p{color:#d0ddd2;max-width:390px;line-height:1.75;font-size:11.5px;margin:0 0 20px}
+#view-dashboard .stadium-hero-actions{display:flex;align-items:center;gap:15px;flex-wrap:wrap}
+#view-dashboard .stadium-hero-actions .btn{background:var(--stadium-lime);border-color:var(--stadium-lime);color:#18321d;font-size:11px;padding:12px 17px;display:inline-flex;gap:15px;align-items:center;min-height:40px;box-shadow:0 8px 28px #0003;font-weight:850}
+#view-dashboard .stadium-hero-actions>span{font-size:9px;letter-spacing:.035em;color:#d0e4d1}
+#view-dashboard .stadium-scoreboard{width:clamp(175px,20%,215px);min-height:191px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:18px 16px;border:1px solid #d4ffe563;border-radius:18px;background:linear-gradient(150deg,rgba(4,24,20,.93),rgba(4,38,34,.91));box-shadow:0 12px 26px #0003;backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}
+#view-dashboard .stadium-board-label{color:var(--stadium-lime);font-size:8px;font-weight:900;line-height:1.25;letter-spacing:.18em}
+#view-dashboard .stadium-board-value{display:block;font-size:clamp(47px,5.2vw,73px);font-weight:950;letter-spacing:-.09em;line-height:1.15;margin:5px 0}
+#view-dashboard .stadium-board-value small{font-size:.31em;color:var(--stadium-lime);letter-spacing:-.05em}
+#view-dashboard .stadium-board-caption{font-size:10px;font-weight:800;color:#d8e9dc;margin-bottom:12px}
+#view-dashboard .stadium-board-track{height:6px;width:100%;max-width:150px;background:#ffffff28;border-radius:999px;overflow:hidden}
+#view-dashboard .stadium-board-track span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#a4e267,#c9fa80);transition:width .35s ease}
+#view-dashboard .stadium-hero-footer{display:flex;align-items:center;gap:26px;min-height:45px;padding:12px 32px;background:#071d17d9;border-top:1px solid #b0d2b522;font-size:9px;font-weight:900;letter-spacing:.08em;color:#9fb8a3}
+#view-dashboard .stadium-hero-footer strong{font-size:11px;letter-spacing:0;color:#fff;margin-left:7px}
+#view-dashboard .stadium-hero-motto{margin-left:auto;color:#e4f8e2;white-space:nowrap}
+#view-dashboard .stadium-stats{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:0}
+#view-dashboard .stadium-stat{min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:0;padding:16px 17px;border:1px solid var(--stadium-stroke);border-radius:16px;background:#fff;box-shadow:0 15px 34px #19372808;text-decoration:none;min-height:129px;transition:transform .18s ease,box-shadow .18s ease}
+#view-dashboard .stadium-stat:hover{transform:translateY(-2px);box-shadow:0 15px 32px #19372816}
+#view-dashboard .stadium-stat:focus-visible{outline:3px solid #80af4c;outline-offset:3px}
+#view-dashboard .stadium-stat::before{opacity:.72}
+#view-dashboard .stadium-stat-top{width:100%;display:flex;justify-content:space-between;align-items:center;gap:6px;color:#92a993;font-size:8px;letter-spacing:.02em;font-weight:850;white-space:nowrap}
+#view-dashboard .stadium-stat-top .stat-icon{width:30px;height:30px;display:grid;place-items:center;border-radius:9px;margin:0}
+#view-dashboard .stadium-stat-top .stat-icon .icon{width:16px;height:16px}
+#view-dashboard .stadium-stat .stat-label{font-size:10px;font-weight:750;color:#728675;margin-top:12px}
+#view-dashboard .stadium-stat .stat-value{font-size:30px;font-weight:950;letter-spacing:-.07em;line-height:1.2;color:var(--stadium-ink);margin-top:0}
+#view-dashboard .stadium-stat .stat-foot{font-size:9px;line-height:1.4;color:#a1aea2;margin-top:3px}
+#view-dashboard .stadium-season-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:25px 0 10px}
+#view-dashboard .stadium-season-heading h2{font-size:19px;color:var(--stadium-ink);font-weight:900;letter-spacing:-.055em;margin:0}
+#view-dashboard .stadium-season-heading>span{font-size:10px;font-weight:750;color:#819684}
+#view-dashboard .stadium-season-grid{display:grid;grid-template-columns:minmax(0,1.36fr) minmax(0,1fr);gap:13px;align-items:stretch}
+#view-dashboard .stadium-season-pane{min-width:0;border:1px solid var(--stadium-stroke);border-radius:17px;background:#fff;padding:18px 19px 17px;box-shadow:0 15px 32px #19372808;display:flex;flex-direction:column}
+#view-dashboard .stadium-pane-head h3{font-size:14px;font-weight:900;letter-spacing:-.035em;color:var(--stadium-ink);margin:0 0 4px}
+#view-dashboard .stadium-pane-head p{font-size:10px;color:#a0aca1;margin:0 0 14px;line-height:1.5}
+#view-dashboard .stadium-teams-list{display:grid;gap:4px;margin-bottom:8px}
+#view-dashboard .stadium-team-row{display:flex;align-items:center;gap:12px;width:100%;background:transparent;border:0;text-align:left;padding:6px 0;cursor:pointer;color:var(--stadium-ink);min-height:48px;border-radius:7px}
+#view-dashboard .stadium-team-row:hover{background:#f7fbf3}
+#view-dashboard .stadium-team-row:focus-visible{outline:2px solid #8abf56;outline-offset:2px}
+#view-dashboard .stadium-team-shield{height:34px;width:31px;flex:0 0 31px;background:#eadeb5;display:grid;place-items:center;font-weight:900;font-size:10px;clip-path:polygon(10% 0,90% 0,100% 68%,50% 100%,0 68%)}
+#view-dashboard .stadium-shield-1{background:#dae6e7}
+#view-dashboard .stadium-shield-2{background:#dbefcf}
+#view-dashboard .stadium-team-detail{flex:1;min-width:0;display:grid;gap:8px}
+#view-dashboard .stadium-team-detail>strong{font-size:10.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#view-dashboard .stadium-team-track{display:block;height:5px;border-radius:999px;background:#e8eee8;overflow:hidden}
+#view-dashboard .stadium-team-track>span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#8ac355,#7eb84c)}
+#view-dashboard .stadium-team-pct{font-size:10px;min-width:35px;text-align:right}
+#view-dashboard .stadium-empty{font-size:11px;color:#859a88;line-height:1.7;background:#f7faf6;border-radius:10px;padding:15px 13px;margin:4px 0 8px;overflow-wrap:anywhere}
+#view-dashboard .stadium-more-link{color:#608844;font-size:10px;font-weight:800;margin-top:auto;padding-top:7px;display:inline-flex;gap:8px;text-decoration:none;align-items:center}
+#view-dashboard .stadium-more-link:hover{text-decoration:underline}
+#view-dashboard .stadium-club-feed{display:grid;gap:0;min-height:85px}
+#view-dashboard .stadium-feed-item{display:flex;align-items:center;gap:11px;min-width:0;padding:8px 0}
+#view-dashboard .stadium-feed-item+.stadium-feed-item{border-top:1px solid #edf1ec}
+#view-dashboard .stadium-feed-medal{display:grid;place-items:center;flex:0 0 35px;width:35px;height:35px;border-radius:9px;background:#fff3df;color:#ab7a38}
+#view-dashboard .stadium-feed-item:nth-child(even) .stadium-feed-medal{background:#ecf6e7;color:#76a44c}
+#view-dashboard .stadium-feed-medal .icon{width:17px;height:17px}
+#view-dashboard .stadium-feed-copy{min-width:0;display:grid;gap:4px}
+#view-dashboard .stadium-feed-copy strong{font-size:10.5px;color:#2b4933;line-height:1.4;overflow-wrap:anywhere}
+#view-dashboard .stadium-feed-copy small{font-size:9px;color:#9ba99a}
+#view-dashboard .stadium-feed-cached{font-size:9px;color:#819582;line-height:1.5}
+#view-dashboard .stadium-club-link{display:flex;align-items:center;justify-content:space-between;gap:12px;border-radius:11px;background:#f0f6eb;color:#5d824a;font-size:10px;font-weight:850;line-height:1.5;margin-top:auto;padding:13px 15px;text-decoration:none}
+#view-dashboard .stadium-club-link:hover{background:#e8f2df}
+#view-dashboard .stadium-awards-link{margin-top:16px;margin-bottom:0}
+@media(max-width:1120px){
+  #view-dashboard .stadium-season-grid{grid-template-columns:1fr 1fr}
+  #view-dashboard .stadium-hero-main{gap:15px}
+  #view-dashboard .stadium-hero-top,#view-dashboard .stadium-hero-main,#view-dashboard .stadium-hero-footer{padding-left:25px;padding-right:25px}
+  #view-dashboard .stadium-hero-copy h2{font-size:clamp(32px,4.5vw,47px)}
+  #view-dashboard .stadium-hero-actions>span{display:none}
+}
+@media(max-width:800px){
+  #view-dashboard .stadium-hero-copy h2{font-size:clamp(33px,5vw,49px)}
+  #view-dashboard .stadium-season-grid{grid-template-columns:1fr}
+  #view-dashboard .stadium-edition{display:none}
+}
+@media(max-width:580px){
+  #view-dashboard .stadium-welcome{margin-bottom:20px}
+  #view-dashboard .stadium-welcome h1{font-size:clamp(28px,8vw,38px)}
+  #view-dashboard .stadium-welcome p{font-size:11.5px;max-width:330px}
+  #view-dashboard .stadium-hero{border-radius:19px;min-height:0}
+  #view-dashboard .stadium-hero::before{background-position:center center}
+  #view-dashboard .stadium-hero::after{background:linear-gradient(180deg,#061c19f2 0%,#0c2d29b8 55%,#071d19b8 100%)}
+  #view-dashboard .stadium-hero-top{padding:24px 20px 0;align-items:start}
+  #view-dashboard .stadium-hero-kicker{font-size:9px;letter-spacing:.11em;max-width:205px;line-height:1.4}
+  #view-dashboard .stadium-matchday{font-size:8px;white-space:normal;line-height:1.25;max-width:115px;padding:6px 9px}
+  #view-dashboard .stadium-hero-main{display:grid;padding:26px 20px 20px;gap:22px}
+  #view-dashboard .stadium-hero-copy h2{font-size:clamp(35px,9.4vw,49px)}
+  #view-dashboard .stadium-hero-copy p{font-size:11.5px;margin-bottom:17px;line-height:1.65}
+  #view-dashboard .stadium-hero-actions>span{display:none}
+  #view-dashboard .stadium-scoreboard{width:100%;min-height:98px;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 10px;padding:15px 18px}
+  #view-dashboard .stadium-board-label{font-size:8px;text-align:left}
+  #view-dashboard .stadium-board-value{font-size:54px;margin:0}
+  #view-dashboard .stadium-board-caption{width:100%;text-align:left;margin:0;color:#cfe4d3;font-size:9px;order:3}
+  #view-dashboard .stadium-board-track{width:100%;max-width:none;order:4;height:5px}
+  #view-dashboard .stadium-hero-footer{padding:13px 20px;justify-content:space-between;gap:13px}
+  #view-dashboard .stadium-hero-footer>.stadium-hero-motto{display:none}
+  #view-dashboard .stadium-hero-footer>span{display:flex;flex-direction:column;gap:3px;font-size:8px}
+  #view-dashboard .stadium-hero-footer strong{margin-left:0}
+  #view-dashboard .stadium-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  #view-dashboard .stadium-stat{min-height:139px;padding:15px 13px}
+  #view-dashboard .stadium-stat-top{font-size:8px}
+  #view-dashboard .stadium-stat .stat-label{font-size:10px}
+  #view-dashboard .stadium-stat .stat-value{font-size:29px}
+  #view-dashboard .stadium-season-heading h2{font-size:17px}
+  #view-dashboard .stadium-season-heading>span{font-size:9px;text-align:right}
+  #view-dashboard .stadium-season-pane{padding:18px 16px}
+}
+@media(max-width:350px){
+  #view-dashboard .stadium-hero-top,#view-dashboard .stadium-hero-main,#view-dashboard .stadium-hero-footer{padding-left:15px;padding-right:15px}
+  #view-dashboard .stadium-matchday{max-width:90px;font-size:7px}
+  #view-dashboard .stadium-hero-copy h2{font-size:33px}
+  #view-dashboard .stadium-board-value{font-size:45px}
+  #view-dashboard .stadium-stat-top>span:last-child{font-size:7px}
+  #view-dashboard .stadium-season-heading{align-items:start}
+  #view-dashboard .stadium-season-heading>span{max-width:100px}
+}
+@media(prefers-reduced-motion:reduce){#view-dashboard .stadium-board-track span,#view-dashboard .stadium-stat{transition:none}}

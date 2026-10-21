@@ -80,10 +80,59 @@ function getAlbumRef(){return doc(db,'users',state.user.uid,'album','main');}
 function stats(){return computeStats(state.items, {...state.counts,...state.pending});}
 function qty(n){return clampQty(Number(Object.prototype.hasOwnProperty.call(state.pending,String(n))?state.pending[String(n)]:state.counts[String(n)]||0));}
 function route(){let v=(location.hash.slice(1)||'dashboard').split('?')[0];if(!['dashboard','album','bacheca','club','scambi','impostazioni','admin','richieste'].includes(v))v='dashboard';if(['admin','richieste'].includes(v)&&!state.admin)v='dashboard';state.view=v;$$('[data-view]').forEach(el=>el.hidden=el.dataset.view!==v);$$('[data-route]').forEach(el=>el.classList.toggle('active',el.dataset.route===v));$('#breadcrumb').textContent={dashboard:'Panoramica',album:'Il mio album',bacheca:'La mia bacheca',club:'Il Club',scambi:'Scambi',impostazioni:'Impostazioni',admin:'Catalogo / Admin',richieste:'Richieste di accesso'}[v];document.documentElement.classList.remove('menu-open');if(v==='album')renderAlbum();if(v==='bacheca')renderAchievements();if(v==='club')renderClub();if(v==='scambi')renderTrades();if(v==='richieste')renderRequests();if(v==='admin')$('#catalog-info').textContent=`${state.items.length} figurine nel catalogo`;window.scrollTo({top:0,behavior:'instant'});}
-function renderChrome(){const name=state.profile?.displayName||state.user?.displayName||'Collezionista';$$('[data-person-name]').forEach(n=>n.textContent=name.split(' ')[0]);$('#side-name').textContent=name;$('#side-email').textContent=state.user?.email||'';$('#side-initial').textContent=name[0]?.toUpperCase()||'F';$('#top-initial').textContent=name[0]?.toUpperCase()||'F';$('#profile-name').value=name;$('#profile-email').value=state.user?.email||'';$('#share-trades').checked=!!state.profile?.shareTrades;$('#admin-nav').hidden=!state.admin;$('#dashboard-edition').textContent=albumEdition;
+function renderChrome(){const name=state.profile?.displayName||state.user?.displayName||'Collezionista';$$('[data-person-name]').forEach(n=>n.textContent=name.split(' ')[0]);$('#side-name').textContent=name;$('#side-email').textContent=state.user?.email||'';$('#side-initial').textContent=name[0]?.toUpperCase()||'F';$('#top-initial').textContent=name[0]?.toUpperCase()||'F';$('#profile-name').value=name;$('#profile-email').value=state.user?.email||'';$('#share-trades').checked=!!state.profile?.shareTrades;$('#admin-nav').hidden=!state.admin;$('#dashboard-edition').textContent='CALCIATORI 2026–27';
 }
-function renderStats(){const s=stats();for(const key of ['total','found','missing','duplicates'])$$(`[data-stat="${key}"]`).forEach(el=>el.textContent=s[key]);$$('[data-percent]').forEach(el=>el.textContent=s.percentage);$('#hero-ring').style.setProperty('--progress',s.percentage);$('#album-ring').style.setProperty('--progress',s.percentage);$('#album-ring').textContent=`${s.percentage}%`;$('#progress-track').style.width=`${s.percentage}%`;}
-function renderTeams(){const map=new Map();state.items.forEach(st=>{let val=map.get(st.team)||{total:0,found:0};val.total++;if(qty(st.number)>0)val.found++;map.set(st.team,val);});const entries=[...map.entries()].sort(([a],[b])=>a.localeCompare(b,'it'));$('#teams-grid').innerHTML=entries.length?entries.map(([team,s],i)=>`<button type="button" class="team-card" data-team="${esc(team)}"><span class="team-logo team-color-${i%6}">${esc(team.slice(0,2).toUpperCase())}</span><span class="team-info"><strong>${esc(team)}</strong><small>${s.found} su ${s.total} trovate</small></span><span class="team-percent">${Math.round(s.found/s.total*100)}%</span></button>`).join(''):'<div class="empty-small">Nessuna figurina ancora. L’amministratore può importare il catalogo da CSV.</div>';$('#demo-notice').hidden=!(state.items.length>0&&state.items.every(s=>/demo|dimostrativ|esempio/i.test(s.subtitle||'')));}
+function renderStats(){
+  const s=stats();
+  for(const key of ['total','found','missing','duplicates'])$$(`[data-stat="${key}"]`).forEach(el=>el.textContent=s[key]);
+  $$('[data-percent]').forEach(el=>el.textContent=s.percentage);
+  $('#hero-ring').style.setProperty('--progress',s.percentage);
+  $('#stadium-found-count').textContent=s.found;
+  $('#stadium-board-progress').setAttribute('aria-valuenow',String(s.percentage));
+  $('#stadium-board-fill').style.width=`${s.percentage}%`;
+  $('#album-ring').style.setProperty('--progress',s.percentage);
+  $('#album-ring').textContent=`${s.percentage}%`;
+  $('#progress-track').style.width=`${s.percentage}%`;
+}
+function renderTeams(){
+  const map=new Map();
+  state.items.forEach(st=>{
+    const val=map.get(st.team)||{total:0,found:0};
+    val.total++;if(qty(st.number)>0)val.found++;
+    map.set(st.team,val);
+  });
+  const entries=[...map.entries()].sort(([a,av],[b,bv])=>
+    (bv.found/bv.total)-(av.found/av.total)||a.localeCompare(b,'it')).slice(0,3);
+  $('#teams-grid').innerHTML=entries.length?entries.map(([team,data],i)=>{
+    const pct=Math.round(data.found/data.total*100);
+    const code=team.trim().slice(0,2).toUpperCase();
+    return `<button type="button" class="stadium-team-row" data-team="${esc(team)}" aria-label="${esc(team)}: ${data.found} figurine su ${data.total}, ${pct}%">
+      <span class="stadium-team-shield stadium-shield-${i%3}">${esc(code)}</span>
+      <span class="stadium-team-detail"><strong>${esc(team)}</strong><span class="stadium-team-track"><span style="width:${pct}%"></span></span></span>
+      <strong class="stadium-team-pct">${pct}%</strong>
+    </button>`;
+  }).join(''):'<div class="stadium-empty">Il catalogo non è ancora disponibile. Quando verrà caricato, qui appariranno i progressi reali delle squadre.</div>';
+  $('#demo-notice').hidden=!(state.items.length>0&&state.items.every(st=>/demo|dimostrativ|esempio/i.test(st.subtitle||'')));
+}
+function renderDashboardClub(){
+  const target=$('#stadium-club-activity');
+  if(!target)return;
+  if(state.clubError){target.innerHTML='<p class="stadium-empty">Le conquiste del Club non sono disponibili al momento. Apri Il Club per i dettagli.</p>';return;}
+  if(!state.clubLoaded){target.innerHTML='<p class="stadium-empty">Caricamento delle conquiste del Club…</p>';return;}
+  const result=computeAchievements(state.items,{});
+  const signature=state.loaded.catalog&&result.available?result.signature:'';
+  const profiles=state.clubProfiles.map(p=>p.ready&&p.catalogSignature!==signature?
+    {...p,ready:false,unlocked:[],earnedAt:{}}:p);
+  const news=recentClubAchievements(profiles,2);
+  const defs=new Map(ACHIEVEMENTS.map(a=>[a.id,a]));
+  target.innerHTML=news.length?news.map(evt=>{
+    const achievement=defs.get(evt.awardId);
+    return `<div class="stadium-feed-item"><span class="stadium-feed-medal">${icon(achievement.icon)}</span><span class="stadium-feed-copy"><strong>${esc(evt.name)} ha conquistato “${esc(achievement.title)}”</strong><small>${esc(evt.date.toLocaleDateString('it-IT',{day:'numeric',month:'short',year:'numeric'}))} · Traguardo del Club</small></span></div>`;
+  }).join(''):'<p class="stadium-empty">Nessuna nuova conquista per ora. I riconoscimenti confermati degli amici compariranno qui.</p>';
+  if(state.clubFromCache){
+    target.insertAdjacentHTML('beforeend','<small class="stadium-feed-cached">Dati del Club salvati sul dispositivo: potrebbero non essere aggiornati.</small>');
+  }
+}
 function fillFilterOptions(){for(const [id,key] of [['team-filter','team'],['section-filter','section']]){const select=$(`#${id}`);const current=state.filters[key];const label=key==='team'?'Tutte le squadre':'Tutte le sezioni';const values=[...new Set(state.items.map(s=>s[key]))].sort((a,b)=>a.localeCompare(b,'it'));select.innerHTML=`<option value="">${label}</option>`+values.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('');select.value=values.includes(current)?current:'';state.filters[key]=select.value;}}
 function renderAlbum(){const f=state.filters;let rows=state.items.filter(s=>{const n=qty(s.number);return (!f.q||[s.number,s.team,s.section,s.title,s.subtitle,s.kind].some(v=>String(v||'').toLocaleLowerCase('it').includes(f.q.toLocaleLowerCase('it'))))&&(!f.team||s.team===f.team)&&(!f.section||s.section===f.section)&&(!f.status||(f.status==='found'&&n>0)||(f.status==='missing'&&n===0)||(f.status==='duplicates'&&n>1));});$('#results-count').textContent=rows.length;$('#album-empty').hidden=rows.length>0;const pages=Math.max(1,Math.ceil(rows.length/state.pageSize));state.page=Math.max(1,Math.min(pages,state.page));const visible=rows.slice((state.page-1)*state.pageSize,state.page*state.pageSize);
 $('#sticker-grid').innerHTML=visible.map(s=>{const q=qty(s.number);const found=q>0;const tone=s.number%6;const image=s.kind.toLowerCase()==='scudetto'?'★':s.kind.toLowerCase()==='squadra'?'◆':String(s.number%10);return `<article class="sticker-card ${found?'is-owned':''}" data-sticker="${s.number}"><div class="sticker-visual team-color-${tone}"><div class="sticker-top"><span class="sticker-no">#${String(s.number).padStart(3,'0')}</span><span class="sticker-type">${esc(s.kind)}</span></div><div class="sticker-art"><span class="art-sparks sparkle-mark" aria-hidden="true"></span><div class="sticker-symbol">${esc(image)}</div><span class="art-fineprint">COLLECT · PLAY · COMPLETE</span></div><button type="button" class="check-sticker ${found?'checked':''}" data-mark aria-label="${found?'Segna come mancante':'Segna come trovata'}">${icon('check')}</button></div><div class="sticker-details"><span class="sticker-team">${esc(s.team)} <span>· ${esc(s.section)}</span></span><h3 title="${esc(s.title)}">${esc(s.title)}</h3><p title="${esc(s.subtitle)}">${esc(s.subtitle||`Figurina n. ${s.number}`)}</p></div><div class="sticker-footer"><span class="sticker-status ${found?'status-owned':''}">${found?'✓ Trovata':'Da trovare'}</span><div class="qty-control"><button type="button" data-step="-1" aria-label="Rimuovi una copia" ${q===0?'disabled':''}>${icon('minus')}</button><output>${q}</output><button type="button" data-step="1" aria-label="Aggiungi una copia" ${q===99?'disabled':''}>${icon('plus')}</button></div></div></article>`;}).join('');
@@ -153,7 +202,7 @@ function renderAchievements(){
       ?'Stai vedendo progressi locali o non ancora confermati: eventuali nuovi premi saranno confermati alla sincronizzazione.':
       'Premi calcolati sul catalogo attualmente importato. Prima del catalogo ufficiale 2026-2027, i risultati sono provvisori.';
 }
-function renderEverything(){renderStats();renderTeams();renderAchievements();if(state.view==='album')renderAlbum();if(state.view==='scambi')renderTrades();queueClubPublish();}
+function renderEverything(){renderStats();renderTeams();renderDashboardClub();renderAchievements();if(state.view==='album')renderAlbum();if(state.view==='scambi')renderTrades();queueClubPublish();}
 function mark(number,next){
   if(!state.user||!state.accessGranted)return;
   if(!isCatalogAvailable()){
@@ -253,7 +302,7 @@ async function publishClubProfile(){
       const merged=mergeClubProfile(existing,desired,serverTimestamp());
       if(needsClubPublish(existing,merged))tx.set(ref,{...merged,updatedAt:serverTimestamp()});
     });
-    if(state.user?.uid===uid){state.clubError='';if(state.view==='club')renderClub();}
+    if(state.user?.uid===uid){state.clubError='';renderDashboardClub();if(state.view==='club')renderClub();}
   }catch(e){
     if(state.user?.uid===uid){state.clubError='Impossibile aggiornare i progressi del Club: '+errorText(e)+'. Verifica che le nuove regole Firestore siano state pubblicate.';if(state.view==='club')renderClub();}
   }finally{clubPublishInProgress=false;}
@@ -266,8 +315,8 @@ function subscribeClub(){
   state.unsubs.push(onSnapshot(query(collection(db,'clubProfiles'),limit(150)),{includeMetadataChanges:true},snap=>{
     state.clubProfiles=snap.docs.map(x=>normalizeClubProfile(x.id,x.data()));
     state.clubLoaded=true;state.clubFromCache=snap.metadata.fromCache;
-    state.clubError='';if(state.view==='club')renderClub();
-  },e=>{state.clubError='Non è stato possibile caricare Il Club: '+errorText(e)+'. Controlla le nuove regole Firestore.';if(state.view==='club')renderClub();}));
+    state.clubError='';renderDashboardClub();if(state.view==='club')renderClub();
+  },e=>{state.clubError='Non è stato possibile caricare Il Club: '+errorText(e)+'. Controlla le nuove regole Firestore.';renderDashboardClub();if(state.view==='club')renderClub();}));
   queueClubPublish();
 }
 async function bootstrapClubMembers(){
@@ -405,7 +454,13 @@ $('#pending-logout').addEventListener('click',async()=>{try{await signOut(auth);
 $('#logout-button').addEventListener('click',async()=>{if((state.metadata.albumPending||Object.keys(state.pending).length)&&!confirm('Hai modifiche non ancora sincronizzate. Se esci potrebbero rimanere in attesa finché non effettuerai nuovamente l’accesso con questo account. Vuoi uscire comunque?'))return;try{await signOut(auth);}catch(e){toast(errorText(e),true);}});
 for(const key of ['q','team','section','status']){const id={q:'search',team:'team-filter',section:'section-filter',status:'status-filter'}[key];$(`#${id}`).addEventListener(key==='q'?'input':'change',e=>{state.filters[key]=e.target.value;state.page=1;renderAlbum();});}
 $('#teams-grid').addEventListener('click',e=>{const card=e.target.closest('[data-team]');if(!card)return;state.filters.team=card.dataset.team;state.filters.q='';state.filters.status='';state.filters.section='';$('#team-filter').value=state.filters.team;$('#section-filter').value='';$('#status-filter').value='';$('#search').value='';state.page=1;location.hash='#album';if(state.view==='album')renderAlbum();});
-$$('[data-quick-filter]').forEach(a=>a.addEventListener('click',()=>{state.filters.status=a.dataset.quickFilter;$('#status-filter').value=state.filters.status;state.page=1;}));$('#hero-missing').addEventListener('click',()=>{state.filters.status='missing';$('#status-filter').value='missing';state.page=1;});
+$$('[data-quick-filter]').forEach(a=>a.addEventListener('click',()=>{state.filters.status=a.dataset.quickFilter;$('#status-filter').value=state.filters.status;state.page=1;}));for(const link of [$('#hero-missing'),$('.stadium-more-link')]){
+  link.addEventListener('click',()=>{
+    state.filters={q:'',team:'',section:'',status:''};
+    for(const id of ['search','team-filter','section-filter','status-filter'])$(`#${id}`).value='';
+    state.page=1;
+  });
+}
 $('#sticker-grid').addEventListener('click',e=>{const button=e.target.closest('[data-mark],[data-step]');if(!button)return;const card=button.closest('[data-sticker]');if(!card)return;const n=Number(card.dataset.sticker),old=qty(n),next=button.hasAttribute('data-mark')?(old>0?0:1):clampQty(old+Number(button.dataset.step));mark(n,next);});
 $('#pagination').addEventListener('click',e=>{const btn=e.target.closest('[data-page]');if(!btn||btn.disabled)return;state.page=Number(btn.dataset.page);renderAlbum();$('#view-album').scrollIntoView({behavior:'smooth'});});
 $('#club-members').addEventListener('click',e=>{const card=e.target.closest('[data-club-id]');if(!card)return;state.clubSelected=card.dataset.clubId;renderClub();$('#view-club').scrollIntoView({behavior:'instant'});});
