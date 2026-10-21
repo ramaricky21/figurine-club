@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+<title id="title">Figurine Club - simbolo delle figurine sovrapposte</title>
+<rect width="512" height="512" rx="116" fill="#101917"/>
+<circle cx="256" cy="256" r="202" fill="#163026"/>
+<circle cx="256" cy="256" r="184" fill="none" stroke="#2d4e38" stroke-width="3"/>
+<g fill="none" stroke="#baff66" stroke-width="28" stroke-linejoin="round" stroke-linecap="round">
+<path d="M256 132 392 206 256 280 120 206Z"/>
+<path d="m120 268 136 74 136-74"/>
+<path d="m120 337 136 74 136-74"/>
+</g>
+</svg>
