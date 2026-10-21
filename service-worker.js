@@ -3,7 +3,7 @@
  * Non memorizzare mai qui risposte Firestore, token o dati personali.
  */
 'use strict';
-const CACHE_VERSION='step4-club-icon-fix-20261021-2';
+const CACHE_VERSION='stadium2-dashboard-20261021-1';
 const STATIC_CACHE='figurine-club-static-'+CACHE_VERSION;
 const CACHE_PREFIX='figurine-club-static-';
 const APP_SCOPE=self.registration.scope;
@@ -13,7 +13,8 @@ const STATIC_PATHS=[
   './index.html','./offline.html','./manifest.webmanifest','./config.js',
   './assets/style.css','./assets/extra.css','./assets/refined.css?v=4',
   './assets/achievements.css?v=1','./assets/club.css?v=1',
-  './assets/app.mjs?v=5','./assets/core.mjs','./assets/offline-state.mjs',
+  './assets/dashboard-stadium.css?v=1','./assets/stadium-night.jpg',
+  './assets/app.mjs?v=6','./assets/core.mjs','./assets/offline-state.mjs',
   './assets/achievements.mjs','./assets/club.mjs',
   './assets/icons.svg','./assets/favicon.svg','./assets/asterisk.svg',
   './assets/sparkle.svg','./assets/pwa-register.js',
@@ -74,7 +75,7 @@ self.addEventListener('fetch',event=>{
   event.respondWith((async()=>{
     const cache=await caches.open(STATIC_CACHE);
     const stored=await cache.match(request);
-    if(/\.(png|svg)$/.test(url.pathname)&&stored)return stored;
+    if(/\.(png|svg|jpe?g)$/.test(url.pathname)&&stored)return stored;
     try{const response=await fetch(request);if(response.ok)await cache.put(request,response.clone());return response;}
     catch(_){return stored||Response.error();}
   })());
