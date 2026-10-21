@@ -1,0 +1,28 @@
+/* STEP 4 · Il Club: profili aggregati, bacheca sempre in lista verticale. */
+.club-member-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,275px),1fr));gap:14px}
+.club-member-card{font:inherit;text-align:left;border:1px solid #dfe8dc;border-radius:17px;background:#fff;padding:20px;cursor:pointer;display:flex;flex-direction:column;gap:14px;min-width:0;box-shadow:0 5px 24px #18301e07;color:#1e3a29;transition:border-color .18s,transform .18s}
+.club-member-card:hover,.club-member-card:focus-visible{border-color:#7fc056;transform:translateY(-1px)}
+.club-member-head{display:flex;align-items:center;gap:12px;min-width:0}
+.club-member-avatar{display:grid;place-items:center;flex:0 0 43px;width:43px;height:43px;border-radius:13px;background:#e3f5c6;color:#284d2b;font-size:17px;font-weight:900}
+.club-member-text{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}
+.club-member-text strong{font-size:15px;overflow-wrap:anywhere}
+.club-member-text small{font-size:11px;color:#738577}
+.club-member-pct{font-size:24px;font-weight:900;letter-spacing:-.06em;white-space:nowrap}
+.club-member-bar{height:8px;background:#e5efe2;border-radius:20px;overflow:hidden;width:100%}
+.club-member-bar span{display:block;height:100%;background:#9cda5a;border-radius:inherit}
+.club-member-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;color:#698171}
+.club-member-footer b{color:#3b7841}
+.club-back{margin-bottom:20px}
+.club-activity{display:flex;flex-direction:column;gap:9px}
+.club-news-row{background:#fff;border:1px solid #e1eadf;border-radius:13px;padding:13px 16px;display:flex;align-items:center;gap:13px;min-width:0}
+.club-news-icon{display:grid;place-items:center;flex:0 0 39px;width:39px;height:39px;border-radius:11px;background:#edf7df;color:#518c41}
+.club-news-icon svg{height:21px;width:21px}
+.club-news-text{min-width:0;display:flex;flex-direction:column;gap:4px;flex:1}
+.club-news-text strong{font-size:13px;color:#24432d;overflow-wrap:anywhere}
+.club-news-text small{font-size:11px;color:#718577}
+.club-empty{background:#fff;border:1px dashed #cddbc9;border-radius:15px;padding:22px;color:#657869;font-size:13px;line-height:1.7}
+.club-warning{padding:14px 16px;border:1px solid #e3cd9c;border-radius:12px;background:#fff7e6;color:#765a25;margin:0 0 18px;font-size:12px;line-height:1.65}
+.club-activity-heading{margin-top:35px}
+.club-person-overview{margin-top:0}
+@media(max-width:420px){.club-member-card{padding:16px}.club-news-row{padding:12px}.club-person-overview{grid-template-columns:minmax(0,1fr) auto}}
+@media(prefers-reduced-motion:reduce){.club-member-card{transition:none}}

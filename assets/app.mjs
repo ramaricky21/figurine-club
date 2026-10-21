@@ -2,6 +2,7 @@ import { firebaseConfig, albumEdition } from '../config.js';
 import { computeStats, exchangeMatch, parseCSV, sectionsFor, clampQty } from './core.mjs';
 import { deriveSyncState } from './offline-state.mjs';
 import { computeAchievements, ACHIEVEMENTS } from './achievements.mjs';
+import {publicSummary, mergeClubProfile, needsClubPublish, normalizeClubProfile, recentClubAchievements} from './club.mjs';
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
 import {
   getAuth, onAuthStateChanged, createUserWithEmailAndPassword,
@@ -10,13 +11,13 @@ import {
 import {
   initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
   getFirestore, doc, collection, query, where, limit, getDoc, getDocs,
-  setDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, writeBatch
+  setDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, writeBatch, runTransaction
 } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 const $=(s,root=document)=>root.querySelector(s);
 const $$=(s,root=document)=>[...root.querySelectorAll(s)];
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const icon=(name)=>`<svg class="icon" aria-hidden="true"><use href="./assets/icons.svg#${name}"></use></svg>`;
-const state={user:null,profile:null,admin:false,accessGranted:false,memberUnsub:null,accessRequests:[],memberships:[],items:[],counts:{},pending:{},pendingTokens:{},peers:[],filters:{q:'',team:'',section:'',status:''},page:1,pageSize:24,loaded:{album:false,catalog:false},metadata:{albumCache:true,catalogCache:true,albumPending:false,albumError:false,catalogError:false},unsubs:[],peerUnsub:null,view:'dashboard',busy:false,achievementKey:null,achievementBaseline:null,achievementNotified:new Set()};
+const state={user:null,profile:null,admin:false,accessGranted:false,memberUnsub:null,accessRequests:[],memberships:[],items:[],counts:{},pending:{},pendingTokens:{},peers:[],filters:{q:'',team:'',section:'',status:''},page:1,pageSize:24,loaded:{album:false,catalog:false},metadata:{albumCache:true,catalogCache:true,albumPending:false,albumError:false,catalogError:false},unsubs:[],peerUnsub:null,view:'dashboard',busy:false,achievementKey:null,achievementBaseline:null,achievementNotified:new Set(),clubProfiles:[],clubSelected:null,clubLoaded:false,clubError:"",clubFromCache:true};
 let auth,db;
 let offlineEnabled=false;
 const DEVICE_KEY='figurine-club:trusted-offline-device:v1';
@@ -59,8 +60,9 @@ function updateOfflineSetting(){
 }
 function isCatalogAvailable(){return state.loaded.album && state.loaded.catalog && state.items.length>0;}
 window.addEventListener('online',updateSyncUI);
+window.addEventListener('online',()=>queueClubPublish());
 window.addEventListener('offline',updateSyncUI);
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateSyncUI();});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){updateSyncUI();queueClubPublish();}});
 let toastTimer;
 function toast(message,isError=false){const n=$('#toast');n.textContent=message;n.classList.toggle('error',isError);n.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>n.classList.remove('show'),3400);}
 function show(id){for(const name of ['boot-screen','setup-screen','auth-screen','pending-screen','app-screen'])$(`#${name}`).hidden=name!==id;document.body.classList.toggle('auth-body',id!=='app-screen');document.body.classList.toggle('app-body',id==='app-screen');}
@@ -70,14 +72,14 @@ function authError(message){const el=$('#auth-error');el.textContent=message;el.
 let registerMode=false;
 function authMode(register){registerMode=register;$('#auth-eyebrow').textContent=register?'IL TUO ALBUM COMINCIA QUI':'BENTORNATO, COLLEZIONISTA';$('#auth-title').innerHTML=register?'Crea il tuo album<span class="heading-period">.</span>':'Accedi al tuo album<span class="heading-period">.</span>';$('#auth-subtitle').textContent=register?'Registrati ora; potrai entrare dopo l’approvazione dell’amministratore.':'Riprendi da dove avevi lasciato.';$('#name-fields').hidden=!register;$('#display-name').required=register;$('#auth-password').autocomplete=register?'new-password':'current-password';$('#auth-submit').textContent=register?'Richiedi l’accesso →':'Entra nel mio album →';$('#auth-switch').firstChild.textContent=register?'Hai già un account? ':'Non hai un account? ';$('#switch-auth').textContent=register?'Accedi ↗':'Registrati gratis ↗';authError('');}
 const signedIn=()=>!!state.user;
-function clearListeners(){state.unsubs.forEach(fn=>fn());state.unsubs=[];if(state.peerUnsub){state.peerUnsub();state.peerUnsub=null;}}
+function clearListeners(){clearTimeout(clubPublishTimer);state.unsubs.forEach(fn=>fn());state.unsubs=[];if(state.peerUnsub){state.peerUnsub();state.peerUnsub=null;}}
 function clearMembershipListener(){if(state.memberUnsub){state.memberUnsub();state.memberUnsub=null;}}
-function resetState(){clearListeners();clearMembershipListener();state.user=null;state.profile=null;state.admin=false;state.accessGranted=false;state.accessRequests=[];state.memberships=[];state.items=[];state.counts={};state.pending={};state.pendingTokens={};state.peers=[];state.loaded={album:false,catalog:false};state.metadata={albumCache:true,catalogCache:true,albumPending:false,albumError:false,catalogError:false};state.achievementKey=null;state.achievementBaseline=null;state.achievementNotified=new Set();updateSyncUI();}
+function resetState(){clearListeners();clearMembershipListener();state.user=null;state.profile=null;state.admin=false;state.accessGranted=false;state.accessRequests=[];state.memberships=[];state.items=[];state.counts={};state.pending={};state.pendingTokens={};state.peers=[];state.loaded={album:false,catalog:false};state.metadata={albumCache:true,catalogCache:true,albumPending:false,albumError:false,catalogError:false};state.achievementKey=null;state.achievementBaseline=null;state.achievementNotified=new Set();state.clubProfiles=[];state.clubSelected=null;state.clubLoaded=false;state.clubError="";state.clubFromCache=true;updateSyncUI();}
 function getProfileRef(){return doc(db,'users',state.user.uid);}
 function getAlbumRef(){return doc(db,'users',state.user.uid,'album','main');}
 function stats(){return computeStats(state.items, {...state.counts,...state.pending});}
 function qty(n){return clampQty(Number(Object.prototype.hasOwnProperty.call(state.pending,String(n))?state.pending[String(n)]:state.counts[String(n)]||0));}
-function route(){let v=(location.hash.slice(1)||'dashboard').split('?')[0];if(!['dashboard','album','bacheca','scambi','impostazioni','admin','richieste'].includes(v))v='dashboard';if(['admin','richieste'].includes(v)&&!state.admin)v='dashboard';state.view=v;$$('[data-view]').forEach(el=>el.hidden=el.dataset.view!==v);$$('[data-route]').forEach(el=>el.classList.toggle('active',el.dataset.route===v));$('#breadcrumb').textContent={dashboard:'Panoramica',album:'Il mio album',bacheca:'La mia bacheca',scambi:'Scambi',impostazioni:'Impostazioni',admin:'Catalogo / Admin',richieste:'Richieste di accesso'}[v];document.documentElement.classList.remove('menu-open');if(v==='album')renderAlbum();if(v==='bacheca')renderAchievements();if(v==='scambi')renderTrades();if(v==='richieste')renderRequests();if(v==='admin')$('#catalog-info').textContent=`${state.items.length} figurine nel catalogo`;window.scrollTo({top:0,behavior:'instant'});}
+function route(){let v=(location.hash.slice(1)||'dashboard').split('?')[0];if(!['dashboard','album','bacheca','club','scambi','impostazioni','admin','richieste'].includes(v))v='dashboard';if(['admin','richieste'].includes(v)&&!state.admin)v='dashboard';state.view=v;$$('[data-view]').forEach(el=>el.hidden=el.dataset.view!==v);$$('[data-route]').forEach(el=>el.classList.toggle('active',el.dataset.route===v));$('#breadcrumb').textContent={dashboard:'Panoramica',album:'Il mio album',bacheca:'La mia bacheca',club:'Il Club',scambi:'Scambi',impostazioni:'Impostazioni',admin:'Catalogo / Admin',richieste:'Richieste di accesso'}[v];document.documentElement.classList.remove('menu-open');if(v==='album')renderAlbum();if(v==='bacheca')renderAchievements();if(v==='club')renderClub();if(v==='scambi')renderTrades();if(v==='richieste')renderRequests();if(v==='admin')$('#catalog-info').textContent=`${state.items.length} figurine nel catalogo`;window.scrollTo({top:0,behavior:'instant'});}
 function renderChrome(){const name=state.profile?.displayName||state.user?.displayName||'Collezionista';$$('[data-person-name]').forEach(n=>n.textContent=name.split(' ')[0]);$('#side-name').textContent=name;$('#side-email').textContent=state.user?.email||'';$('#side-initial').textContent=name[0]?.toUpperCase()||'F';$('#top-initial').textContent=name[0]?.toUpperCase()||'F';$('#profile-name').value=name;$('#profile-email').value=state.user?.email||'';$('#share-trades').checked=!!state.profile?.shareTrades;$('#admin-nav').hidden=!state.admin;$('#dashboard-edition').textContent=albumEdition;
 }
 function renderStats(){const s=stats();for(const key of ['total','found','missing','duplicates'])$$(`[data-stat="${key}"]`).forEach(el=>el.textContent=s[key]);$$('[data-percent]').forEach(el=>el.textContent=s.percentage);$('#hero-ring').style.setProperty('--progress',s.percentage);$('#album-ring').style.setProperty('--progress',s.percentage);$('#album-ring').textContent=`${s.percentage}%`;$('#progress-track').style.width=`${s.percentage}%`;}
@@ -151,7 +153,7 @@ function renderAchievements(){
       ?'Stai vedendo progressi locali o non ancora confermati: eventuali nuovi premi saranno confermati alla sincronizzazione.':
       'Premi calcolati sul catalogo attualmente importato. Prima del catalogo ufficiale 2026-2027, i risultati sono provvisori.';
 }
-function renderEverything(){renderStats();renderTeams();renderAchievements();if(state.view==='album')renderAlbum();if(state.view==='scambi')renderTrades();}
+function renderEverything(){renderStats();renderTeams();renderAchievements();if(state.view==='album')renderAlbum();if(state.view==='scambi')renderTrades();queueClubPublish();}
 function mark(number,next){
   if(!state.user||!state.accessGranted)return;
   if(!isCatalogAvailable()){
@@ -187,8 +189,104 @@ function mark(number,next){
 }
 async function publishTradeSheet(){if(!state.user||!state.profile?.shareTrades||!state.loaded.album||!state.loaded.catalog||!navigator.onLine||state.metadata.albumCache||state.metadata.albumPending||Object.keys(state.pending).length)return;const duplicates=[],missing=[];for(const s of state.items){const n=qty(s.number);if(n>1)duplicates.push(s.number);if(n===0)missing.push(s.number);}await setDoc(doc(db,'tradeSheets',state.user.uid),{active:true,displayName:state.profile.displayName,duplicates,missing,updatedAt:serverTimestamp()});}
 let publishTimer;
+let clubPublishTimer;
+let clubBootstrapBusy=false;
 function queueTradePublish(){clearTimeout(publishTimer);if(!state.profile?.shareTrades||!navigator.onLine||state.metadata.albumCache||state.metadata.albumPending||Object.keys(state.pending).length)return;publishTimer=setTimeout(()=>publishTradeSheet().catch(e=>toast('Impossibile aggiornare gli scambi: '+errorText(e),true)),700);}
 function subscribePeers(){if(state.peerUnsub){state.peerUnsub();state.peerUnsub=null;}state.peers=[];if(!state.profile?.shareTrades){renderTrades();return;}state.peerUnsub=onSnapshot(query(collection(db,'tradeSheets'),where('active','==',true),limit(150)),snap=>{state.peers=snap.docs.filter(d=>d.id!==state.user?.uid).map(d=>({id:d.id,...d.data()}));renderTrades();},e=>toast('Errore caricamento scambi: '+errorText(e),true));}
+// Il Club legge esclusivamente /clubProfiles: nessun altro utente può leggere
+// i documenti /users/{uid}/album/main o i profili con indirizzi email.
+function renderClub(){
+  const warning=$('#club-warning');
+  const message=state.clubError || (state.clubFromCache?'Dati del Club in memoria locale: potrebbero non essere aggiornati. Torna online per vedere i progressi più recenti.':'');
+  warning.hidden=!message;warning.textContent=message;
+  const currentCatalog=computeAchievements(state.items,{});
+  const signature=state.loaded.catalog&&currentCatalog.available?currentCatalog.signature:'';
+  const members=state.clubProfiles.map(p=>p.ready&&p.catalogSignature!==signature?{...p,ready:false,percentage:0,unlocked:[],earnedAt:{}}:p).sort((a,b)=>a.displayName.localeCompare(b.displayName,'it'));
+  $('#club-member-count').textContent=String(members.length);
+  const current=members.find(p=>p.id===state.clubSelected);
+  $('#club-list-panel').hidden=!!current;
+  $('#club-profile-panel').hidden=!current;
+  if(!current){
+    $('#club-members').innerHTML=members.length?members.map(member=>{
+      const pct=member.ready?`${member.percentage}%`:'—';
+      return `<button type="button" class="club-member-card" data-club-id="${esc(member.id)}">
+        <span class="club-member-head"><span class="club-member-avatar">${esc(member.displayName[0]?.toUpperCase()||'F')}</span><span class="club-member-text"><strong>${esc(member.displayName)}</strong><small>${member.id===state.user?.uid?'Il tuo album · ':''}${member.ready?'Album Calciatori':'Progressi non ancora disponibili'}</small></span><span class="club-member-pct">${pct}</span></span>
+        <span class="club-member-bar"><span style="width:${member.percentage}%"></span></span>
+        <span class="club-member-footer"><span>${member.ready?`${member.unlocked.length} di 7 riconoscimenti`:'Attende l’aggiornamento dell’album'}</span><b>Apri bacheca →</b></span></button>`;
+    }).join(''):`<div class="club-empty">${state.clubLoaded?'Non ci sono ancora bacheche pubblicate. Gli iscritti compariranno dopo il primo accesso alla versione aggiornata.':'Caricamento dei membri del Club…'}</div>`;
+    const news=recentClubAchievements(members);
+    const defs=new Map(ACHIEVEMENTS.map(a=>[a.id,a]));
+    $('#club-activity').innerHTML=news.length?news.map(evt=>{
+      const a=defs.get(evt.awardId);
+      const when=evt.date.toLocaleDateString('it-IT',{day:'numeric',month:'short',year:'numeric'});
+      return `<div class="club-news-row"><span class="club-news-icon">${icon(a.icon)}</span><span class="club-news-text"><strong>${esc(evt.name)} ha conquistato “${esc(a.title)}”!</strong><small>${esc(when)} · Traguardo del Club</small></span></div>`;
+    }).join(''):'<div class="club-empty">Le nuove conquiste confermate degli amici compariranno qui. Le bacheche già completate prima di questo aggiornamento non generano annunci retroattivi.</div>';
+    return;
+  }
+  $('#club-profile-name').textContent=current.displayName;
+  $('#club-profile-caption').textContent=current.ready?'Album Calciatori · Riconoscimenti del membro':'Questo membro non ha ancora aggiornato il proprio album con la nuova versione.';
+  $('#club-profile-percent').textContent=current.ready?`${current.percentage}%`:'—';
+  $('#club-profile-progress').setAttribute('aria-valuenow',String(current.percentage));
+  $('#club-profile-progress-fill').style.width=`${current.percentage}%`;
+  $('#club-profile-awards-counter').textContent=`${current.unlocked.length} di ${ACHIEVEMENTS.length}`;
+  $('#club-profile-awards').innerHTML=ACHIEVEMENTS.map(a=>{
+    const obtained=current.ready&&current.unlocked.includes(a.id);
+    return `<div class="award-row ${obtained?'award-unlocked':'award-locked'}" data-tone="${a.tone}"><span class="award-icon">${icon(a.icon)}</span>
+    <div class="award-copy"><h3>${esc(a.title)}</h3><p>${esc(a.description)}</p></div>
+    <span class="award-status">${icon(obtained?'check-circle':'lock')}<span>${obtained?'Sbloccato':current.ready?'Da sbloccare':'In attesa'}</span></span></div>`;
+  }).join('');
+}
+let clubPublishInProgress=false;
+async function publishClubProfile(){
+  if(!state.user||!state.accessGranted||!state.profile||!navigator.onLine||
+     !state.loaded.album||!state.loaded.catalog||state.metadata.albumCache||state.metadata.catalogCache||
+     state.metadata.albumPending||state.metadata.albumError||state.metadata.catalogError||
+     Object.keys(state.pending).length||clubPublishInProgress)return;
+  const uid=state.user.uid;
+  const desired=publicSummary(computeAchievements(state.items,state.counts),state.profile.displayName);
+  clubPublishInProgress=true;
+  try{
+    await runTransaction(db,async tx=>{
+      const ref=doc(db,'clubProfiles',uid);
+      const snap=await tx.get(ref);
+      const existing=snap.exists()?snap.data():null;
+      const merged=mergeClubProfile(existing,desired,serverTimestamp());
+      if(needsClubPublish(existing,merged))tx.set(ref,{...merged,updatedAt:serverTimestamp()});
+    });
+    if(state.user?.uid===uid){state.clubError='';if(state.view==='club')renderClub();}
+  }catch(e){
+    if(state.user?.uid===uid){state.clubError='Impossibile aggiornare i progressi del Club: '+errorText(e)+'. Verifica che le nuove regole Firestore siano state pubblicate.';if(state.view==='club')renderClub();}
+  }finally{clubPublishInProgress=false;}
+}
+function queueClubPublish(){
+  clearTimeout(clubPublishTimer);
+  clubPublishTimer=setTimeout(()=>publishClubProfile(),1100);
+}
+function subscribeClub(){
+  state.unsubs.push(onSnapshot(query(collection(db,'clubProfiles'),limit(150)),{includeMetadataChanges:true},snap=>{
+    state.clubProfiles=snap.docs.map(x=>normalizeClubProfile(x.id,x.data()));
+    state.clubLoaded=true;state.clubFromCache=snap.metadata.fromCache;
+    state.clubError='';if(state.view==='club')renderClub();
+  },e=>{state.clubError='Non è stato possibile caricare Il Club: '+errorText(e)+'. Controlla le nuove regole Firestore.';if(state.view==='club')renderClub();}));
+  queueClubPublish();
+}
+async function bootstrapClubMembers(){
+  if(!state.admin||!state.user||!state.accessGranted||!navigator.onLine||clubBootstrapBusy)return;
+  clubBootstrapBusy=true;
+  try{
+    // L'amministratore crea soltanto schede VUOTE degli autorizzati. Non legge
+    // e non inventa i progressi dei loro album personali.
+    for(const member of state.memberships.filter(x=>x.approved===true).slice(0,140)){
+      if(member.uid===state.user.uid)continue;
+      await runTransaction(db,async tx=>{
+        const ref=doc(db,'clubProfiles',member.uid);
+        const current=await tx.get(ref);
+        if(!current.exists())tx.set(ref,{displayName:String(member.displayName||'Collezionista').slice(0,40),ready:false,percentage:0,unlocked:[],catalogSignature:'',earnedAt:{},updatedAt:serverTimestamp()});
+      });
+    }
+  }catch(e){console.warn('Il Club: inizializzazione elenco membri incompleta.',e);}
+  finally{clubBootstrapBusy=false;}
+}
 function renderTrades(){const shared=!!state.profile?.shareTrades;$('#trade-disabled').hidden=shared;$('#trade-enabled').hidden=!shared;if(!shared)return;const select=$('#partner');const selected=select.value;select.innerHTML='<option value="">Seleziona un amico...</option>'+state.peers.map(p=>`<option value="${esc(p.id)}">${esc(p.displayName)}</option>`).join('');select.value=state.peers.some(p=>p.id===selected)?selected:'';if(!state.peers.length)$('#trade-results').innerHTML='<div class="section-card"><p class="muted-copy">Nessun altro amico ha ancora attivato la partecipazione agli scambi.</p></div>';
 else if(!select.value)$('#trade-results').innerHTML='<div class="empty-small">Seleziona un amico per confrontare i doppioni.</div>';}
 function compareTrades(){const peer=state.peers.find(p=>p.id===$('#partner').value);if(!peer){toast('Seleziona un amico.',true);return;}const match=exchangeMatch(state.items,{...state.counts,...state.pending},peer);const list=items=>items.length?items.map(s=>`<div class="match-item"><div class="match-number">#${String(s.number).padStart(3,'0')}</div><div><strong>${esc(s.title)}</strong><span>${esc(s.team)} · ${esc(s.section)}</span></div></div>`).join(''):'<div class="empty-small">Nessuna corrispondenza per il momento.</div>';$('#trade-results').innerHTML=`<div class="trade-match-header"><div class="avatar peer-avatar">${esc(peer.displayName?.[0]?.toUpperCase()||'F')}</div><div><span class="eyebrow">CONFRONTO CON</span><h2>${esc(peer.displayName)}</h2></div></div><div class="match-grid"><div class="section-card"><div class="section-heading"><div><span class="eyebrow">L’AMICO HA, TU CERCHI</span><h2>Puoi ricevere <span class="small-count">${match.receive.length}</span></h2></div></div><div class="match-list">${list(match.receive)}</div></div><div class="section-card"><div class="section-heading"><div><span class="eyebrow">TU HAI, L’AMICO CERCA</span><h2>Puoi offrire <span class="small-count">${match.offer.length}</span></h2></div></div><div class="match-list">${list(match.offer)}</div></div></div><p class="trade-footnote">I confronti indicano possibili scambi, senza trasferire automaticamente figurine. Accordatevi direttamente.</p>`;}
@@ -209,7 +307,7 @@ function renderRequests(){
 function subscribeApprovals(){
   if(!state.admin)return;
   state.unsubs.push(onSnapshot(collection(db,'joinRequests'),snap=>{state.accessRequests=snap.docs.map(x=>({uid:x.id,...x.data()}));renderRequests();},e=>alertApp('Richieste: '+errorText(e))));
-  state.unsubs.push(onSnapshot(collection(db,'memberships'),snap=>{state.memberships=snap.docs.map(x=>({uid:x.id,...x.data()}));renderRequests();},e=>alertApp('Autorizzazioni: '+errorText(e))));
+  state.unsubs.push(onSnapshot(collection(db,'memberships'),{includeMetadataChanges:true},snap=>{state.memberships=snap.docs.map(x=>({uid:x.id,...x.data()}));renderRequests();if(!snap.metadata.fromCache)bootstrapClubMembers();},e=>alertApp('Autorizzazioni: '+errorText(e))));
 }
 async function changeApproval(uid,action){
   if(!navigator.onLine)throw new Error('La gestione degli accessi richiede Internet.');
@@ -226,6 +324,8 @@ async function changeApproval(uid,action){
   const source=request||member;
   const batch=writeBatch(db);
   batch.set(membershipRef,{email:source.email,displayName:source.displayName,approved:isApprove,updatedAt:serverTimestamp()});
+  // Il profilo pubblico di un membro revocato non deve restare visibile nel Club.
+  if(!isApprove)batch.delete(doc(db,'clubProfiles',uid));
   if(request)batch.update(requestRef,{status:isApprove?'approved':action==='reject'?'rejected':'revoked',updatedAt:serverTimestamp()});
   await batch.commit();
   toast(isApprove?'Utente autorizzato.':'Accesso non autorizzato.');
@@ -264,7 +364,7 @@ async function enterClub(user){
       profileSnap=await getDoc(profileRef);
     }
     if(!state.user||!state.accessGranted)return;
-    state.profile=profileSnap.data();renderChrome();liveData();subscribePeers();subscribeApprovals();show('app-screen');route();
+    state.profile=profileSnap.data();renderChrome();liveData();subscribePeers();subscribeApprovals();subscribeClub();show('app-screen');route();
   }catch(e){show('pending-screen');$('#pending-title').textContent='Accesso momentaneamente non disponibile.';$('#pending-description').textContent='Non è stato possibile caricare il tuo profilo: '+errorText(e);}
 }
 async function onUser(user){
@@ -285,7 +385,7 @@ async function onUser(user){
     },e=>{show('pending-screen');$('#pending-title').textContent='Verifica accesso non riuscita.';$('#pending-description').textContent=errorText(e);});
   }catch(e){show('pending-screen');$('#pending-title').textContent='Impossibile verificare il tuo account.';$('#pending-description').textContent=errorText(e);}
 }
-function liveData(){state.unsubs.push(onSnapshot(getProfileRef(),snap=>{if(!snap.exists())return;const previous=state.profile?.shareTrades;state.profile=snap.data();renderChrome();if(previous!==state.profile.shareTrades)subscribePeers();renderTrades();},e=>alertApp('Profilo: '+errorText(e))));
+function liveData(){state.unsubs.push(onSnapshot(getProfileRef(),snap=>{if(!snap.exists())return;const previous=state.profile?.shareTrades;state.profile=snap.data();renderChrome();queueClubPublish();if(previous!==state.profile.shareTrades)subscribePeers();renderTrades();},e=>alertApp('Profilo: '+errorText(e))));
 state.unsubs.push(onSnapshot(getAlbumRef(),{includeMetadataChanges:true},snap=>{state.counts=snap.data()?.counts||{};state.loaded.album=true;state.metadata.albumError=false;state.metadata.albumCache=snap.metadata.fromCache;state.metadata.albumPending=snap.metadata.hasPendingWrites;renderEverything();updateSyncUI();queueTradePublish();},e=>{state.metadata.albumError=true;updateSyncUI();alertApp('Album: '+errorText(e));}));
 state.unsubs.push(onSnapshot(collection(db,'catalog'),{includeMetadataChanges:true},snap=>{const map=new Map();for(const sec of snap.docs){for(const s of sec.data().items||[])if(!map.has(s.number))map.set(s.number,s);}state.items=[...map.values()].sort((a,b)=>a.number-b.number);state.loaded.catalog=true;state.metadata.catalogError=false;state.metadata.catalogCache=snap.metadata.fromCache;fillFilterOptions();renderEverything();updateSyncUI();queueTradePublish();},e=>{state.metadata.catalogError=true;updateSyncUI();alertApp('Catalogo: '+errorText(e));}));}
 async function importCatalog(items){const sections=sectionsFor(items);const old=await getDocs(collection(db,'catalog'));const keep=new Set(sections.map(s=>s.id));const toDelete=old.docs.map(s=>s.id).filter(id=>!keep.has(id));const operations=[...sections.map(s=>({op:'set',...s})),...toDelete.map(id=>({op:'delete',id}))];
@@ -308,7 +408,9 @@ $('#teams-grid').addEventListener('click',e=>{const card=e.target.closest('[data
 $$('[data-quick-filter]').forEach(a=>a.addEventListener('click',()=>{state.filters.status=a.dataset.quickFilter;$('#status-filter').value=state.filters.status;state.page=1;}));$('#hero-missing').addEventListener('click',()=>{state.filters.status='missing';$('#status-filter').value='missing';state.page=1;});
 $('#sticker-grid').addEventListener('click',e=>{const button=e.target.closest('[data-mark],[data-step]');if(!button)return;const card=button.closest('[data-sticker]');if(!card)return;const n=Number(card.dataset.sticker),old=qty(n),next=button.hasAttribute('data-mark')?(old>0?0:1):clampQty(old+Number(button.dataset.step));mark(n,next);});
 $('#pagination').addEventListener('click',e=>{const btn=e.target.closest('[data-page]');if(!btn||btn.disabled)return;state.page=Number(btn.dataset.page);renderAlbum();$('#view-album').scrollIntoView({behavior:'smooth'});});
-$('#profile-form').addEventListener('submit',async e=>{e.preventDefault();if(!navigator.onLine){toast('Per aggiornare il profilo è necessaria una connessione Internet.',true);return;}const name=$('#profile-name').value.trim();if(name.length<2||name.length>40){toast('Nome da 2 a 40 caratteri.',true);return;}try{await updateDoc(getProfileRef(),{displayName:name});toast('Nome aggiornato.');queueTradePublish();}catch(err){toast(errorText(err),true);}});
+$('#club-members').addEventListener('click',e=>{const card=e.target.closest('[data-club-id]');if(!card)return;state.clubSelected=card.dataset.clubId;renderClub();$('#view-club').scrollIntoView({behavior:'instant'});});
+  $('#club-back').addEventListener('click',()=>{state.clubSelected=null;renderClub();});
+  $('#profile-form').addEventListener('submit',async e=>{e.preventDefault();if(!navigator.onLine){toast('Per aggiornare il profilo è necessaria una connessione Internet.',true);return;}const name=$('#profile-name').value.trim();if(name.length<2||name.length>40){toast('Nome da 2 a 40 caratteri.',true);return;}try{await updateDoc(getProfileRef(),{displayName:name});toast('Nome aggiornato.');queueTradePublish();}catch(err){toast(errorText(err),true);}});
 $('#share-trades').addEventListener('change',async e=>{if(!navigator.onLine){e.target.checked=!e.target.checked;toast('Per cambiare la condivisione degli scambi è necessaria una connessione Internet.',true);return;}const on=e.target.checked;e.target.disabled=true;try{await updateDoc(getProfileRef(),{shareTrades:on});state.profile.shareTrades=on;if(on){await publishTradeSheet();toast('Condivisione per gli scambi attivata.');}else{await deleteDoc(doc(db,'tradeSheets',state.user.uid));toast('Riepilogo scambi rimosso.');}subscribePeers();}catch(err){e.target.checked=!on;toast(errorText(err),true);}finally{e.target.disabled=false;}});
 $('#compare-button').addEventListener('click',compareTrades);$('#partner').addEventListener('change',()=>{$('#trade-results').innerHTML='';});
 $('#load-demo').addEventListener('click',async()=>{try{await handleImport(demoItems());}catch(e){toast(errorText(e),true);}});
