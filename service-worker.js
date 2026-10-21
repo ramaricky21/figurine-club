@@ -3,7 +3,7 @@
  * Non memorizzare mai qui risposte Firestore, token o dati personali.
  */
 'use strict';
-const CACHE_VERSION='step4-club-20261021-1';
+const CACHE_VERSION='step4-club-icon-fix-20261021-2';
 const STATIC_CACHE='figurine-club-static-'+CACHE_VERSION;
 const CACHE_PREFIX='figurine-club-static-';
 const APP_SCOPE=self.registration.scope;
