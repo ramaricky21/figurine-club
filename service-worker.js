@@ -3,7 +3,7 @@
  * Non memorizzare mai qui risposte Firestore, token o dati personali.
  */
 'use strict';
-const CACHE_VERSION='step2-offline-20261021-1';
+const CACHE_VERSION='step3-riconoscimenti-20261021-1';
 const STATIC_CACHE='figurine-club-static-'+CACHE_VERSION;
 const CACHE_PREFIX='figurine-club-static-';
 const APP_SCOPE=self.registration.scope;
@@ -12,7 +12,9 @@ const OFFLINE_URL=new URL('./offline.html',APP_SCOPE).href;
 const STATIC_PATHS=[
   './index.html','./offline.html','./manifest.webmanifest','./config.js',
   './assets/style.css','./assets/extra.css','./assets/refined.css?v=4',
-  './assets/app.mjs?v=3','./assets/core.mjs','./assets/offline-state.mjs',
+  './assets/achievements.css?v=1',
+  './assets/app.mjs?v=4','./assets/core.mjs','./assets/offline-state.mjs',
+  './assets/achievements.mjs',
   './assets/icons.svg','./assets/favicon.svg','./assets/asterisk.svg',
   './assets/sparkle.svg','./assets/pwa-register.js',
   './assets/pwa/icon.svg','./assets/pwa/icon-192.png','./assets/pwa/icon-512.png',
