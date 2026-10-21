@@ -158,3 +158,25 @@ body{background:var(--canvas)}
 @media (max-width:470px) {
   #view-dashboard > .page-head > a.btn { display:none; }
 }
+
+/* STEP 2: stato connessione e consenso per la memoria offline. */
+.sync-status{display:inline-flex;gap:8px;align-items:center;min-width:0;max-width:min(250px,38vw)}
+.sync-status .topbar-label{display:inline;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sync-status[data-status="pending"] .online-dot{background:#ecaa32}
+.sync-status[data-status="offline"] .online-dot,.sync-status[data-status="offline-disabled"] .online-dot{background:#9fa9a0}
+.sync-status[data-status="cache"] .online-dot,.sync-status[data-status="loading"] .online-dot{background:#e5c358}
+.sync-status[data-status="synced"] .online-dot{background:#7bc638}
+.offline-consent-backdrop:not([hidden]){position:fixed;z-index:200;inset:0;display:flex;align-items:center;justify-content:center;padding:18px;background:#091a12bf;overflow-y:auto}
+.offline-consent-card{width:min(100%,530px);background:#fff;border-radius:21px;padding:clamp(24px,4vw,37px);box-shadow:0 22px 65px #091a124d;color:#203b2a}
+.offline-consent-card h2{font-size:clamp(23px,4vw,30px);line-height:1.17;margin:15px 0;letter-spacing:-.03em}
+.offline-consent-card p{font-size:14px;line-height:1.6;color:#586d5e;margin:12px 0}
+.offline-consent-card .offline-consent-note{font-size:12px}
+.offline-consent-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}
+.offline-consent-actions .btn{white-space:normal;text-align:center}
+.offline-settings{grid-column:1/-1}
+@media(max-width:700px){.sync-status{max-width:148px}.sync-status .topbar-label{font-size:10px}.offline-consent-actions .btn{width:100%}}
+@media(max-width:470px){.topbar-right .sync-status .topbar-label,.topbar-right .sync-status .online-dot{display:inline-block}.topbar-right{min-width:0}.topbar-breadcrumb{min-width:0}.topbar-breadcrumb>span:first-child{display:none}.topbar-breadcrumb .breadcrumb-slash{display:none}.sync-status{max-width:118px}.sync-status .topbar-label{font-size:9px}.sync-status .online-dot{flex-shrink:0}}
+
+@media(max-width:360px){.topbar{gap:6px}.sync-status{max-width:94px}.top-avatar{margin-left:0}.topbar-breadcrumb strong{font-size:10px}}
+
+.sync-status[data-status="error"] .online-dot{background:#cb6955}
