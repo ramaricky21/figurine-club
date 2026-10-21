@@ -3,7 +3,7 @@
    Per invalidare tutta la cache in un futuro rilascio, cambiare CACHE_VERSION.
 */
 'use strict';
-const CACHE_VERSION = 'step1-20261021-1';
+const CACHE_VERSION = 'step1-mobilefix-20261021-2';
 const STATIC_CACHE = 'figurine-club-static-' + CACHE_VERSION;
 const CACHE_PREFIX = 'figurine-club-static-';
 const APP_SCOPE = self.registration.scope;
@@ -16,7 +16,7 @@ const PRECACHE_PATHS = [
   './manifest.webmanifest',
   './assets/style.css',
   './assets/extra.css',
-  './assets/refined.css?v=2',
+  './assets/refined.css?v=3',
   './assets/app.mjs?v=2',
   './assets/core.mjs',
   './assets/icons.svg',
