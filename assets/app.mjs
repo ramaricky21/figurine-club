@@ -1,6 +1,7 @@
 import { firebaseConfig, albumEdition } from '../config.js';
 import { computeStats, exchangeMatch, parseCSV, sectionsFor, clampQty } from './core.mjs';
 import { deriveSyncState } from './offline-state.mjs';
+import { computeAchievements, ACHIEVEMENTS } from './achievements.mjs';
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
 import {
   getAuth, onAuthStateChanged, createUserWithEmailAndPassword,
@@ -15,7 +16,7 @@ const $=(s,root=document)=>root.querySelector(s);
 const $$=(s,root=document)=>[...root.querySelectorAll(s)];
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const icon=(name)=>`<svg class="icon" aria-hidden="true"><use href="./assets/icons.svg#${name}"></use></svg>`;
-const state={user:null,profile:null,admin:false,accessGranted:false,memberUnsub:null,accessRequests:[],memberships:[],items:[],counts:{},pending:{},pendingTokens:{},peers:[],filters:{q:'',team:'',section:'',status:''},page:1,pageSize:24,loaded:{album:false,catalog:false},metadata:{albumCache:true,catalogCache:true,albumPending:false,albumError:false,catalogError:false},unsubs:[],peerUnsub:null,view:'dashboard',busy:false};
+const state={user:null,profile:null,admin:false,accessGranted:false,memberUnsub:null,accessRequests:[],memberships:[],items:[],counts:{},pending:{},pendingTokens:{},peers:[],filters:{q:'',team:'',section:'',status:''},page:1,pageSize:24,loaded:{album:false,catalog:false},metadata:{albumCache:true,catalogCache:true,albumPending:false,albumError:false,catalogError:false},unsubs:[],peerUnsub:null,view:'dashboard',busy:false,achievementKey:null,achievementBaseline:null,achievementNotified:new Set()};
 let auth,db;
 let offlineEnabled=false;
 const DEVICE_KEY='figurine-club:trusted-offline-device:v1';
@@ -71,12 +72,12 @@ function authMode(register){registerMode=register;$('#auth-eyebrow').textContent
 const signedIn=()=>!!state.user;
 function clearListeners(){state.unsubs.forEach(fn=>fn());state.unsubs=[];if(state.peerUnsub){state.peerUnsub();state.peerUnsub=null;}}
 function clearMembershipListener(){if(state.memberUnsub){state.memberUnsub();state.memberUnsub=null;}}
-function resetState(){clearListeners();clearMembershipListener();state.user=null;state.profile=null;state.admin=false;state.accessGranted=false;state.accessRequests=[];state.memberships=[];state.items=[];state.counts={};state.pending={};state.pendingTokens={};state.peers=[];state.loaded={album:false,catalog:false};state.metadata={albumCache:true,catalogCache:true,albumPending:false};updateSyncUI();}
+function resetState(){clearListeners();clearMembershipListener();state.user=null;state.profile=null;state.admin=false;state.accessGranted=false;state.accessRequests=[];state.memberships=[];state.items=[];state.counts={};state.pending={};state.pendingTokens={};state.peers=[];state.loaded={album:false,catalog:false};state.metadata={albumCache:true,catalogCache:true,albumPending:false,albumError:false,catalogError:false};state.achievementKey=null;state.achievementBaseline=null;state.achievementNotified=new Set();updateSyncUI();}
 function getProfileRef(){return doc(db,'users',state.user.uid);}
 function getAlbumRef(){return doc(db,'users',state.user.uid,'album','main');}
 function stats(){return computeStats(state.items, {...state.counts,...state.pending});}
 function qty(n){return clampQty(Number(Object.prototype.hasOwnProperty.call(state.pending,String(n))?state.pending[String(n)]:state.counts[String(n)]||0));}
-function route(){let v=(location.hash.slice(1)||'dashboard').split('?')[0];if(!['dashboard','album','scambi','impostazioni','admin','richieste'].includes(v))v='dashboard';if(['admin','richieste'].includes(v)&&!state.admin)v='dashboard';state.view=v;$$('[data-view]').forEach(el=>el.hidden=el.dataset.view!==v);$$('[data-route]').forEach(el=>el.classList.toggle('active',el.dataset.route===v));$('#breadcrumb').textContent={dashboard:'Panoramica',album:'Il mio album',scambi:'Scambi',impostazioni:'Impostazioni',admin:'Catalogo / Admin',richieste:'Richieste di accesso'}[v];document.documentElement.classList.remove('menu-open');if(v==='album')renderAlbum();if(v==='scambi')renderTrades();if(v==='richieste')renderRequests();if(v==='admin')$('#catalog-info').textContent=`${state.items.length} figurine nel catalogo`;window.scrollTo({top:0,behavior:'instant'});}
+function route(){let v=(location.hash.slice(1)||'dashboard').split('?')[0];if(!['dashboard','album','bacheca','scambi','impostazioni','admin','richieste'].includes(v))v='dashboard';if(['admin','richieste'].includes(v)&&!state.admin)v='dashboard';state.view=v;$$('[data-view]').forEach(el=>el.hidden=el.dataset.view!==v);$$('[data-route]').forEach(el=>el.classList.toggle('active',el.dataset.route===v));$('#breadcrumb').textContent={dashboard:'Panoramica',album:'Il mio album',bacheca:'La mia bacheca',scambi:'Scambi',impostazioni:'Impostazioni',admin:'Catalogo / Admin',richieste:'Richieste di accesso'}[v];document.documentElement.classList.remove('menu-open');if(v==='album')renderAlbum();if(v==='bacheca')renderAchievements();if(v==='scambi')renderTrades();if(v==='richieste')renderRequests();if(v==='admin')$('#catalog-info').textContent=`${state.items.length} figurine nel catalogo`;window.scrollTo({top:0,behavior:'instant'});}
 function renderChrome(){const name=state.profile?.displayName||state.user?.displayName||'Collezionista';$$('[data-person-name]').forEach(n=>n.textContent=name.split(' ')[0]);$('#side-name').textContent=name;$('#side-email').textContent=state.user?.email||'';$('#side-initial').textContent=name[0]?.toUpperCase()||'F';$('#top-initial').textContent=name[0]?.toUpperCase()||'F';$('#profile-name').value=name;$('#profile-email').value=state.user?.email||'';$('#share-trades').checked=!!state.profile?.shareTrades;$('#admin-nav').hidden=!state.admin;$('#dashboard-edition').textContent=albumEdition;
 }
 function renderStats(){const s=stats();for(const key of ['total','found','missing','duplicates'])$$(`[data-stat="${key}"]`).forEach(el=>el.textContent=s[key]);$$('[data-percent]').forEach(el=>el.textContent=s.percentage);$('#hero-ring').style.setProperty('--progress',s.percentage);$('#album-ring').style.setProperty('--progress',s.percentage);$('#album-ring').textContent=`${s.percentage}%`;$('#progress-track').style.width=`${s.percentage}%`;}
@@ -85,7 +86,72 @@ function fillFilterOptions(){for(const [id,key] of [['team-filter','team'],['sec
 function renderAlbum(){const f=state.filters;let rows=state.items.filter(s=>{const n=qty(s.number);return (!f.q||[s.number,s.team,s.section,s.title,s.subtitle,s.kind].some(v=>String(v||'').toLocaleLowerCase('it').includes(f.q.toLocaleLowerCase('it'))))&&(!f.team||s.team===f.team)&&(!f.section||s.section===f.section)&&(!f.status||(f.status==='found'&&n>0)||(f.status==='missing'&&n===0)||(f.status==='duplicates'&&n>1));});$('#results-count').textContent=rows.length;$('#album-empty').hidden=rows.length>0;const pages=Math.max(1,Math.ceil(rows.length/state.pageSize));state.page=Math.max(1,Math.min(pages,state.page));const visible=rows.slice((state.page-1)*state.pageSize,state.page*state.pageSize);
 $('#sticker-grid').innerHTML=visible.map(s=>{const q=qty(s.number);const found=q>0;const tone=s.number%6;const image=s.kind.toLowerCase()==='scudetto'?'★':s.kind.toLowerCase()==='squadra'?'◆':String(s.number%10);return `<article class="sticker-card ${found?'is-owned':''}" data-sticker="${s.number}"><div class="sticker-visual team-color-${tone}"><div class="sticker-top"><span class="sticker-no">#${String(s.number).padStart(3,'0')}</span><span class="sticker-type">${esc(s.kind)}</span></div><div class="sticker-art"><span class="art-sparks sparkle-mark" aria-hidden="true"></span><div class="sticker-symbol">${esc(image)}</div><span class="art-fineprint">COLLECT · PLAY · COMPLETE</span></div><button type="button" class="check-sticker ${found?'checked':''}" data-mark aria-label="${found?'Segna come mancante':'Segna come trovata'}">${icon('check')}</button></div><div class="sticker-details"><span class="sticker-team">${esc(s.team)} <span>· ${esc(s.section)}</span></span><h3 title="${esc(s.title)}">${esc(s.title)}</h3><p title="${esc(s.subtitle)}">${esc(s.subtitle||`Figurina n. ${s.number}`)}</p></div><div class="sticker-footer"><span class="sticker-status ${found?'status-owned':''}">${found?'✓ Trovata':'Da trovare'}</span><div class="qty-control"><button type="button" data-step="-1" aria-label="Rimuovi una copia" ${q===0?'disabled':''}>${icon('minus')}</button><output>${q}</output><button type="button" data-step="1" aria-label="Aggiungi una copia" ${q===99?'disabled':''}>${icon('plus')}</button></div></div></article>`;}).join('');
 const nav=$('#pagination');nav.innerHTML=pages===1?'':`<button data-page="${state.page-1}" ${state.page===1?'disabled':''}>← Prec.</button>`+[...new Set([1,state.page-1,state.page,state.page+1,pages].filter(n=>n>=1&&n<=pages))].sort((a,b)=>a-b).map(n=>`<button data-page="${n}" ${n===state.page?'class="active" aria-current="page"':''}>${n}</button>`).join('')+`<button data-page="${state.page+1}" ${state.page===pages?'disabled':''}>Succ. →</button>`;}
-function renderEverything(){renderStats();renderTeams();if(state.view==='album')renderAlbum();if(state.view==='scambi')renderTrades();}
+
+// Riconoscimenti personali: derivati dall'album corrente, senza nuove scritture Firebase.
+// Gli sblocchi sono annunciati solo dopo la conferma del server; nessun toast
+// all'ingresso, al semplice caricamento da cache o con catalogo dimostrativo.
+function renderAchievements(){
+  const result=computeAchievements(state.items,{...state.counts,...state.pending});
+  const ready=state.loaded.album&&state.loaded.catalog;
+  const eligible=ready&&result.available;
+  const synchronized=eligible && navigator.onLine && !state.metadata.albumCache &&
+    !state.metadata.catalogCache && !state.metadata.albumPending &&
+    !state.metadata.albumError && !state.metadata.catalogError &&
+    Object.keys(state.pending).length===0;
+  const now=new Set(result.awards.filter(a=>a.unlocked).map(a=>a.id));
+  if(!eligible){state.achievementKey=null;state.achievementBaseline=null;}
+  else if(state.achievementKey!==result.signature || state.achievementBaseline===null){
+    // Una nuova stagione/catalogo o un primo accesso sono il punto di partenza:
+    // premi già acquisiti non producono notifiche retroattive.
+    state.achievementKey=result.signature;
+    state.achievementBaseline=now;
+    state.achievementNotified=new Set();
+  }else if(synchronized){
+    const newly=result.awards.filter(a=>a.unlocked &&
+      !state.achievementBaseline.has(a.id) && !state.achievementNotified.has(a.id));
+    state.achievementBaseline=now;
+    if(newly.length){
+      for(const award of newly)state.achievementNotified.add(award.id);
+      const title=newly.length===1?newly[0].title:`${newly.length} riconoscimenti`;
+      toast(`Nuovo traguardo conquistato! ${title}`);
+      if(state.view==='bacheca'){
+        requestAnimationFrame(()=>{
+          for(const a of newly){const row=$(`[data-achievement="${a.id}"]`);if(row){row.classList.add('award-new');setTimeout(()=>row.classList.remove('award-new'),2000);}}
+        });
+      }
+    }
+  }
+  $('#awards-edition').textContent=albumEdition;
+  $('#awards-percent').textContent=ready?result.percentage:0;
+  const bar=$('#awards-progress');
+  bar.setAttribute('aria-valuenow',String(ready?result.percentage:0));
+  $('#awards-progress-fill').style.width=`${ready?result.percentage:0}%`;
+  $('#awards-counter').textContent=`${eligible?result.unlocked:0} di ${ACHIEVEMENTS.length}`;
+  $('#awards-overview-note').textContent=!ready?'Caricamento album e catalogo…':
+    result.demo?'Il catalogo contiene figurine dimostrative: i premi sono sospesi.':
+    !result.total?'Nessun catalogo caricato. I sette traguardi ti aspettano.':
+    `${result.found} figurine diverse raccolte su ${result.total}. ${result.completeTeams} squadre completate.`;
+  $('#awards-list').innerHTML=result.awards.map(a=>{
+    const unlocked=eligible&&a.unlocked;
+    const unavailable=a.unavailable;
+    const description=a.description;
+    const pendingUnlock=unlocked && (state.metadata.albumPending || Object.keys(state.pending).length>0) &&
+      state.achievementBaseline && !state.achievementBaseline.has(a.id);
+    const status=pendingUnlock?'Da sincronizzare':unlocked?'Sbloccato':unavailable?'Non disponibile':'Da sbloccare';
+    return `<div class="award-row ${unlocked?'award-unlocked':'award-locked'} ${unavailable?'award-unavailable':''}" data-achievement="${a.id}" data-tone="${a.tone}">
+      <span class="award-icon">${icon(a.icon)}</span>
+      <div class="award-copy"><h3>${a.title}</h3><p>${description}</p>${a.id==='special'&&eligible&&!result.specialAvailable?'<small>In attesa di una sezione speciale nel catalogo.</small>':''}</div>
+      <span class="award-status">${icon(pendingUnlock?'refresh':unlocked?'check-circle':'lock')}<span>${status}</span></span>
+    </div>`;
+  }).join('');
+  $('#awards-data-note').textContent=!ready?'I riconoscimenti saranno disponibili dopo il caricamento dei dati.':
+    result.demo?'I premi non si sbloccano con figurine dimostrative.':
+    !result.total?'Importa il catalogo ufficiale quando disponibile per attivare i riconoscimenti.':
+    !navigator.onLine||state.metadata.albumPending||Object.keys(state.pending).length||state.metadata.albumCache||state.metadata.catalogCache
+      ?'Stai vedendo progressi locali o non ancora confermati: eventuali nuovi premi saranno confermati alla sincronizzazione.':
+      'Premi calcolati sul catalogo attualmente importato. Prima del catalogo ufficiale 2026-2027, i risultati sono provvisori.';
+}
+function renderEverything(){renderStats();renderTeams();renderAchievements();if(state.view==='album')renderAlbum();if(state.view==='scambi')renderTrades();}
 function mark(number,next){
   if(!state.user||!state.accessGranted)return;
   if(!isCatalogAvailable()){
