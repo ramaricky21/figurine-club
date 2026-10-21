@@ -9,9 +9,9 @@
 <meta name="apple-mobile-web-app-title" content="Figurine Club">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <title>Figurine Club · Il tuo album digitale</title>
-<link rel="icon" href="./assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="./assets/style.css"><link rel="stylesheet" href="./assets/extra.css"><link rel="stylesheet" href="./assets/refined.css?v=4"><link rel="stylesheet" href="./assets/achievements.css?v=1">
+<link rel="icon" href="./assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="./assets/style.css"><link rel="stylesheet" href="./assets/extra.css"><link rel="stylesheet" href="./assets/refined.css?v=4"><link rel="stylesheet" href="./assets/achievements.css?v=1"><link rel="stylesheet" href="./assets/club.css?v=1">
 <script defer src="./assets/pwa-register.js"></script>
-<script type="module" src="./assets/app.mjs?v=4"></script>
+<script type="module" src="./assets/app.mjs?v=5"></script>
 </head>
 <body class="auth-body">
 <div id="boot-screen" class="boot-screen"><div class="boot-logo asterisk-mark" aria-hidden="true"></div><strong>FIGURINE<span>CLUB</span></strong><p>Prepariamo il tuo album…</p></div>
@@ -48,7 +48,7 @@
 </div>
 <div id="app-screen" class="app-layout" hidden>
 <aside class="sidebar" id="sidebar"><a class="brand" href="#dashboard"><span class="brand-mark"><svg class="icon"><use href="./assets/icons.svg#layers"></use></svg></span><span class="brand-copy">FIGURINE<span>CLUB</span><small>YOUR COLLECTION, YOUR RULES</small></span></a>
-<div class="sidebar-overline">IL TUO SPAZIO</div><nav class="side-nav" aria-label="Menu principale"><a href="#dashboard" data-route="dashboard" class="nav-link active"><svg class="icon"><use href="./assets/icons.svg#layout"></use></svg><span>Panoramica</span></a><a href="#album" data-route="album" class="nav-link"><svg class="icon"><use href="./assets/icons.svg#grid"></use></svg><span>Il mio album</span></a><a href="#bacheca" data-route="bacheca" class="nav-link"><svg class="icon"><use href="./assets/icons.svg#trophy"></use></svg><span>La mia bacheca</span></a><a href="#scambi" data-route="scambi" class="nav-link"><svg class="icon"><use href="./assets/icons.svg#repeat"></use></svg><span>Scambi</span><span class="nav-new">NEW</span></a><a href="#impostazioni" data-route="impostazioni" class="nav-link"><svg class="icon"><use href="./assets/icons.svg#settings"></use></svg><span>Impostazioni</span></a></nav>
+<div class="sidebar-overline">IL TUO SPAZIO</div><nav class="side-nav" aria-label="Menu principale"><a href="#dashboard" data-route="dashboard" class="nav-link active"><svg class="icon"><use href="./assets/icons.svg#layout"></use></svg><span>Panoramica</span></a><a href="#album" data-route="album" class="nav-link"><svg class="icon"><use href="./assets/icons.svg#grid"></use></svg><span>Il mio album</span></a><a href="#bacheca" data-route="bacheca" class="nav-link"><svg class="icon"><use href="./assets/icons.svg#trophy"></use></svg><span>La mia bacheca</span></a><a href="#club" data-route="club" class="nav-link"><svg class="icon"><use href="./assets/icons.svg#users"></use></svg><span>Il Club</span></a><a href="#scambi" data-route="scambi" class="nav-link"><svg class="icon"><use href="./assets/icons.svg#repeat"></use></svg><span>Scambi</span><span class="nav-new">NEW</span></a><a href="#impostazioni" data-route="impostazioni" class="nav-link"><svg class="icon"><use href="./assets/icons.svg#settings"></use></svg><span>Impostazioni</span></a></nav>
 <div id="admin-nav" hidden><div class="sidebar-overline sidebar-overline-more">GESTIONE</div><nav class="side-nav"><a href="#admin" data-route="admin" class="nav-link"><svg class="icon"><use href="./assets/icons.svg#database"></use></svg><span>Catalogo / Admin</span></a><a href="#richieste" data-route="richieste" class="nav-link"><svg class="icon"><use href="./assets/icons.svg#user"></use></svg><span>Richieste di accesso</span><span class="nav-new" id="requests-nav-count" hidden></span></a></nav></div>
 <div class="sidebar-bottom"><div class="tip-box"><div class="tip-icon"><svg class="icon"><use href="./assets/icons.svg#sparkles"></use></svg></div><strong>Ogni figurina conta.</strong><p>Tieni l'album aggiornato e scopri gli scambi possibili.</p><a href="#scambi">Vai agli scambi →</a></div><div class="profile-mini"><div class="avatar" id="side-initial">F</div><div class="profile-mini-copy"><strong id="side-name">Collezionista</strong><small id="side-email">Account personale</small></div><button type="button" class="icon-button logout-button" id="logout-button" aria-label="Esci" title="Esci"><svg class="icon"><use href="./assets/icons.svg#logout"></use></svg></button></div></div></aside>
 <div class="mobile-overlay" id="menu-overlay"></div>
@@ -78,6 +78,27 @@
   <div class="awards-heading"><div><span class="eyebrow">I TUOI RICONOSCIMENTI</span><h2>Traguardi <span class="awards-counter" id="awards-counter">0 di 7</span></h2></div><p>Le medaglie si illuminano quando raggiungi l’obiettivo.</p></div>
   <div class="awards-list" id="awards-list" aria-label="Elenco dei sette riconoscimenti"></div>
   <p class="awards-footer-note" id="awards-data-note">I riconoscimenti dipendono dal catalogo dell’album.</p>
+</section>
+<section data-view="club" id="view-club" hidden>
+  <div class="page-head"><div><span class="eyebrow eyebrow-flex"><span class="eyebrow-dot"></span> IL NOSTRO GRUPPO</span><h1>Il Club<span class="heading-period">.</span></h1><p>Segui i progressi e le conquiste degli amici autorizzati.</p></div></div>
+  <div class="club-warning" id="club-warning" role="status" hidden></div>
+  <div id="club-list-panel">
+    <div class="awards-heading"><div><span class="eyebrow">GLI ALBUM DEL CLUB</span><h2>I collezionisti <span class="awards-counter" id="club-member-count">0</span></h2></div><p>Apri un album per vedere la sua bacheca.</p></div>
+    <div id="club-members" class="club-member-grid" aria-label="Membri del Club"></div>
+    <div class="awards-heading club-activity-heading"><div><span class="eyebrow">SI FESTEGGIA INSIEME</span><h2>Ultime conquiste</h2></div><p>Solo nuovi riconoscimenti confermati dopo l'attivazione del Club.</p></div>
+    <div id="club-activity" class="club-activity" aria-live="polite"></div>
+  </div>
+  <div id="club-profile-panel" hidden>
+    <button type="button" class="btn btn-outline club-back" id="club-back">← Torna agli album del Club</button>
+    <div class="awards-overview club-person-overview">
+      <div class="awards-overview-main"><span class="eyebrow">BACHECA DEL CLUB</span><h2 id="club-profile-name">Collezionista</h2><p id="club-profile-caption">Album personale</p></div>
+      <div class="awards-overview-progress"><strong id="club-profile-percent">0%</strong><span>COMPLETATO</span></div>
+      <div class="awards-overview-track" id="club-profile-progress" role="progressbar" aria-label="Completamento album del membro" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="club-profile-progress-fill"></span></div>
+    </div>
+    <div class="awards-heading"><div><span class="eyebrow">I SUOI RICONOSCIMENTI</span><h2>Traguardi <span class="awards-counter" id="club-profile-awards-counter">0 di 7</span></h2></div><p>Premi conquistati e obiettivi ancora da raggiungere.</p></div>
+    <div id="club-profile-awards" class="awards-list" aria-label="Riconoscimenti del collezionista"></div>
+  </div>
+  <p class="awards-footer-note">Nel Club condividiamo soltanto nome, percentuale e riconoscimenti. L'elenco delle figurine e i doppioni restano nell'album personale e nella sezione Scambi.</p>
 </section>
 <section data-view="scambi" id="view-scambi" hidden><div class="page-head"><div><span class="eyebrow eyebrow-flex"><span class="eyebrow-dot"></span> FAI SQUADRA</span><h1>Scambi intelligenti<span class="heading-period">.</span></h1><p>Confronta le figurine con gli amici.</p></div></div><section class="trade-intro"><div class="trade-intro-icon"><svg class="icon"><use href="./assets/icons.svg#repeat"></use></svg></div><div><span class="eyebrow lime">SCAMBI TRA AMICI</span><h2>Il doppione di uno, il tesoro di un altro.</h2><p>Condivisione facoltativa. Gli album completi degli altri rimangono privati.</p></div><div class="trade-pictogram">↗ ↙</div></section>
 <div id="trade-disabled" class="callout"><span class="callout-icon">🔒</span><div><strong>Attiva la partecipazione agli scambi</strong><p>Pubblicherai soltanto i numeri dei tuoi doppioni e delle figurine mancanti.</p></div><a href="#impostazioni" class="btn btn-primary">Impostazioni →</a></div>
