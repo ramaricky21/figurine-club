@@ -3,7 +3,7 @@
  * Non memorizzare mai qui risposte Firestore, token o dati personali.
  */
 'use strict';
-const CACHE_VERSION='stadium2-dashboard-20261021-1';
+const CACHE_VERSION='stadium2-catalog-20261022-1';
 const STATIC_CACHE='figurine-club-static-'+CACHE_VERSION;
 const CACHE_PREFIX='figurine-club-static-';
 const APP_SCOPE=self.registration.scope;
@@ -14,7 +14,7 @@ const STATIC_PATHS=[
   './assets/style.css','./assets/extra.css','./assets/refined.css?v=4',
   './assets/achievements.css?v=1','./assets/club.css?v=1',
   './assets/dashboard-stadium.css?v=1','./assets/stadium-night.jpg',
-  './assets/app.mjs?v=6','./assets/core.mjs','./assets/offline-state.mjs',
+  './assets/app.mjs?v=7','./assets/core.mjs','./assets/offline-state.mjs',
   './assets/achievements.mjs','./assets/club.mjs',
   './assets/icons.svg','./assets/favicon.svg','./assets/asterisk.svg',
   './assets/sparkle.svg','./assets/pwa-register.js',

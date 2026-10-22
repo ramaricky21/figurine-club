@@ -1,6 +1,5 @@
-/* Incolla qui la configurazione dell'APP WEB fornita da Firebase Console.
-   Questi dati sono pubblici per definizione: NON inserire password, token privati
-   o chiavi di account di servizio. Le protezioni stanno nelle regole Firestore. */
+/* Configurazione pubblica dell'app web Firebase, recuperata dal repository GitHub del progetto.
+   NON inserire chiavi private o credenziali di account di servizio. */
 export const firebaseConfig = {
   apiKey: "AIzaSyDZ5ABIA8zR4tiX3erCGPGBomWa03nkFW0",
   authDomain: "figurine-club-5efbe.firebaseapp.com",
@@ -9,4 +8,4 @@ export const firebaseConfig = {
   messagingSenderId: "1008170238070",
   appId: "1:1008170238070:web:c025515cbf4cdec6d35f57"
 };
-export const albumEdition = "Album da configurare";
+export const albumEdition = "Calciatori 2026-2027";
