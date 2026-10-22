@@ -14,20 +14,48 @@ export function exchangeMatch(items, myCounts, peer) {
     offer:items.filter(s=>clampQty(Number(myCounts[String(s.number)]||0))>1&&pMissing.has(String(s.number)))
   };
 }
+// Gli identificativi numerici restano numeri per conservare i progressi già salvati.
+// I codici dell'album sono stringhe e NON vanno convertiti con Number().
+export function stickerNumber(value) {
+  const raw=String(value??'').trim();
+  if (/^[1-9]\d{0,4}$/.test(raw)) return Number(raw);
+  const match=/^(Kit|UPG|C|K)([1-9]\d{0,3})$/i.exec(raw);
+  if (!match) return null;
+  const prefix=match[1].toUpperCase()==='KIT'?'Kit':match[1].toUpperCase();
+  return prefix+String(Number(match[2]));
+}
+// Ordine preciso del PDF, compresi i gruppi alfanumerici tra le sezioni numeriche.
+export function stickerSortKey(value) {
+  const id=stickerNumber(value);
+  if (typeof id==='number') {
+    if (id<=444) return [0,id];
+    if (id<=504) return [2,id];
+    if (id<=579) return [4,id];
+    return [7,id];
+  }
+  const match=/^(Kit|UPG|C|K)(\d+)$/.exec(String(id));
+  if (!match) return [8,String(value)];
+  return [{Kit:1,UPG:3,C:5,K:6}[match[1]],Number(match[2])];
+}
+export function compareStickerNumbers(a,b) {
+  const x=stickerSortKey(a),y=stickerSortKey(b);
+  return x[0]-y[0]||(typeof x[1]==='number'&&typeof y[1]==='number'
+    ? x[1]-y[1] : String(x[1]).localeCompare(String(y[1]),'it'));
+}
 export function catalogNormalize(rows) {
   if (!rows.length) throw new Error('Il CSV non contiene figurine.');
   if (rows.length>4000) throw new Error('Massimo 4.000 figurine per importazione.');
   const seen=new Set();
   return rows.map((row,i)=>{
-    const number=Number(String(row.numero||'').trim());
-    if (!Number.isInteger(number)||number<1||number>99999||seen.has(number)) throw new Error(`Numero non valido o ripetuto alla riga ${i+2}.`);
-    seen.add(number);
+    const number=stickerNumber(row.numero);
+    if (number===null||seen.has(String(number))) throw new Error(`Numero non valido o ripetuto alla riga ${i+2}.`);
+    seen.add(String(number));
     const fields=['squadra','sezione','titolo','sottotitolo','tipo'];
     for(const field of fields) if(String(row[field]||'').trim().length>160) throw new Error(`Testo troppo lungo alla riga ${i+2}.`);
     const [team,section,title,subtitle,kind]=fields.map(f=>String(row[f]||'').trim());
     if (!team||!section||!title) throw new Error(`Squadra, sezione e titolo obbligatori alla riga ${i+2}.`);
     return {number,team,section,title,subtitle,kind:kind||'Giocatore'};
-  }).sort((a,b)=>a.number-b.number);
+  }).sort((a,b)=>compareStickerNumbers(a.number,b.number));
 }
 /* Parser CSV RFC-4180 per virgole, virgolette, righe multilinea e BOM. */
 export function parseCSV(text) {

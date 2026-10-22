@@ -1,5 +1,5 @@
 import { firebaseConfig, albumEdition } from '../config.js';
-import { computeStats, exchangeMatch, parseCSV, sectionsFor, clampQty } from './core.mjs';
+import { computeStats, exchangeMatch, parseCSV, sectionsFor, clampQty, compareStickerNumbers } from './core.mjs';
 import { deriveSyncState } from './offline-state.mjs';
 import { computeAchievements, ACHIEVEMENTS } from './achievements.mjs';
 import {publicSummary, mergeClubProfile, needsClubPublish, normalizeClubProfile, recentClubAchievements} from './club.mjs';
@@ -96,7 +96,9 @@ function renderStats(){
 }
 function renderTeams(){
   const map=new Map();
+  const hasSerieA=state.items.some(s=>s.section==='Serie A');
   state.items.forEach(st=>{
+    if(hasSerieA&&st.section!=='Serie A')return;
     const val=map.get(st.team)||{total:0,found:0};
     val.total++;if(qty(st.number)>0)val.found++;
     map.set(st.team,val);
@@ -135,7 +137,7 @@ function renderDashboardClub(){
 }
 function fillFilterOptions(){for(const [id,key] of [['team-filter','team'],['section-filter','section']]){const select=$(`#${id}`);const current=state.filters[key];const label=key==='team'?'Tutte le squadre':'Tutte le sezioni';const values=[...new Set(state.items.map(s=>s[key]))].sort((a,b)=>a.localeCompare(b,'it'));select.innerHTML=`<option value="">${label}</option>`+values.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('');select.value=values.includes(current)?current:'';state.filters[key]=select.value;}}
 function renderAlbum(){const f=state.filters;let rows=state.items.filter(s=>{const n=qty(s.number);return (!f.q||[s.number,s.team,s.section,s.title,s.subtitle,s.kind].some(v=>String(v||'').toLocaleLowerCase('it').includes(f.q.toLocaleLowerCase('it'))))&&(!f.team||s.team===f.team)&&(!f.section||s.section===f.section)&&(!f.status||(f.status==='found'&&n>0)||(f.status==='missing'&&n===0)||(f.status==='duplicates'&&n>1));});$('#results-count').textContent=rows.length;$('#album-empty').hidden=rows.length>0;const pages=Math.max(1,Math.ceil(rows.length/state.pageSize));state.page=Math.max(1,Math.min(pages,state.page));const visible=rows.slice((state.page-1)*state.pageSize,state.page*state.pageSize);
-$('#sticker-grid').innerHTML=visible.map(s=>{const q=qty(s.number);const found=q>0;const tone=s.number%6;const image=s.kind.toLowerCase()==='scudetto'?'★':s.kind.toLowerCase()==='squadra'?'◆':String(s.number%10);return `<article class="sticker-card ${found?'is-owned':''}" data-sticker="${s.number}"><div class="sticker-visual team-color-${tone}"><div class="sticker-top"><span class="sticker-no">#${String(s.number).padStart(3,'0')}</span><span class="sticker-type">${esc(s.kind)}</span></div><div class="sticker-art"><span class="art-sparks sparkle-mark" aria-hidden="true"></span><div class="sticker-symbol">${esc(image)}</div><span class="art-fineprint">COLLECT · PLAY · COMPLETE</span></div><button type="button" class="check-sticker ${found?'checked':''}" data-mark aria-label="${found?'Segna come mancante':'Segna come trovata'}">${icon('check')}</button></div><div class="sticker-details"><span class="sticker-team">${esc(s.team)} <span>· ${esc(s.section)}</span></span><h3 title="${esc(s.title)}">${esc(s.title)}</h3><p title="${esc(s.subtitle)}">${esc(s.subtitle||`Figurina n. ${s.number}`)}</p></div><div class="sticker-footer"><span class="sticker-status ${found?'status-owned':''}">${found?'✓ Trovata':'Da trovare'}</span><div class="qty-control"><button type="button" data-step="-1" aria-label="Rimuovi una copia" ${q===0?'disabled':''}>${icon('minus')}</button><output>${q}</output><button type="button" data-step="1" aria-label="Aggiungi una copia" ${q===99?'disabled':''}>${icon('plus')}</button></div></div></article>`;}).join('');
+$('#sticker-grid').innerHTML=visible.map(s=>{const q=qty(s.number);const found=q>0;const digit=(String(s.number).match(/\d+/)||['0'])[0];const tone=Number(digit)%6;const image=s.kind.toLowerCase()==='scudetto'?'★':s.kind.toLowerCase()==='squadra'?'◆':String(Number(digit)%10);const composite=s.section==='Serie BKT'||s.section==='Serie C'||(s.section==='Celebration'&&/\b[AB]\)/.test(s.title));return `<article class="sticker-card ${found?'is-owned':''} ${composite?'is-composite':''}" data-sticker="${esc(s.number)}"><div class="sticker-visual team-color-${tone}"><div class="sticker-top"><span class="sticker-no">#${String(s.number).padStart(3,'0')}</span><span class="sticker-type">${esc(s.kind)}</span></div><div class="sticker-art"><span class="art-sparks sparkle-mark" aria-hidden="true"></span><div class="sticker-symbol">${esc(image)}</div><span class="art-fineprint">COLLECT · PLAY · COMPLETE</span></div><button type="button" class="check-sticker ${found?'checked':''}" data-mark aria-label="${found?'Segna come mancante':'Segna come trovata'}">${icon('check')}</button></div><div class="sticker-details"><span class="sticker-team">${esc(s.team)} <span>· ${esc(s.section)}</span></span><h3 title="${esc(s.title)}">${esc(s.title)}</h3><p title="${esc(s.subtitle)}">${esc(s.subtitle||`Figurina n. ${s.number}`)}</p></div><div class="sticker-footer"><span class="sticker-status ${found?'status-owned':''}">${found?'✓ Trovata':'Da trovare'}</span><div class="qty-control"><button type="button" data-step="-1" aria-label="Rimuovi una copia" ${q===0?'disabled':''}>${icon('minus')}</button><output>${q}</output><button type="button" data-step="1" aria-label="Aggiungi una copia" ${q===99?'disabled':''}>${icon('plus')}</button></div></div></article>`;}).join('');
 const nav=$('#pagination');nav.innerHTML=pages===1?'':`<button data-page="${state.page-1}" ${state.page===1?'disabled':''}>← Prec.</button>`+[...new Set([1,state.page-1,state.page,state.page+1,pages].filter(n=>n>=1&&n<=pages))].sort((a,b)=>a-b).map(n=>`<button data-page="${n}" ${n===state.page?'class="active" aria-current="page"':''}>${n}</button>`).join('')+`<button data-page="${state.page+1}" ${state.page===pages?'disabled':''}>Succ. →</button>`;}
 
 // Riconoscimenti personali: derivati dall'album corrente, senza nuove scritture Firebase.
@@ -180,7 +182,7 @@ function renderAchievements(){
   $('#awards-counter').textContent=`${eligible?result.unlocked:0} di ${ACHIEVEMENTS.length}`;
   $('#awards-overview-note').textContent=!ready?'Caricamento album e catalogo…':
     result.demo?'Il catalogo contiene figurine dimostrative: i premi sono sospesi.':
-    !result.total?'Nessun catalogo caricato. I sette traguardi ti aspettano.':
+    !result.total?`Nessun catalogo caricato. I ${ACHIEVEMENTS.length} traguardi ti aspettano.`:
     `${result.found} figurine diverse raccolte su ${result.total}. ${result.completeTeams} squadre completate.`;
   $('#awards-list').innerHTML=result.awards.map(a=>{
     const unlocked=eligible&&a.unlocked;
@@ -191,7 +193,7 @@ function renderAchievements(){
     const status=pendingUnlock?'Da sincronizzare':unlocked?'Sbloccato':unavailable?'Non disponibile':'Da sbloccare';
     return `<div class="award-row ${unlocked?'award-unlocked':'award-locked'} ${unavailable?'award-unavailable':''}" data-achievement="${a.id}" data-tone="${a.tone}">
       <span class="award-icon">${icon(a.icon)}</span>
-      <div class="award-copy"><h3>${a.title}</h3><p>${description}</p>${a.id==='special'&&eligible&&!result.specialAvailable?'<small>In attesa di una sezione speciale nel catalogo.</small>':''}</div>
+      <div class="award-copy"><h3>${a.title}</h3><p>${description}</p>${a.id.startsWith('special-')&&eligible&&unavailable?'<small>In attesa della categoria nel catalogo.</small>':''}</div>
       <span class="award-status">${icon(pendingUnlock?'refresh':unlocked?'check-circle':'lock')}<span>${status}</span></span>
     </div>`;
   }).join('');
@@ -200,7 +202,7 @@ function renderAchievements(){
     !result.total?'Importa il catalogo ufficiale quando disponibile per attivare i riconoscimenti.':
     !navigator.onLine||state.metadata.albumPending||Object.keys(state.pending).length||state.metadata.albumCache||state.metadata.catalogCache
       ?'Stai vedendo progressi locali o non ancora confermati: eventuali nuovi premi saranno confermati alla sincronizzazione.':
-      'Premi calcolati sul catalogo attualmente importato. Prima del catalogo ufficiale 2026-2027, i risultati sono provvisori.';
+      'Premi calcolati sulle figurine del catalogo attualmente importato.';
 }
 function renderEverything(){renderStats();renderTeams();renderDashboardClub();renderAchievements();if(state.view==='album')renderAlbum();if(state.view==='scambi')renderTrades();queueClubPublish();}
 function mark(number,next){
@@ -261,7 +263,7 @@ function renderClub(){
       return `<button type="button" class="club-member-card" data-club-id="${esc(member.id)}">
         <span class="club-member-head"><span class="club-member-avatar">${esc(member.displayName[0]?.toUpperCase()||'F')}</span><span class="club-member-text"><strong>${esc(member.displayName)}</strong><small>${member.id===state.user?.uid?'Il tuo album · ':''}${member.ready?'Album Calciatori':'Progressi non ancora disponibili'}</small></span><span class="club-member-pct">${pct}</span></span>
         <span class="club-member-bar"><span style="width:${member.percentage}%"></span></span>
-        <span class="club-member-footer"><span>${member.ready?`${member.unlocked.length} di 7 riconoscimenti`:'Attende l’aggiornamento dell’album'}</span><b>Apri bacheca →</b></span></button>`;
+        <span class="club-member-footer"><span>${member.ready?`${member.unlocked.length} di ${ACHIEVEMENTS.length} riconoscimenti`:'Attende l’aggiornamento dell’album'}</span><b>Apri bacheca →</b></span></button>`;
     }).join(''):`<div class="club-empty">${state.clubLoaded?'Non ci sono ancora bacheche pubblicate. Gli iscritti compariranno dopo il primo accesso alla versione aggiornata.':'Caricamento dei membri del Club…'}</div>`;
     const news=recentClubAchievements(members);
     const defs=new Map(ACHIEVEMENTS.map(a=>[a.id,a]));
@@ -436,7 +438,7 @@ async function onUser(user){
 }
 function liveData(){state.unsubs.push(onSnapshot(getProfileRef(),snap=>{if(!snap.exists())return;const previous=state.profile?.shareTrades;state.profile=snap.data();renderChrome();queueClubPublish();if(previous!==state.profile.shareTrades)subscribePeers();renderTrades();},e=>alertApp('Profilo: '+errorText(e))));
 state.unsubs.push(onSnapshot(getAlbumRef(),{includeMetadataChanges:true},snap=>{state.counts=snap.data()?.counts||{};state.loaded.album=true;state.metadata.albumError=false;state.metadata.albumCache=snap.metadata.fromCache;state.metadata.albumPending=snap.metadata.hasPendingWrites;renderEverything();updateSyncUI();queueTradePublish();},e=>{state.metadata.albumError=true;updateSyncUI();alertApp('Album: '+errorText(e));}));
-state.unsubs.push(onSnapshot(collection(db,'catalog'),{includeMetadataChanges:true},snap=>{const map=new Map();for(const sec of snap.docs){for(const s of sec.data().items||[])if(!map.has(s.number))map.set(s.number,s);}state.items=[...map.values()].sort((a,b)=>a.number-b.number);state.loaded.catalog=true;state.metadata.catalogError=false;state.metadata.catalogCache=snap.metadata.fromCache;fillFilterOptions();renderEverything();updateSyncUI();queueTradePublish();},e=>{state.metadata.catalogError=true;updateSyncUI();alertApp('Catalogo: '+errorText(e));}));}
+state.unsubs.push(onSnapshot(collection(db,'catalog'),{includeMetadataChanges:true},snap=>{const map=new Map();for(const sec of snap.docs){for(const s of sec.data().items||[])if(!map.has(s.number))map.set(s.number,s);}state.items=[...map.values()].sort((a,b)=>compareStickerNumbers(a.number,b.number));state.loaded.catalog=true;state.metadata.catalogError=false;state.metadata.catalogCache=snap.metadata.fromCache;fillFilterOptions();renderEverything();updateSyncUI();queueTradePublish();},e=>{state.metadata.catalogError=true;updateSyncUI();alertApp('Catalogo: '+errorText(e));}));}
 async function importCatalog(items){const sections=sectionsFor(items);const old=await getDocs(collection(db,'catalog'));const keep=new Set(sections.map(s=>s.id));const toDelete=old.docs.map(s=>s.id).filter(id=>!keep.has(id));const operations=[...sections.map(s=>({op:'set',...s})),...toDelete.map(id=>({op:'delete',id}))];
 // Firestore ammette max 500 operazioni per batch; usiamo gruppi più piccoli.
 for(let i=0;i<operations.length;i+=350){const batch=writeBatch(db);for(const entry of operations.slice(i,i+350)){const r=doc(db,'catalog',entry.id);if(entry.op==='delete')batch.delete(r);else batch.set(r,{team:entry.team,section:entry.section,items:entry.items,updatedAt:serverTimestamp()});}await batch.commit();}
@@ -461,7 +463,7 @@ $$('[data-quick-filter]').forEach(a=>a.addEventListener('click',()=>{state.filte
     state.page=1;
   });
 }
-$('#sticker-grid').addEventListener('click',e=>{const button=e.target.closest('[data-mark],[data-step]');if(!button)return;const card=button.closest('[data-sticker]');if(!card)return;const n=Number(card.dataset.sticker),old=qty(n),next=button.hasAttribute('data-mark')?(old>0?0:1):clampQty(old+Number(button.dataset.step));mark(n,next);});
+$('#sticker-grid').addEventListener('click',e=>{const button=e.target.closest('[data-mark],[data-step]');if(!button)return;const card=button.closest('[data-sticker]');if(!card)return;const n=card.dataset.sticker,old=qty(n),next=button.hasAttribute('data-mark')?(old>0?0:1):clampQty(old+Number(button.dataset.step));mark(n,next);});
 $('#pagination').addEventListener('click',e=>{const btn=e.target.closest('[data-page]');if(!btn||btn.disabled)return;state.page=Number(btn.dataset.page);renderAlbum();$('#view-album').scrollIntoView({behavior:'smooth'});});
 $('#club-members').addEventListener('click',e=>{const card=e.target.closest('[data-club-id]');if(!card)return;state.clubSelected=card.dataset.clubId;renderClub();$('#view-club').scrollIntoView({behavior:'instant'});});
   $('#club-back').addEventListener('click',()=>{state.clubSelected=null;renderClub();});
