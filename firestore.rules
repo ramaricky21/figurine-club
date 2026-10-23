@@ -1,17 +1,30 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    function signedIn() {
-      return request.auth != null;
-    }
-    function owner(uid) {
-      return signedIn() && request.auth.uid == uid;
-    }
+    function signedIn() { return request.auth != null; }
+    function owner(uid) { return signedIn() && request.auth.uid == uid; }
     function admin() {
       return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
     }
+    function approved() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/memberships/$(request.auth.uid))
+        && get(/databases/$(database)/documents/memberships/$(request.auth.uid)).data.approved == true;
+    }
+    function canUseClub() { return admin() || approved(); }
+    function validRequest() {
+      return request.resource.data.keys().hasOnly(['email','displayName','status','createdAt'])
+        && request.resource.data.keys().hasAll(['email','displayName','status','createdAt'])
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.displayName is string
+        && request.resource.data.displayName.size() >= 2
+        && request.resource.data.displayName.size() <= 40
+        && request.resource.data.status == 'pending'
+        && request.resource.data.createdAt == request.time;
+    }
     function validProfile() {
       return request.resource.data.keys().hasOnly(['displayName','email','shareTrades','createdAt'])
+        && request.resource.data.keys().hasAll(['displayName','email','shareTrades','createdAt'])
         && request.resource.data.displayName is string
         && request.resource.data.displayName.size() >= 2
         && request.resource.data.displayName.size() <= 40
@@ -34,14 +47,110 @@ service cloud.firestore {
         && request.resource.data.duplicates.size() <= 5000
         && request.resource.data.missing.size() <= 5000;
     }
-    // La console Firebase (non il browser) crea admins/{UID} per autorizzare l'admin.
+
+    // Percentuali pubbliche per 15 traguardi: solamente interi da 0 a 100.
+    // Le vecchie schede vengono aggiornate automaticamente dal nuovo client.
+    function validAwardPercent(progress,id) {
+      let n = progress.get(id,0);
+      return n is int && n >= 0 && n <= 100;
+    }
+    function validAwardProgress(p) {
+      return p is map && p.size() <= 15
+        && p.keys().hasOnly(['first-team','hundred','three-teams','half','special-trophies','special-serie-a','special-kits','special-signings','special-rookies','special-capsule','special-serie-b','special-serie-c','special-potm','ninety','complete'])
+        && validAwardPercent(p,'first-team')
+        && validAwardPercent(p,'hundred')
+        && validAwardPercent(p,'three-teams')
+        && validAwardPercent(p,'half')
+        && validAwardPercent(p,'special-trophies')
+        && validAwardPercent(p,'special-serie-a')
+        && validAwardPercent(p,'special-kits')
+        && validAwardPercent(p,'special-signings')
+        && validAwardPercent(p,'special-rookies')
+        && validAwardPercent(p,'special-capsule')
+        && validAwardPercent(p,'special-serie-b')
+        && validAwardPercent(p,'special-serie-c')
+        && validAwardPercent(p,'special-potm')
+        && validAwardPercent(p,'ninety')
+        && validAwardPercent(p,'complete');
+    }
+
+    // STEP 4 · Soltanto riepiloghi aggregati. Non contengono email, copie,
+    // numeri di figurine, album personali o elenchi di mancanti/doppioni.
+    function validClubProfile() {
+      let d = request.resource.data;
+      return d.keys().hasOnly(['displayName','ready','percentage','unlocked','awardProgress','catalogSignature','earnedAt','updatedAt'])
+        && d.keys().hasAll(['displayName','ready','percentage','unlocked','catalogSignature','earnedAt','updatedAt'])
+        && d.displayName is string && d.displayName.size() >= 2 && d.displayName.size() <= 40
+        && d.ready is bool
+        && d.percentage is int && d.percentage >= 0 && d.percentage <= 100
+        && validAwardProgress(d.get('awardProgress',{}))
+        && d.unlocked is list && d.unlocked.size() <= 15
+        && d.unlocked.hasOnly(['first-team','hundred','three-teams','half','special-trophies','special-serie-a','special-kits','special-signings','special-rookies','special-capsule','special-serie-b','special-serie-c','special-potm','ninety','complete'])
+        && d.catalogSignature is string && d.catalogSignature.size() <= 64
+        && d.earnedAt is map && d.earnedAt.size() <= 15
+        && d.earnedAt.keys().hasOnly(['first-team','hundred','three-teams','half','special-trophies','special-serie-a','special-kits','special-signings','special-rookies','special-capsule','special-serie-b','special-serie-c','special-potm','ninety','complete'])
+        && d.earnedAt.get('first-team',request.time) is timestamp && d.earnedAt.get('first-team',request.time) <= request.time
+        && d.earnedAt.get('hundred',request.time) is timestamp && d.earnedAt.get('hundred',request.time) <= request.time
+        && d.earnedAt.get('three-teams',request.time) is timestamp && d.earnedAt.get('three-teams',request.time) <= request.time
+        && d.earnedAt.get('half',request.time) is timestamp && d.earnedAt.get('half',request.time) <= request.time
+        && d.earnedAt.get('special-trophies',request.time) is timestamp && d.earnedAt.get('special-trophies',request.time) <= request.time
+        && d.earnedAt.get('special-serie-a',request.time) is timestamp && d.earnedAt.get('special-serie-a',request.time) <= request.time
+        && d.earnedAt.get('special-kits',request.time) is timestamp && d.earnedAt.get('special-kits',request.time) <= request.time
+        && d.earnedAt.get('special-signings',request.time) is timestamp && d.earnedAt.get('special-signings',request.time) <= request.time
+        && d.earnedAt.get('special-rookies',request.time) is timestamp && d.earnedAt.get('special-rookies',request.time) <= request.time
+        && d.earnedAt.get('special-capsule',request.time) is timestamp && d.earnedAt.get('special-capsule',request.time) <= request.time
+        && d.earnedAt.get('special-serie-b',request.time) is timestamp && d.earnedAt.get('special-serie-b',request.time) <= request.time
+        && d.earnedAt.get('special-serie-c',request.time) is timestamp && d.earnedAt.get('special-serie-c',request.time) <= request.time
+        && d.earnedAt.get('special-potm',request.time) is timestamp && d.earnedAt.get('special-potm',request.time) <= request.time
+        && d.earnedAt.get('ninety',request.time) is timestamp && d.earnedAt.get('ninety',request.time) <= request.time
+        && d.earnedAt.get('complete',request.time) is timestamp && d.earnedAt.get('complete',request.time) <= request.time
+        && d.updatedAt == request.time
+        && (d.ready ? d.catalogSignature.size() > 0
+                    : (d.percentage == 0 && d.unlocked.size() == 0 && d.catalogSignature == ''));
+    }
+    function adminSeedForApproved(uid) {
+      return admin()
+        && exists(/databases/$(database)/documents/memberships/$(uid))
+        && get(/databases/$(database)/documents/memberships/$(uid)).data.approved == true
+        && request.resource.data.displayName == get(/databases/$(database)/documents/memberships/$(uid)).data.displayName
+        && request.resource.data.ready == false
+        && request.resource.data.percentage == 0
+        && request.resource.data.unlocked.size() == 0
+        && request.resource.data.catalogSignature == ''
+        && request.resource.data.earnedAt.size() == 0;
+    }
+
+    // Bootstrap sicuro: soltanto dalla console Firebase si crea admins/{UID}.
+    // L'admin gia' esistente mantiene sempre l'accesso senza membership.
     match /admins/{uid} {
       allow get: if owner(uid);
       allow list, write: if false;
     }
-    // Catalogo uguale per tutti gli utenti registrati, modificabile solo dall'admin.
+
+    // Ogni nuovo utente puo' presentare UNA richiesta, mai approvarla da solo.
+    match /joinRequests/{uid} {
+      allow get: if owner(uid) || admin();
+      allow list: if admin();
+      allow create: if owner(uid) && validRequest();
+      // Correzione del nome in fase di registrazione, prima della decisione.
+      allow update: if owner(uid) && resource.data.status == 'pending'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName'])
+        && request.resource.data.displayName is string
+        && request.resource.data.displayName.size() >= 2
+        && request.resource.data.displayName.size() <= 40;
+      allow update, delete: if admin();
+    }
+
+    // L'autorizzazione e' attribuita/revocata soltanto da un admin.
+    // Mai consentire a un utente di impostare approved=true da solo.
+    match /memberships/{uid} {
+      allow get: if owner(uid) || admin();
+      allow list: if admin();
+      allow create, update, delete: if admin();
+    }
+
     match /catalog/{sectionId} {
-      allow get, list: if signedIn();
+      allow get, list: if canUseClub();
       allow create, update: if admin()
         && request.resource.data.keys().hasOnly(['team','section','items','updatedAt'])
         && request.resource.data.team is string
@@ -50,23 +159,35 @@ service cloud.firestore {
         && request.resource.data.items.size() <= 80;
       allow delete: if admin();
     }
-    // Ogni album e profilo rimane strettamente privato.
+
     match /users/{uid} {
-      allow get: if owner(uid);
-      allow create, update: if owner(uid) && validProfile();
+      allow get: if owner(uid) && canUseClub();
+      allow create, update: if owner(uid) && canUseClub() && validProfile();
       allow list: if false;
-      allow delete: if owner(uid);
+      allow delete: if owner(uid) && canUseClub();
       match /album/{albumId} {
-        allow get: if owner(uid);
-        allow create, update: if owner(uid) && albumId == 'main' && validAlbum();
+        allow get: if owner(uid) && canUseClub();
+        allow create, update: if owner(uid) && canUseClub() && albumId == 'main' && validAlbum();
         allow list, delete: if false;
       }
     }
-    // Visibili agli iscritti SOLO i riepiloghi che l'utente pubblica volontariamente.
+
+    // Pubblico SOLO all'interno del Club approvato. Il proprietario aggiorna
+    // il riepilogo; l'admin può inizializzare una scheda vuota e rimuoverla alla revoca.
+    // Le regole limitano i campi, non certificano i calcoli client dei premi.
+    match /clubProfiles/{uid} {
+      allow get: if canUseClub();
+      allow list: if canUseClub() && request.query.limit <= 150;
+      allow create: if validClubProfile() &&
+        ((owner(uid) && canUseClub()) || adminSeedForApproved(uid));
+      allow update: if owner(uid) && canUseClub() && validClubProfile();
+      allow delete: if owner(uid) && canUseClub() || admin();
+    }
+
     match /tradeSheets/{uid} {
-      allow get, list: if signedIn() && resource.data.active == true;
-      allow create, update: if owner(uid) && validTrade();
-      allow delete: if owner(uid);
+      allow get, list: if canUseClub() && resource.data.active == true;
+      allow create, update: if owner(uid) && canUseClub() && validTrade();
+      allow delete: if owner(uid) && canUseClub();
     }
   }
 }
