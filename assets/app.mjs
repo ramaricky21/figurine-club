@@ -140,6 +140,17 @@ function renderAlbum(){const f=state.filters;let rows=state.items.filter(s=>{con
 $('#sticker-grid').innerHTML=visible.map(s=>{const q=qty(s.number);const found=q>0;const digit=(String(s.number).match(/\d+/)||['0'])[0];const tone=Number(digit)%6;const image=s.kind.toLowerCase()==='scudetto'?'★':s.kind.toLowerCase()==='squadra'?'◆':String(Number(digit)%10);const composite=s.section==='Serie BKT'||s.section==='Serie C'||(s.section==='Celebration'&&/\b[AB]\)/.test(s.title));return `<article class="sticker-card ${found?'is-owned':''} ${composite?'is-composite':''}" data-sticker="${esc(s.number)}"><div class="sticker-visual team-color-${tone}"><div class="sticker-top"><span class="sticker-no">#${String(s.number).padStart(3,'0')}</span><span class="sticker-type">${esc(s.kind)}</span></div><div class="sticker-art"><span class="art-sparks sparkle-mark" aria-hidden="true"></span><div class="sticker-symbol">${esc(image)}</div><span class="art-fineprint">COLLECT · PLAY · COMPLETE</span></div><button type="button" class="check-sticker ${found?'checked':''}" data-mark aria-label="${found?'Segna come mancante':'Segna come trovata'}">${icon('check')}</button></div><div class="sticker-details"><span class="sticker-team">${esc(s.team)} <span>· ${esc(s.section)}</span></span><h3 title="${esc(s.title)}">${esc(s.title)}</h3><p title="${esc(s.subtitle)}">${esc(s.subtitle||`Figurina n. ${s.number}`)}</p></div><div class="sticker-footer"><span class="sticker-status ${found?'status-owned':''}">${found?'✓ Trovata':'Da trovare'}</span><div class="qty-control"><button type="button" data-step="-1" aria-label="Rimuovi una copia" ${q===0?'disabled':''}>${icon('minus')}</button><output>${q}</output><button type="button" data-step="1" aria-label="Aggiungi una copia" ${q===99?'disabled':''}>${icon('plus')}</button></div></div></article>`;}).join('');
 const nav=$('#pagination');nav.innerHTML=pages===1?'':`<button data-page="${state.page-1}" ${state.page===1?'disabled':''}>← Prec.</button>`+[...new Set([1,state.page-1,state.page,state.page+1,pages].filter(n=>n>=1&&n<=pages))].sort((a,b)=>a-b).map(n=>`<button data-page="${n}" ${n===state.page?'class="active" aria-current="page"':''}>${n}</button>`).join('')+`<button data-page="${state.page+1}" ${state.page===pages?'disabled':''}>Succ. →</button>`;}
 
+// Barra presente SOLO dentro il singolo riconoscimento (personale o di un amico).
+// Percentuale mancante/vecchio client: non inventiamo uno 0%, mostriamo un trattino.
+function awardProgressHtml(title,percentage,detail){
+  const valid=Number.isInteger(percentage)&&percentage>=0&&percentage<=100;
+  const pct=valid?percentage:0;
+  const caption=valid?detail:'Progressi non ancora disponibili';
+  const track=valid?` role="progressbar" aria-label="${esc(title)}: ${pct}%" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"`:
+    ` aria-label="Progresso non disponibile per ${esc(title)}"`;
+  return `<div class="award-progress"><div class="award-progress-caption"><span class="progress-detail">${esc(caption)}</span><strong>${valid?pct+'%':'—'}</strong></div>
+    <div class="award-progress-track"${track}><span style="width:${pct}%"></span></div></div>`;
+}
 // Riconoscimenti personali: derivati dall'album corrente, senza nuove scritture Firebase.
 // Gli sblocchi sono annunciati solo dopo la conferma del server; nessun toast
 // all'ingresso, al semplice caricamento da cache o con catalogo dimostrativo.
@@ -195,6 +206,7 @@ function renderAchievements(){
       <span class="award-icon">${icon(a.icon)}</span>
       <div class="award-copy"><h3>${a.title}</h3><p>${description}</p>${a.id.startsWith('special-')&&eligible&&unavailable?'<small>In attesa della categoria nel catalogo.</small>':''}</div>
       <span class="award-status">${icon(pendingUnlock?'refresh':unlocked?'check-circle':'lock')}<span>${status}</span></span>
+      ${awardProgressHtml(a.title,eligible&&!unavailable?a.progress:null,a.progressDetail)}
     </div>`;
   }).join('');
   $('#awards-data-note').textContent=!ready?'I riconoscimenti saranno disponibili dopo il caricamento dei dati.':
@@ -284,7 +296,12 @@ function renderClub(){
     const obtained=current.ready&&current.unlocked.includes(a.id);
     return `<div class="award-row ${obtained?'award-unlocked':'award-locked'}" data-tone="${a.tone}"><span class="award-icon">${icon(a.icon)}</span>
     <div class="award-copy"><h3>${esc(a.title)}</h3><p>${esc(a.description)}</p></div>
-    <span class="award-status">${icon(obtained?'check-circle':'lock')}<span>${obtained?'Sbloccato':current.ready?'Da sbloccare':'In attesa'}</span></span></div>`;
+    <span class="award-status">${icon(obtained?'check-circle':'lock')}<span>${obtained?'Sbloccato':current.ready?'Da sbloccare':'In attesa'}</span></span>
+    ${awardProgressHtml(a.title,current.ready?current.awardProgress?.[a.id]:null,
+      a.id==='first-team'?'La squadra più vicina al traguardo':
+      a.id==='three-teams'?'Le tre squadre più vicine al traguardo':
+      'Avanzamento di questo obiettivo')}
+    </div>`;
   }).join('');
 }
 let clubPublishInProgress=false;
@@ -332,7 +349,7 @@ async function bootstrapClubMembers(){
       await runTransaction(db,async tx=>{
         const ref=doc(db,'clubProfiles',member.uid);
         const current=await tx.get(ref);
-        if(!current.exists())tx.set(ref,{displayName:String(member.displayName||'Collezionista').slice(0,40),ready:false,percentage:0,unlocked:[],catalogSignature:'',earnedAt:{},updatedAt:serverTimestamp()});
+        if(!current.exists())tx.set(ref,{displayName:String(member.displayName||'Collezionista').slice(0,40),ready:false,percentage:0,unlocked:[],awardProgress:{},catalogSignature:'',earnedAt:{},updatedAt:serverTimestamp()});
       });
     }
   }catch(e){console.warn('Il Club: inizializzazione elenco membri incompleta.',e);}

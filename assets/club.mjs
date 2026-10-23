@@ -14,6 +14,8 @@ export function publicSummary(result,name){
     ready,
     percentage:ready?Math.max(0,Math.min(100,Math.round(result.percentage))):0,
     unlocked:ready?ACHIEVEMENTS.filter(a=>result.awards.some(x=>x.id===a.id&&x.unlocked)).map(a=>a.id):[],
+    // Solo 15 numeri aggregati 0–100: niente figurine, quantità, squadre o email.
+    awardProgress:ready?Object.fromEntries(result.awards.map(a=>[a.id,a.progress])):{},
     catalogSignature:ready?result.signature:''
   };
 }
@@ -29,12 +31,15 @@ export function mergeClubProfile(previous,desired,newAwardTimestamp){
 export function needsClubPublish(oldData,next){
   return !oldData || oldData.displayName!==next.displayName || oldData.ready!==next.ready ||
     oldData.percentage!==next.percentage || oldData.catalogSignature!==next.catalogSignature ||
-    !sameList(oldData.unlocked,next.unlocked);
+    !sameList(oldData.unlocked,next.unlocked) || !sameList(oldData.awardProgress,next.awardProgress);
 }
 export function normalizeClubProfile(id,data){
   const ready=data?.ready===true;
   const unlocked=ready&&Array.isArray(data?.unlocked)?data.unlocked.filter(a=>ALLOWED.has(a)):[];
-  return {id,displayName:String(data?.displayName||'Collezionista').slice(0,40),ready,catalogSignature:String(data?.catalogSignature||''),
+  const rawProgress=data?.awardProgress;
+  const awardProgress=ready&&rawProgress&&typeof rawProgress==='object'&&!Array.isArray(rawProgress)?
+    Object.fromEntries(Object.entries(rawProgress).filter(([id,n])=>ALLOWED.has(id)&&Number.isInteger(n)&&n>=0&&n<=100)):{};
+  return {id,displayName:String(data?.displayName||'Collezionista').slice(0,40),ready,catalogSignature:String(data?.catalogSignature||''),awardProgress,
     percentage:ready&&Number.isInteger(data.percentage)?Math.max(0,Math.min(100,data.percentage)):0,
     unlocked,earnedAt:data?.earnedAt&&typeof data.earnedAt==='object'?data.earnedAt:{}};
 }

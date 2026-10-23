@@ -48,3 +48,31 @@
 @media(max-width:680px){.awards-overview{grid-template-columns:minmax(0,1fr) auto;gap:16px;padding:22px}.awards-heading{display:block}.awards-heading p{max-width:none;text-align:left;margin-top:9px}.award-row{padding:16px 14px;gap:12px}.award-icon{width:48px;height:48px;flex-basis:48px;border-radius:13px}.award-icon .icon{width:25px;height:25px}.award-status{flex-direction:column;gap:4px;font-size:10px;min-width:70px;text-align:center}.award-copy h3{font-size:14px}.award-copy p{font-size:11px}}
 @media(max-width:380px){.award-row{gap:10px;padding:14px 11px}.award-icon{width:40px;height:40px;flex-basis:40px}.award-icon .icon{width:23px;height:23px}.award-status{min-width:55px;font-size:9px}.award-status .icon{width:14px;height:14px}.award-copy h3{font-size:13px}.award-copy p{font-size:10px}.awards-overview-progress strong{font-size:30px}}
 @media(prefers-reduced-motion:reduce){.award-new{animation:none}.awards-overview-track>span{transition:none}}
+
+/* Percentuale di OGNI singolo obiettivo. Non modifica i riepiloghi dell'album. */
+.award-row{display:grid;grid-template-columns:59px minmax(0,1fr) auto;grid-template-rows:auto auto;column-gap:18px;row-gap:0;align-items:center}
+.award-icon{grid-column:1;grid-row:1}
+.award-copy{grid-column:2;grid-row:1}
+.award-status{grid-column:3;grid-row:1}
+.award-progress{grid-column:2/-1;grid-row:2;min-width:0;align-self:stretch;margin-top:14px}
+.award-progress-caption{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:7px;min-width:0;color:#7f9082}
+.award-progress-caption .progress-detail{font-size:11px;line-height:1.45;overflow-wrap:anywhere}
+.award-progress-caption strong{font-size:13px;line-height:1;font-weight:900;white-space:nowrap;color:#53665a;font-variant-numeric:tabular-nums}
+.award-progress-track{height:8px;width:100%;border-radius:999px;overflow:hidden;background:#e8ebe7}
+.award-progress-track>span{display:block;height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#aab5ae,#9bc2a0);transition:width .25s ease}
+.award-unlocked .award-progress-caption strong{color:#408c3f}
+.award-unlocked .award-progress-track{background:#dfecd7}
+.award-unlocked .award-progress-track>span{background:linear-gradient(90deg,#6eae49,#b5e572)}
+.award-unavailable .award-progress-track>span{background:#c5cbc7}
+@media(max-width:680px){
+ .award-row{grid-template-columns:48px minmax(0,1fr) auto;column-gap:12px;row-gap:0}
+ .award-progress{grid-column:1/-1;margin-top:13px}
+ .award-progress-caption .progress-detail{font-size:10px}
+ .award-progress-caption strong{font-size:12px}
+}
+@media(max-width:380px){
+ .award-row{grid-template-columns:40px minmax(0,1fr) auto;column-gap:10px}
+ .award-progress{margin-top:11px}
+ .award-progress-caption{gap:7px}
+}
+@media(prefers-reduced-motion:reduce){.award-progress-track>span{transition:none}}
