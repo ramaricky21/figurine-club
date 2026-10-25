@@ -494,6 +494,8 @@ $('#sticker-grid').addEventListener('click',e=>{
   const card=btn.closest('[data-sticker]');
   const photo=card?.querySelector('.sticker-photo');if(!photo)return;
   const dialog=$('#sticker-image-dialog');
+  // Su PC le figurine a 2/4 parti entrano tutte nel popup, senza scorrimento.
+  dialog.classList.toggle('sticker-lightbox-composite',card.classList.contains('is-composite'));
   $('#sticker-dialog-image').src=photo.src;
   $('#sticker-dialog-image').alt=photo.alt;
   $('#sticker-dialog-title').textContent=card.querySelector('.sticker-details h3')?.textContent||'';
