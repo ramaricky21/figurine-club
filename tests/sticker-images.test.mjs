@@ -39,7 +39,7 @@ test('Le foto non modificano la composizione dell album o i progressi delle figu
 test('GitHub Pages e cache offline includono solo foto pubbliche, e non Firestore',()=>{
  const html=readFileSync(local('index.html'),'utf8');
  const sw=readFileSync(local('service-worker.js'),'utf8');
- assert.match(html,/sticker-images\.css\?v=4/);
+ assert.match(html,/sticker-images\.css\?v=5/);
  assert.match(html,/id="sticker-image-dialog"/);
  assert.match(sw,/STICKER_IMAGE_CACHE/);
  assert.match(sw,/sticker-images\.mjs/);
@@ -57,8 +57,8 @@ test('Anteprima completa dall alto al basso e margini esclusivamente laterali, l
  assert.match(css,/@media\(max-width:470px\)\{[^}]*height:min\(201px,55vw\)/);
  // Le regole dell'ingrandimento non cambiano.
  assert.match(css,/\.sticker-lightbox img\{[^}]*object-fit:contain/);
- assert.match(sw,/sticker-images\.css\?v=4/);
- assert.match(sw,/images-4-composites-1/);
+ assert.match(sw,/sticker-images\.css\?v=5/);
+ assert.match(sw,/images-4-composites-2-lightbox-fit/);
 });
 
 
@@ -87,5 +87,24 @@ test('Le nuove figurine multi-parte hanno i gruppi A/B/C/D corretti, senza riuti
  const css=readFileSync(local('assets/sticker-images.css'),'utf8');
  assert.match(css,/\.has-sticker-image\.sticker-image-landscape \.sticker-photo\{[^}]*object-fit:contain/);
  const html=readFileSync(local('index.html'),'utf8');
- assert.match(html,/app\.mjs\?v=10/);
+ assert.match(html,/app\.mjs\?v=11/);
+});
+
+
+test('Ingrandimento PC di 2/4 parti: foto intera senza scrollbar, singole e mobile invariati',()=>{
+ const app=readFileSync(local('assets/app.mjs'),'utf8');
+ const css=readFileSync(local('assets/sticker-images.css'),'utf8');
+ const html=readFileSync(local('index.html'),'utf8');
+ const sw=readFileSync(local('service-worker.js'),'utf8');
+ assert.match(app,/dialog\.classList\.toggle\('sticker-lightbox-composite',card\.classList\.contains\('is-composite'\)\)/);
+ assert.match(css,/@media \(min-width:700px\) and \(pointer:fine\)/);
+ assert.match(css,/\.sticker-lightbox\.sticker-lightbox-composite \{[^}]*overflow:hidden/);
+ assert.match(css,/\.sticker-lightbox\.sticker-lightbox-composite img \{[^}]*max-height:calc\(100dvh - 156px\);[^}]*object-fit:contain/);
+ assert.match(html,/sticker-images\.css\?v=5/);
+ assert.match(html,/app\.mjs\?v=11/);
+ assert.match(sw,/sticker-images\.css\?v=5/);
+ assert.match(sw,/app\.mjs\?v=11/);
+ // I popup normali restano regolati dal CSS originale fuori dalla media query.
+ assert.match(css,/\.sticker-lightbox\{[^}]*overflow:auto/);
+ assert.match(css,/\.sticker-lightbox img\{[^}]*object-fit:contain/);
 });
