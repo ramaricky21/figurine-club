@@ -21,4 +21,10 @@ L'app usa SDK JavaScript di Firebase dal CDN ufficiale e non necessita npm
 per la pubblicazione. Python è disponibile per l'automazione opzionale.
 
 ## Licenza
-MIT. Le figurine e i dati ufficiali non sono inclusi; rispetta i diritti d'uso.
+MIT per il codice. Sono incluse 87 fotografie estratte dai PDF forniti dall'utente; verifica separatamente il diritto di pubblicare e distribuire le immagini delle figurine.
+
+## Fotografie delle figurine
+
+Sono state integrate 87 immagini nel catalogo esistente, senza modificare Firebase.
+Vedi [AGGIORNAMENTO_IMMAGINI_GITHUB_FIREBASE.md](AGGIORNAMENTO_IMMAGINI_GITHUB_FIREBASE.md)
+per i file modificati e le istruzioni di pubblicazione.
