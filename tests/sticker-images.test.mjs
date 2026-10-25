@@ -39,9 +39,20 @@ test('Le foto non modificano la composizione dell album o i progressi delle figu
 test('GitHub Pages e cache offline includono solo foto pubbliche, e non Firestore',()=>{
  const html=readFileSync(local('index.html'),'utf8');
  const sw=readFileSync(local('service-worker.js'),'utf8');
- assert.match(html,/sticker-images\.css\?v=1/);
+ assert.match(html,/sticker-images\.css\?v=2/);
  assert.match(html,/id="sticker-image-dialog"/);
  assert.match(sw,/STICKER_IMAGE_CACHE/);
  assert.match(sw,/sticker-images\.mjs/);
  assert.match(sw,/assets\/stickers\//);
+});
+
+test('La foto della tessera riempie l’anteprima senza alterare la visualizzazione con lente',()=>{
+ const css=readFileSync(local('assets/sticker-images.css'),'utf8');
+ const sw=readFileSync(local('service-worker.js'),'utf8');
+ assert.match(css,/\.sticker-visual\.has-sticker-image \.sticker-art\{inset:0 9px;overflow:hidden\}/);
+ assert.match(css,/\.sticker-visual\.has-sticker-image \.sticker-photo\{[^}]*object-fit:cover;object-position:center 22%/);
+ assert.match(css,/\.sticker-lightbox img\{[^}]*object-fit:contain/);
+ assert.match(css,/\.sticker-visual\.has-sticker-image \.sticker-art\{inset:0 6px\}/);
+ assert.match(sw,/sticker-images\.css\?v=2/);
+ assert.match(sw,/images-2/);
 });
