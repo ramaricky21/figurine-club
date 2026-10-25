@@ -1,4 +1,5 @@
 import { firebaseConfig, albumEdition } from '../config.js';
+import { STICKER_IMAGES } from './sticker-images.mjs';
 import { computeStats, exchangeMatch, parseCSV, sectionsFor, clampQty, compareStickerNumbers } from './core.mjs';
 import { deriveSyncState } from './offline-state.mjs';
 import { computeAchievements, ACHIEVEMENTS } from './achievements.mjs';
@@ -137,7 +138,7 @@ function renderDashboardClub(){
 }
 function fillFilterOptions(){for(const [id,key] of [['team-filter','team'],['section-filter','section']]){const select=$(`#${id}`);const current=state.filters[key];const label=key==='team'?'Tutte le squadre':'Tutte le sezioni';const values=[...new Set(state.items.map(s=>s[key]))].sort((a,b)=>a.localeCompare(b,'it'));select.innerHTML=`<option value="">${label}</option>`+values.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('');select.value=values.includes(current)?current:'';state.filters[key]=select.value;}}
 function renderAlbum(){const f=state.filters;let rows=state.items.filter(s=>{const n=qty(s.number);return (!f.q||[s.number,s.team,s.section,s.title,s.subtitle,s.kind].some(v=>String(v||'').toLocaleLowerCase('it').includes(f.q.toLocaleLowerCase('it'))))&&(!f.team||s.team===f.team)&&(!f.section||s.section===f.section)&&(!f.status||(f.status==='found'&&n>0)||(f.status==='missing'&&n===0)||(f.status==='duplicates'&&n>1));});$('#results-count').textContent=rows.length;$('#album-empty').hidden=rows.length>0;const pages=Math.max(1,Math.ceil(rows.length/state.pageSize));state.page=Math.max(1,Math.min(pages,state.page));const visible=rows.slice((state.page-1)*state.pageSize,state.page*state.pageSize);
-$('#sticker-grid').innerHTML=visible.map(s=>{const q=qty(s.number);const found=q>0;const digit=(String(s.number).match(/\d+/)||['0'])[0];const tone=Number(digit)%6;const image=s.kind.toLowerCase()==='scudetto'?'★':s.kind.toLowerCase()==='squadra'?'◆':String(Number(digit)%10);const composite=s.section==='Serie BKT'||s.section==='Serie C'||(s.section==='Celebration'&&/\b[AB]\)/.test(s.title));return `<article class="sticker-card ${found?'is-owned':''} ${composite?'is-composite':''}" data-sticker="${esc(s.number)}"><div class="sticker-visual team-color-${tone}"><div class="sticker-top"><span class="sticker-no">#${String(s.number).padStart(3,'0')}</span><span class="sticker-type">${esc(s.kind)}</span></div><div class="sticker-art"><span class="art-sparks sparkle-mark" aria-hidden="true"></span><div class="sticker-symbol">${esc(image)}</div><span class="art-fineprint">COLLECT · PLAY · COMPLETE</span></div><button type="button" class="check-sticker ${found?'checked':''}" data-mark aria-label="${found?'Segna come mancante':'Segna come trovata'}">${icon('check')}</button></div><div class="sticker-details"><span class="sticker-team">${esc(s.team)} <span>· ${esc(s.section)}</span></span><h3 title="${esc(s.title)}">${esc(s.title)}</h3><p title="${esc(s.subtitle)}">${esc(s.subtitle||`Figurina n. ${s.number}`)}</p></div><div class="sticker-footer"><span class="sticker-status ${found?'status-owned':''}">${found?'✓ Trovata':'Da trovare'}</span><div class="qty-control"><button type="button" data-step="-1" aria-label="Rimuovi una copia" ${q===0?'disabled':''}>${icon('minus')}</button><output>${q}</output><button type="button" data-step="1" aria-label="Aggiungi una copia" ${q===99?'disabled':''}>${icon('plus')}</button></div></div></article>`;}).join('');
+$('#sticker-grid').innerHTML=visible.map(s=>{const q=qty(s.number);const found=q>0;const digit=(String(s.number).match(/\d+/)||['0'])[0];const tone=Number(digit)%6;const image=s.kind.toLowerCase()==='scudetto'?'★':s.kind.toLowerCase()==='squadra'?'◆':String(Number(digit)%10);const composite=s.section==='Serie BKT'||s.section==='Serie C'||(s.section==='Celebration'&&/\b[AB]\)/.test(s.title));const photo=STICKER_IMAGES[String(s.number)];return `<article class="sticker-card ${found?'is-owned':''} ${composite?'is-composite':''}" data-sticker="${esc(s.number)}"><div class="sticker-visual team-color-${tone} ${photo?'has-sticker-image':''}"><div class="sticker-top"><span class="sticker-no">#${String(s.number).padStart(3,'0')}</span><span class="sticker-type">${esc(s.kind)}</span></div><div class="sticker-art"><span class="art-sparks sparkle-mark" aria-hidden="true"></span><div class="sticker-symbol">${esc(image)}</div>${photo?`<img class="sticker-photo" src="${esc(photo)}" alt="Figurina ${esc(s.number)}: ${esc(s.title)}" loading="lazy" decoding="async">`: ''}<span class="art-fineprint">COLLECT · PLAY · COMPLETE</span></div>${photo?`<button type="button" class="zoom-sticker" data-zoom title="Ingrandisci la figurina" aria-label="Ingrandisci la figurina ${esc(s.title)}">${icon('search')}</button>`:''}<button type="button" class="check-sticker ${found?'checked':''}" data-mark aria-label="${found?'Segna come mancante':'Segna come trovata'}">${icon('check')}</button></div><div class="sticker-details"><span class="sticker-team">${esc(s.team)} <span>· ${esc(s.section)}</span></span><h3 title="${esc(s.title)}">${esc(s.title)}</h3><p title="${esc(s.subtitle)}">${esc(s.subtitle||`Figurina n. ${s.number}`)}</p></div><div class="sticker-footer"><span class="sticker-status ${found?'status-owned':''}">${found?'✓ Trovata':'Da trovare'}</span><div class="qty-control"><button type="button" data-step="-1" aria-label="Rimuovi una copia" ${q===0?'disabled':''}>${icon('minus')}</button><output>${q}</output><button type="button" data-step="1" aria-label="Aggiungi una copia" ${q===99?'disabled':''}>${icon('plus')}</button></div></div></article>`;}).join('');
 const nav=$('#pagination');nav.innerHTML=pages===1?'':`<button data-page="${state.page-1}" ${state.page===1?'disabled':''}>← Prec.</button>`+[...new Set([1,state.page-1,state.page,state.page+1,pages].filter(n=>n>=1&&n<=pages))].sort((a,b)=>a-b).map(n=>`<button data-page="${n}" ${n===state.page?'class="active" aria-current="page"':''}>${n}</button>`).join('')+`<button data-page="${state.page+1}" ${state.page===pages?'disabled':''}>Succ. →</button>`;}
 
 // Barra presente SOLO dentro il singolo riconoscimento (personale o di un amico).
@@ -480,6 +481,27 @@ $$('[data-quick-filter]').forEach(a=>a.addEventListener('click',()=>{state.filte
     state.page=1;
   });
 }
+// Foto pubbliche statiche: nessuna scrittura su Firestore e nessuna modifica ai progressi.
+$('#sticker-grid').addEventListener('error',e=>{
+  if(!e.target.matches('.sticker-photo'))return;
+  const visual=e.target.closest('.sticker-visual');
+  visual?.classList.remove('has-sticker-image');
+  visual?.querySelector('.zoom-sticker')?.remove();
+  e.target.remove(); // Resta il simbolo segnaposto se la foto non è raggiungibile.
+},true);
+$('#sticker-grid').addEventListener('click',e=>{
+  const btn=e.target.closest('[data-zoom]');if(!btn)return;
+  const card=btn.closest('[data-sticker]');
+  const photo=card?.querySelector('.sticker-photo');if(!photo)return;
+  const dialog=$('#sticker-image-dialog');
+  $('#sticker-dialog-image').src=photo.src;
+  $('#sticker-dialog-image').alt=photo.alt;
+  $('#sticker-dialog-title').textContent=card.querySelector('.sticker-details h3')?.textContent||'';
+  dialog.showModal();
+});
+$('#sticker-image-dialog').addEventListener('click',e=>{
+  if(e.target===$('#sticker-image-dialog'))e.target.close();
+});
 $('#sticker-grid').addEventListener('click',e=>{const button=e.target.closest('[data-mark],[data-step]');if(!button)return;const card=button.closest('[data-sticker]');if(!card)return;const n=card.dataset.sticker,old=qty(n),next=button.hasAttribute('data-mark')?(old>0?0:1):clampQty(old+Number(button.dataset.step));mark(n,next);});
 $('#pagination').addEventListener('click',e=>{const btn=e.target.closest('[data-page]');if(!btn||btn.disabled)return;state.page=Number(btn.dataset.page);renderAlbum();$('#view-album').scrollIntoView({behavior:'smooth'});});
 $('#club-members').addEventListener('click',e=>{const card=e.target.closest('[data-club-id]');if(!card)return;state.clubSelected=card.dataset.clubId;renderClub();$('#view-club').scrollIntoView({behavior:'instant'});});

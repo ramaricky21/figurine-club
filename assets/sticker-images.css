@@ -1,0 +1,19 @@
+/* Figurine reali nella vista Album: stile aggiuntivo, compatibile con le card esistenti. */
+.sticker-visual.has-sticker-image{height:252px;padding:11px;background:linear-gradient(145deg,#e5ebdf,#cedbd2)}
+.sticker-visual.has-sticker-image::before,.sticker-visual.has-sticker-image::after{display:none}
+.sticker-visual.has-sticker-image .sticker-art{inset:0;overflow:hidden}
+.sticker-visual.has-sticker-image .sticker-photo{width:100%;height:100%;object-fit:contain;display:block;position:absolute;inset:0;z-index:1}
+.sticker-visual.has-sticker-image .sticker-symbol,.sticker-visual.has-sticker-image .art-fineprint,.sticker-visual.has-sticker-image .art-sparks{visibility:hidden}
+.sticker-visual.has-sticker-image .sticker-top{z-index:3}
+.sticker-visual.has-sticker-image .sticker-no,.sticker-visual.has-sticker-image .sticker-type{background:#192820dd;color:#fff;border:1px solid #ffffff65;border-radius:5px;padding:4px 6px;text-shadow:none}
+.zoom-sticker{position:absolute;z-index:4;left:10px;bottom:10px;width:32px;height:32px;display:grid;place-items:center;background:#1c342be0;color:#fff;border:1px solid #ffffffa8;border-radius:50%;cursor:pointer}
+.zoom-sticker:hover,.zoom-sticker:focus-visible{background:#38594c}
+.zoom-sticker svg{height:15px;width:15px}
+.sticker-lightbox{max-width:min(94vw,540px);max-height:94dvh;width:max-content;padding:0;border:0;border-radius:16px;overflow:auto;box-shadow:0 25px 80px #0009;background:#fff;color:#22372b}
+.sticker-lightbox::backdrop{background:#04120bd4}
+.sticker-lightbox-inner{padding:14px;position:relative;display:flex;align-items:center;flex-direction:column;gap:8px}
+.sticker-lightbox img{display:block;max-width:calc(94vw - 40px);max-height:calc(90dvh - 100px);height:auto;width:auto;object-fit:contain;border-radius:4px}
+.sticker-lightbox h3{font-size:15px;margin:5px 10px 8px;text-align:center}
+.sticker-lightbox form{position:absolute;right:8px;top:8px;z-index:1}
+.sticker-lightbox-close{width:36px;height:36px;border:0;border-radius:50%;font-size:26px;background:#162720e8;color:#fff;cursor:pointer}
+@media(max-width:470px){.sticker-visual.has-sticker-image{height:201px;padding:8px}.sticker-visual.has-sticker-image .sticker-no,.sticker-visual.has-sticker-image .sticker-type{font-size:7px;padding:3px}.zoom-sticker{left:7px;bottom:7px;width:27px;height:27px}.zoom-sticker svg{width:13px;height:13px}}
