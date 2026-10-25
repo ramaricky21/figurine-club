@@ -33,7 +33,7 @@ test('PWA: icone PNG locali per installazione standard, maskable e Apple', () =>
 
 test('PWA: script indipendente da Firebase e nessun caricamento JS principale modificato', () => {
   assert.match(read('assets/pwa-register.js'), /register\('\.\/service-worker\.js', \{ scope: '\.\/' \}\)/);
-  assert.match(html, /src="\.\/assets\/app\.mjs\?v=9"/);
+  assert.match(html, /src="\.\/assets\/app\.mjs\?v=10"/);
   assert.match(html, /href="\.\/assets\/refined\.css\?v=4"/);
   assert.doesNotMatch(read('assets/pwa-register.js'), /(?:from|import|fetch|writeBatch|setDoc|addDoc|updateDoc)\s*\(?[^\n]*firebase|signOut\s*\(/i);
 });
@@ -72,6 +72,6 @@ test('PWA: risorse statiche pubbliche e CDN Firebase sono disponibili offline, n
   assert.ok(preloaded.includes(scope+'index.html'));
   assert.ok(preloaded.includes(scope+'config.js'));
   assert.ok(preloaded.includes(scope+'assets/offline-state.mjs'));
-  assert.ok(preloaded.includes(scope+'assets/app.mjs?v=9'));
+  assert.ok(preloaded.includes(scope+'assets/app.mjs?v=10'));
   assert.ok(!preloaded.some(url=>/users\/|firestore\.googleapis\.com|identitytoolkit/i.test(url)));
 });
