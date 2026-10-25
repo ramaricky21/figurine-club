@@ -23,3 +23,8 @@
 .sticker-lightbox form{position:absolute;right:8px;top:8px;z-index:1}
 .sticker-lightbox-close{width:36px;height:36px;border:0;border-radius:50%;font-size:26px;background:#162720e8;color:#fff;cursor:pointer}
 @media(max-width:470px){.sticker-visual.has-sticker-image{height:min(201px,55vw);padding:8px}.sticker-visual.has-sticker-image .sticker-no,.sticker-visual.has-sticker-image .sticker-type{font-size:7px;padding:3px}.zoom-sticker{left:7px;bottom:7px;width:27px;height:27px}.zoom-sticker svg{width:13px;height:13px}}
+
+/* Figurine orizzontali da due parti: l'intera foto deve entrare nel riquadro,
+ * con entrambe le metà visibili. Il fondo verde riempie solo lo spazio residuo.
+ * Questa regola NON interviene nel pop-up della lente. */
+.sticker-visual.has-sticker-image.sticker-image-landscape .sticker-photo{position:absolute;top:0;left:0;right:0;bottom:0;transform:none;width:100%;height:100%;max-width:none;object-fit:contain}

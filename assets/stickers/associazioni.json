@@ -955,5 +955,567 @@
     "posizione": 6,
     "larghezza": 282,
     "altezza": 395
+  },
+  {
+    "numero": "509",
+    "squadra": "Serie BKT",
+    "nome": "Divise: Avellino / Benevento",
+    "file": "assets/stickers/509.webp",
+    "documento": "figurine3.pdf",
+    "pagina": [
+      3
+    ],
+    "composizione": "two",
+    "orientamento": "orizzontale",
+    "parti": [
+      {
+        "sezione": "A",
+        "etichetta": "Divisa Avellino",
+        "pagina": 3,
+        "xref_pdf": 34
+      },
+      {
+        "sezione": "B",
+        "etichetta": "Divisa Benevento",
+        "pagina": 3,
+        "xref_pdf": 36
+      }
+    ],
+    "larghezza": 800,
+    "altezza": 560
+  },
+  {
+    "numero": "510",
+    "squadra": "Serie BKT",
+    "nome": "Capitani: Avellino / Benevento",
+    "file": "assets/stickers/510.webp",
+    "documento": "figurine3.pdf",
+    "pagina": [
+      3
+    ],
+    "composizione": "two",
+    "orientamento": "orizzontale",
+    "parti": [
+      {
+        "sezione": "A",
+        "etichetta": "Capitano Luca Palmiero - Avellino",
+        "pagina": 3,
+        "xref_pdf": 35
+      },
+      {
+        "sezione": "B",
+        "etichetta": "Capitano Mattia Maita - Benevento",
+        "pagina": 3,
+        "xref_pdf": 37
+      }
+    ],
+    "larghezza": 800,
+    "altezza": 560
+  },
+  {
+    "numero": "513",
+    "squadra": "Serie BKT",
+    "nome": "Capitani: Carrarese / Catanzaro",
+    "file": "assets/stickers/513.webp",
+    "documento": "figurine3.pdf",
+    "pagina": [
+      3
+    ],
+    "composizione": "two",
+    "orientamento": "orizzontale",
+    "parti": [
+      {
+        "sezione": "A",
+        "etichetta": "Capitano Nicolas Schiavi - Carrarese",
+        "pagina": 3,
+        "xref_pdf": 38
+      },
+      {
+        "sezione": "B",
+        "etichetta": "Capitano Pietro Iemmello - Catanzaro",
+        "pagina": 3,
+        "xref_pdf": 39
+      }
+    ],
+    "larghezza": 800,
+    "altezza": 560
+  },
+  {
+    "numero": "514",
+    "squadra": "Serie BKT",
+    "nome": "Scudetti: Cesena / Cremonese",
+    "file": "assets/stickers/514.webp",
+    "documento": "figurine3.pdf",
+    "pagina": [
+      1
+    ],
+    "composizione": "two",
+    "orientamento": "orizzontale",
+    "parti": [
+      {
+        "sezione": "A",
+        "etichetta": "Cesena",
+        "pagina": 1,
+        "xref_pdf": 21
+      },
+      {
+        "sezione": "B",
+        "etichetta": "Cremonese",
+        "pagina": 1,
+        "xref_pdf": 12
+      }
+    ],
+    "larghezza": 800,
+    "altezza": 560
+  },
+  {
+    "numero": "516",
+    "squadra": "Serie BKT",
+    "nome": "Capitani: Cesena / Cremonese",
+    "file": "assets/stickers/516.webp",
+    "documento": "figurine3.pdf",
+    "pagina": [
+      3
+    ],
+    "composizione": "two",
+    "orientamento": "orizzontale",
+    "parti": [
+      {
+        "sezione": "A",
+        "etichetta": "Capitano Andrea Ciofi - Cesena",
+        "pagina": 3,
+        "xref_pdf": 40
+      },
+      {
+        "sezione": "B",
+        "etichetta": "Capitano Matteo Bianchetti - Cremonese",
+        "pagina": 3,
+        "xref_pdf": 41
+      }
+    ],
+    "larghezza": 800,
+    "altezza": 560
+  },
+  {
+    "numero": "541",
+    "squadra": "Serie C",
+    "nome": "Scudetti: Giana Erminio / Juventus Next Gen / Lecco / Lumezzane",
+    "file": "assets/stickers/541.webp",
+    "documento": "figurine3.pdf",
+    "pagina": [
+      1
+    ],
+    "composizione": "four",
+    "orientamento": "verticale",
+    "parti": [
+      {
+        "sezione": "A",
+        "etichetta": "Giana Erminio",
+        "pagina": 1,
+        "xref_pdf": 13
+      },
+      {
+        "sezione": "B",
+        "etichetta": "Juventus Next Gen",
+        "pagina": 1,
+        "xref_pdf": 14
+      },
+      {
+        "sezione": "C",
+        "etichetta": "Lecco",
+        "pagina": 1,
+        "xref_pdf": 15
+      },
+      {
+        "sezione": "D",
+        "etichetta": "Lumezzane",
+        "pagina": 1,
+        "xref_pdf": 16
+      }
+    ],
+    "larghezza": 560,
+    "altezza": 800
+  },
+  {
+    "numero": "542",
+    "squadra": "Serie C",
+    "nome": "Divise: Giana Erminio / Juventus Next Gen",
+    "file": "assets/stickers/542.webp",
+    "documento": "figurine3.pdf",
+    "pagina": [
+      3
+    ],
+    "composizione": "two",
+    "orientamento": "orizzontale",
+    "parti": [
+      {
+        "sezione": "A",
+        "etichetta": "Divisa Giana Erminio",
+        "pagina": 3,
+        "xref_pdf": 42
+      },
+      {
+        "sezione": "B",
+        "etichetta": "Divisa Juventus Next Gen",
+        "pagina": 3,
+        "xref_pdf": 43
+      }
+    ],
+    "larghezza": 800,
+    "altezza": 560
+  },
+  {
+    "numero": "544",
+    "squadra": "Serie C",
+    "nome": "Scudetti: Novara / Ospitaletto Franciacorta / Pergolettese / Pro Vercelli",
+    "file": "assets/stickers/544.webp",
+    "documento": "figurine3.pdf",
+    "pagina": [
+      1
+    ],
+    "composizione": "four",
+    "orientamento": "verticale",
+    "parti": [
+      {
+        "sezione": "A",
+        "etichetta": "Novara",
+        "pagina": 1,
+        "xref_pdf": 17
+      },
+      {
+        "sezione": "B",
+        "etichetta": "Ospitaletto Franciacorta",
+        "pagina": 1,
+        "xref_pdf": 18
+      },
+      {
+        "sezione": "C",
+        "etichetta": "Pergolettese",
+        "pagina": 1,
+        "xref_pdf": 19
+      },
+      {
+        "sezione": "D",
+        "etichetta": "Pro Vercelli",
+        "pagina": 1,
+        "xref_pdf": 20
+      }
+    ],
+    "larghezza": 560,
+    "altezza": 800
+  },
+  {
+    "numero": "545",
+    "squadra": "Serie C",
+    "nome": "Divise: Novara / Ospitaletto Franciacorta",
+    "file": "assets/stickers/545.webp",
+    "documento": "figurine3.pdf",
+    "pagina": [
+      3
+    ],
+    "composizione": "two",
+    "orientamento": "orizzontale",
+    "parti": [
+      {
+        "sezione": "A",
+        "etichetta": "Divisa Novara",
+        "pagina": 3,
+        "xref_pdf": 44
+      },
+      {
+        "sezione": "B",
+        "etichetta": "Divisa Ospitaletto Franciacorta",
+        "pagina": 3,
+        "xref_pdf": 45
+      }
+    ],
+    "larghezza": 800,
+    "altezza": 560
+  },
+  {
+    "numero": "550",
+    "squadra": "Serie C",
+    "nome": "Scudetti: Atalanta U23 / Campobasso / Forlì / Grosseto",
+    "file": "assets/stickers/550.webp",
+    "documento": "figurine3.pdf",
+    "pagina": [
+      2
+    ],
+    "composizione": "four",
+    "orientamento": "verticale",
+    "parti": [
+      {
+        "sezione": "A",
+        "etichetta": "Atalanta U23",
+        "pagina": 2,
+        "xref_pdf": 24
+      },
+      {
+        "sezione": "B",
+        "etichetta": "Campobasso",
+        "pagina": 2,
+        "xref_pdf": 25
+      },
+      {
+        "sezione": "C",
+        "etichetta": "Forli",
+        "pagina": 2,
+        "xref_pdf": 26
+      },
+      {
+        "sezione": "D",
+        "etichetta": "Grosseto",
+        "pagina": 2,
+        "xref_pdf": 27
+      }
+    ],
+    "larghezza": 560,
+    "altezza": 800
+  },
+  {
+    "numero": "551",
+    "squadra": "Serie C",
+    "nome": "Divise: Atalanta U23 / Campobasso",
+    "file": "assets/stickers/551.webp",
+    "documento": "figurine3.pdf",
+    "pagina": [
+      3
+    ],
+    "composizione": "two",
+    "orientamento": "orizzontale",
+    "parti": [
+      {
+        "sezione": "A",
+        "etichetta": "Divisa Atalanta U23",
+        "pagina": 3,
+        "xref_pdf": 46
+      },
+      {
+        "sezione": "B",
+        "etichetta": "Divisa Campobasso",
+        "pagina": 3,
+        "xref_pdf": 47
+      }
+    ],
+    "larghezza": 800,
+    "altezza": 560
+  },
+  {
+    "numero": "555",
+    "squadra": "Serie C",
+    "nome": "Divise: Latina / Livorno",
+    "file": "assets/stickers/555.webp",
+    "documento": "figurine3.pdf",
+    "pagina": [
+      3
+    ],
+    "composizione": "two",
+    "orientamento": "orizzontale",
+    "parti": [
+      {
+        "sezione": "A",
+        "etichetta": "Divisa Latina",
+        "pagina": 3,
+        "xref_pdf": 48
+      },
+      {
+        "sezione": "B",
+        "etichetta": "Divisa Livorno",
+        "pagina": 3,
+        "xref_pdf": 49
+      }
+    ],
+    "larghezza": 800,
+    "altezza": 560
+  },
+  {
+    "numero": "556",
+    "squadra": "Serie C",
+    "nome": "Scudetti: Ostiamare / Perugia / Pescara / Pianese",
+    "file": "assets/stickers/556.webp",
+    "documento": "figurine3.pdf",
+    "pagina": [
+      2
+    ],
+    "composizione": "four",
+    "orientamento": "verticale",
+    "parti": [
+      {
+        "sezione": "A",
+        "etichetta": "Ostiamare",
+        "pagina": 2,
+        "xref_pdf": 28
+      },
+      {
+        "sezione": "B",
+        "etichetta": "Perugia",
+        "pagina": 2,
+        "xref_pdf": 29
+      },
+      {
+        "sezione": "C",
+        "etichetta": "Pescara",
+        "pagina": 2,
+        "xref_pdf": 30
+      },
+      {
+        "sezione": "D",
+        "etichetta": "Pianese",
+        "pagina": 2,
+        "xref_pdf": 31
+      }
+    ],
+    "larghezza": 560,
+    "altezza": 800
+  },
+  {
+    "numero": "557",
+    "squadra": "Serie C",
+    "nome": "Divise: Ostiamare / Perugia",
+    "file": "assets/stickers/557.webp",
+    "documento": "figurine3.pdf",
+    "pagina": [
+      3
+    ],
+    "composizione": "two",
+    "orientamento": "orizzontale",
+    "parti": [
+      {
+        "sezione": "A",
+        "etichetta": "Divisa Ostiamare",
+        "pagina": 3,
+        "xref_pdf": 50
+      },
+      {
+        "sezione": "B",
+        "etichetta": "Divisa Perugia",
+        "pagina": 3,
+        "xref_pdf": 51
+      }
+    ],
+    "larghezza": 800,
+    "altezza": 560
+  },
+  {
+    "numero": "567",
+    "squadra": "Serie C",
+    "nome": "Divise: Bari / Barletta",
+    "file": "assets/stickers/567.webp",
+    "documento": "figurine3.pdf",
+    "pagina": [
+      4
+    ],
+    "composizione": "two",
+    "orientamento": "orizzontale",
+    "parti": [
+      {
+        "sezione": "A",
+        "etichetta": "Divisa Bari",
+        "pagina": 4,
+        "xref_pdf": 54
+      },
+      {
+        "sezione": "B",
+        "etichetta": "Divisa Barletta",
+        "pagina": 4,
+        "xref_pdf": 55
+      }
+    ],
+    "larghezza": 800,
+    "altezza": 560
+  },
+  {
+    "numero": "576",
+    "squadra": "Serie C",
+    "nome": "Divise: Picerno / Potenza",
+    "file": "assets/stickers/576.webp",
+    "documento": "figurine3.pdf",
+    "pagina": [
+      4
+    ],
+    "composizione": "two",
+    "orientamento": "orizzontale",
+    "parti": [
+      {
+        "sezione": "A",
+        "etichetta": "Divisa Picerno",
+        "pagina": 4,
+        "xref_pdf": 56
+      },
+      {
+        "sezione": "B",
+        "etichetta": "Divisa Potenza",
+        "pagina": 4,
+        "xref_pdf": 57
+      }
+    ],
+    "larghezza": 800,
+    "altezza": 560
+  },
+  {
+    "numero": "580",
+    "squadra": "Player Of The Match",
+    "nome": "Giocatore 1",
+    "file": "assets/stickers/580.webp",
+    "documento": "figurine3.pdf",
+    "pagina": [
+      4
+    ],
+    "composizione": "single",
+    "orientamento": "verticale",
+    "parti": [
+      {
+        "sezione": "A",
+        "etichetta": "Player Of The Match - Giocatore 1",
+        "pagina": 4,
+        "xref_pdf": 58
+      }
+    ],
+    "larghezza": 274,
+    "altezza": 388
+  },
+  {
+    "numero": "584",
+    "squadra": "Player Of The Match",
+    "nome": "Giocatore 5",
+    "file": "assets/stickers/584.webp",
+    "documento": "figurine3.pdf",
+    "pagina": [
+      4
+    ],
+    "composizione": "single",
+    "orientamento": "verticale",
+    "parti": [
+      {
+        "sezione": "A",
+        "etichetta": "Player Of The Match - Giocatore 5",
+        "pagina": 4,
+        "xref_pdf": 59
+      }
+    ],
+    "larghezza": 279,
+    "altezza": 393
+  },
+  {
+    "numero": "588",
+    "squadra": "Player Of The Match",
+    "nome": "Giocatore 9",
+    "file": "assets/stickers/588.webp",
+    "documento": "figurine3.pdf",
+    "pagina": [
+      4
+    ],
+    "composizione": "single",
+    "orientamento": "verticale",
+    "parti": [
+      {
+        "sezione": "A",
+        "etichetta": "Player Of The Match - Giocatore 9",
+        "pagina": 4,
+        "xref_pdf": 60
+      }
+    ],
+    "larghezza": 274,
+    "altezza": 391
   }
 ]
