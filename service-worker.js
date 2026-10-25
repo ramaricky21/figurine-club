@@ -3,7 +3,7 @@
  * Non memorizzare mai qui risposte Firestore, token o dati personali.
  */
 'use strict';
-const CACHE_VERSION='stadium2-bacheca-percentuali-20261025-images-3';
+const CACHE_VERSION='stadium2-bacheca-percentuali-20261025-images-4-composites-1';
 const STATIC_CACHE='figurine-club-static-'+CACHE_VERSION;
 const CACHE_PREFIX='figurine-club-static-';
 const STICKER_IMAGE_CACHE='figurine-club-sticker-images-v1';
@@ -14,8 +14,8 @@ const STATIC_PATHS=[
   './index.html','./offline.html','./manifest.webmanifest','./config.js',
   './assets/style.css','./assets/extra.css','./assets/refined.css?v=4',
   './assets/achievements.css?v=2','./assets/club.css?v=1',
-  './assets/dashboard-stadium.css?v=1','./assets/sticker-images.css?v=3','./assets/stadium-night.jpg',
-  './assets/app.mjs?v=9','./assets/sticker-images.mjs','./assets/core.mjs','./assets/offline-state.mjs',
+  './assets/dashboard-stadium.css?v=1','./assets/sticker-images.css?v=4','./assets/stadium-night.jpg',
+  './assets/app.mjs?v=10','./assets/sticker-images.mjs?v=2','./assets/core.mjs','./assets/offline-state.mjs',
   './assets/achievements.mjs','./assets/club.mjs',
   './assets/icons.svg','./assets/favicon.svg','./assets/asterisk.svg',
   './assets/sparkle.svg','./assets/pwa-register.js',
