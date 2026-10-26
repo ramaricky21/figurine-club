@@ -3,10 +3,11 @@
  * Non memorizzare mai qui risposte Firestore, token o dati personali.
  */
 'use strict';
-const CACHE_VERSION='stadium2-bacheca-percentuali-20261025-images-4-composites-2-lightbox-fit';
+const CACHE_VERSION='stadium2-bacheca-percentuali-20261026-images-5-composites-2-lightbox-fit';
 const STATIC_CACHE='figurine-club-static-'+CACHE_VERSION;
 const CACHE_PREFIX='figurine-club-static-';
-const STICKER_IMAGE_CACHE='figurine-club-sticker-images-v1';
+const STICKER_IMAGE_CACHE_PREFIX='figurine-club-sticker-images-v';
+const STICKER_IMAGE_CACHE=STICKER_IMAGE_CACHE_PREFIX+'2';
 const APP_SCOPE=self.registration.scope;
 const INDEX_URL=new URL('./index.html',APP_SCOPE).href;
 const OFFLINE_URL=new URL('./offline.html',APP_SCOPE).href;
@@ -15,7 +16,7 @@ const STATIC_PATHS=[
   './assets/style.css','./assets/extra.css','./assets/refined.css?v=4',
   './assets/achievements.css?v=2','./assets/club.css?v=1',
   './assets/dashboard-stadium.css?v=1','./assets/sticker-images.css?v=5','./assets/stadium-night.jpg',
-  './assets/app.mjs?v=11','./assets/sticker-images.mjs?v=2','./assets/core.mjs','./assets/offline-state.mjs',
+  './assets/app.mjs?v=12','./assets/sticker-images.mjs?v=3','./assets/core.mjs','./assets/offline-state.mjs',
   './assets/achievements.mjs','./assets/club.mjs',
   './assets/icons.svg','./assets/favicon.svg','./assets/asterisk.svg',
   './assets/sparkle.svg','./assets/pwa-register.js',
@@ -47,7 +48,7 @@ self.addEventListener('install',event=>{
 self.addEventListener('activate',event=>{
   event.waitUntil((async()=>{
     const keys=await caches.keys();
-    await Promise.all(keys.filter(key=>key.startsWith(CACHE_PREFIX)&&key!==STATIC_CACHE).map(key=>caches.delete(key)));
+    await Promise.all(keys.filter(key=>(key.startsWith(CACHE_PREFIX)&&key!==STATIC_CACHE)||(key.startsWith(STICKER_IMAGE_CACHE_PREFIX)&&key!==STICKER_IMAGE_CACHE)).map(key=>caches.delete(key)));
     await self.clients.claim();
   })());
 });
@@ -80,7 +81,7 @@ self.addEventListener('fetch',event=>{
     event.respondWith((async()=>{
       const cache=await caches.open(STICKER_IMAGE_CACHE);
       const stored=await cache.match(request);if(stored)return stored;
-      try{const response=await fetch(request);if(response.ok)await cache.put(request,response.clone());return response;}
+      try{const response=await fetch(request,{cache:'reload'});if(response.ok)await cache.put(request,response.clone());return response;}
       catch(_){return Response.error();}
     })());
     return;
