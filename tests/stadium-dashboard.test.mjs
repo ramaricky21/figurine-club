@@ -41,9 +41,9 @@ test('Ultime conquiste dal Club, senza nuovi dati pubblicati o eventi finti',()=
  assert.doesNotMatch(dashboard,/Marco|Luca|68%|221 figurine/);
 });
 test('PWA precache lo stadio e CSS/JS nuovi, senza dati privati',()=>{
- assert.match(sw,/stadium2-bacheca-percentuali-20261026-images-5-composites-2-lightbox-fit/);
+ assert.match(sw,/stadium2-bacheca-percentuali-20261026-images-5-composites-2-lightbox-fit-catalog-names-1/);
  assert.match(sw,/\.\/assets\/stadium-night\.jpg/);
  assert.match(sw,/\.\/assets\/dashboard-stadium\.css\?v=1/);
- assert.match(sw,/\.\/assets\/app\.mjs\?v=12/);
+ assert.match(sw,/\.\/assets\/app\.mjs\?v=13/);
  assert.doesNotMatch(sw,/['"]\.\/users\//);
 });

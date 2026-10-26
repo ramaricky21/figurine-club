@@ -88,7 +88,7 @@ test('Le nuove figurine multi-parte hanno i gruppi A/B/C/D corretti, senza riuti
  const css=readFileSync(local('assets/sticker-images.css'),'utf8');
  assert.match(css,/\.has-sticker-image\.sticker-image-landscape \.sticker-photo\{[^}]*object-fit:contain/);
  const html=readFileSync(local('index.html'),'utf8');
- assert.match(html,/app\.mjs\?v=12/);
+ assert.match(html,/app\.mjs\?v=13/);
 });
 
 
@@ -102,9 +102,9 @@ test('Ingrandimento PC di 2/4 parti: foto intera senza scrollbar, singole e mobi
  assert.match(css,/\.sticker-lightbox\.sticker-lightbox-composite \{[^}]*overflow:hidden/);
  assert.match(css,/\.sticker-lightbox\.sticker-lightbox-composite img \{[^}]*max-height:calc\(100dvh - 156px\);[^}]*object-fit:contain/);
  assert.match(html,/sticker-images\.css\?v=5/);
- assert.match(html,/app\.mjs\?v=12/);
+ assert.match(html,/app\.mjs\?v=13/);
  assert.match(sw,/sticker-images\.css\?v=5/);
- assert.match(sw,/app\.mjs\?v=12/);
+ assert.match(sw,/app\.mjs\?v=13/);
  // I popup normali restano regolati dal CSS originale fuori dalla media query.
  assert.match(css,/\.sticker-lightbox\{[^}]*overflow:auto/);
  assert.match(css,/\.sticker-lightbox img\{[^}]*object-fit:contain/);
@@ -131,5 +131,5 @@ test('Figurine4: 88 associazioni certe, 73 nuove e 15 sostituzioni, solo giocato
  assert.match(serviceWorker,/STICKER_IMAGE_CACHE_PREFIX/);
  assert.match(serviceWorker,/cache:'reload'/);
  assert.match(app,/sticker-images\.mjs\?v=3/);
- assert.match(html,/app\.mjs\?v=12/);
+ assert.match(html,/app\.mjs\?v=13/);
 });
