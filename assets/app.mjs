@@ -18,6 +18,12 @@ const $=(s,root=document)=>root.querySelector(s);
 const $$=(s,root=document)=>[...root.querySelectorAll(s)];
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const icon=(name)=>`<svg class="icon" aria-hidden="true"><use href="./assets/icons.svg#${name}"></use></svg>`;
+// Correzioni di sola visualizzazione per due titoli del catalogo già importato su Firestore.
+const CATALOG_NAME_CORRECTIONS=Object.freeze({'170':'Piotr Zieliński','212':'Alfonso Pedraza'});
+function correctedCatalogItem(item){
+  const title=CATALOG_NAME_CORRECTIONS[String(item.number)];
+  return title&&item.title!==title?{...item,title}:item;
+}
 const state={user:null,profile:null,admin:false,accessGranted:false,memberUnsub:null,accessRequests:[],memberships:[],items:[],counts:{},pending:{},pendingTokens:{},peers:[],filters:{q:'',team:'',section:'',status:''},page:1,pageSize:24,loaded:{album:false,catalog:false},metadata:{albumCache:true,catalogCache:true,albumPending:false,albumError:false,catalogError:false},unsubs:[],peerUnsub:null,view:'dashboard',busy:false,achievementKey:null,achievementBaseline:null,achievementNotified:new Set(),clubProfiles:[],clubSelected:null,clubLoaded:false,clubError:"",clubFromCache:true};
 let auth,db;
 let offlineEnabled=false;
@@ -456,7 +462,7 @@ async function onUser(user){
 }
 function liveData(){state.unsubs.push(onSnapshot(getProfileRef(),snap=>{if(!snap.exists())return;const previous=state.profile?.shareTrades;state.profile=snap.data();renderChrome();queueClubPublish();if(previous!==state.profile.shareTrades)subscribePeers();renderTrades();},e=>alertApp('Profilo: '+errorText(e))));
 state.unsubs.push(onSnapshot(getAlbumRef(),{includeMetadataChanges:true},snap=>{state.counts=snap.data()?.counts||{};state.loaded.album=true;state.metadata.albumError=false;state.metadata.albumCache=snap.metadata.fromCache;state.metadata.albumPending=snap.metadata.hasPendingWrites;renderEverything();updateSyncUI();queueTradePublish();},e=>{state.metadata.albumError=true;updateSyncUI();alertApp('Album: '+errorText(e));}));
-state.unsubs.push(onSnapshot(collection(db,'catalog'),{includeMetadataChanges:true},snap=>{const map=new Map();for(const sec of snap.docs){for(const s of sec.data().items||[])if(!map.has(s.number))map.set(s.number,s);}state.items=[...map.values()].sort((a,b)=>compareStickerNumbers(a.number,b.number));state.loaded.catalog=true;state.metadata.catalogError=false;state.metadata.catalogCache=snap.metadata.fromCache;fillFilterOptions();renderEverything();updateSyncUI();queueTradePublish();},e=>{state.metadata.catalogError=true;updateSyncUI();alertApp('Catalogo: '+errorText(e));}));}
+state.unsubs.push(onSnapshot(collection(db,'catalog'),{includeMetadataChanges:true},snap=>{const map=new Map();for(const sec of snap.docs){for(const s of sec.data().items||[])if(!map.has(s.number))map.set(s.number,s);}state.items=[...map.values()].map(correctedCatalogItem).sort((a,b)=>compareStickerNumbers(a.number,b.number));state.loaded.catalog=true;state.metadata.catalogError=false;state.metadata.catalogCache=snap.metadata.fromCache;fillFilterOptions();renderEverything();updateSyncUI();queueTradePublish();},e=>{state.metadata.catalogError=true;updateSyncUI();alertApp('Catalogo: '+errorText(e));}));}
 async function importCatalog(items){const sections=sectionsFor(items);const old=await getDocs(collection(db,'catalog'));const keep=new Set(sections.map(s=>s.id));const toDelete=old.docs.map(s=>s.id).filter(id=>!keep.has(id));const operations=[...sections.map(s=>({op:'set',...s})),...toDelete.map(id=>({op:'delete',id}))];
 // Firestore ammette max 500 operazioni per batch; usiamo gruppi più piccoli.
 for(let i=0;i<operations.length;i+=350){const batch=writeBatch(db);for(const entry of operations.slice(i,i+350)){const r=doc(db,'catalog',entry.id);if(entry.op==='delete')batch.delete(r);else batch.set(r,{team:entry.team,section:entry.section,items:entry.items,updatedAt:serverTimestamp()});}await batch.commit();}
