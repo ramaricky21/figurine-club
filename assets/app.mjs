@@ -1,5 +1,5 @@
 import { firebaseConfig, albumEdition } from '../config.js';
-import { STICKER_IMAGES, STICKER_LANDSCAPE_IMAGE_IDS } from './sticker-images.mjs?v=2';
+import { STICKER_IMAGES, STICKER_LANDSCAPE_IMAGE_IDS } from './sticker-images.mjs?v=3';
 import { computeStats, exchangeMatch, parseCSV, sectionsFor, clampQty, compareStickerNumbers } from './core.mjs';
 import { deriveSyncState } from './offline-state.mjs';
 import { computeAchievements, ACHIEVEMENTS } from './achievements.mjs';
