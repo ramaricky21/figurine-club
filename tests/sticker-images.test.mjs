@@ -8,14 +8,14 @@ const items=parseCSV(readFileSync(local('catalogo_2026_2027.csv'),'utf8'));
 const byId=new Map(items.map(x=>[String(x.number),x]));
 const manifest=JSON.parse(readFileSync(local('assets/stickers/associazioni.json'),'utf8'));
 
-test('Sono presenti 179 figurine univoche e tutte appartengono al catalogo già esistente',()=>{
- assert.equal(STICKER_IMAGE_IDS.length,179);
- assert.equal(new Set(STICKER_IMAGE_IDS).size,179);
- assert.equal(Object.keys(STICKER_IMAGES).length,179);
- assert.equal(manifest.length,179);
+test('Sono presenti 334 figurine univoche e tutte appartengono al catalogo già esistente',()=>{
+ assert.equal(STICKER_IMAGE_IDS.length,334);
+ assert.equal(new Set(STICKER_IMAGE_IDS).size,334);
+ assert.equal(Object.keys(STICKER_IMAGES).length,334);
+ assert.equal(manifest.length,334);
  for(const id of STICKER_IMAGE_IDS)assert.ok(byId.has(id),`Id fuori catalogo: ${id}`);
 });
-test('Le 179 immagini corrispondono ai file WebP e al titolo del catalogo',()=>{
+test('Le 334 immagini corrispondono ai file WebP e al titolo del catalogo',()=>{
  for(const match of manifest){
   const id=match.numero;
   assert.equal(match.nome,byId.get(id)?.title,match.file);
@@ -58,17 +58,17 @@ test('Anteprima completa dall alto al basso e margini esclusivamente laterali, l
  // Le regole dell'ingrandimento non cambiano.
  assert.match(css,/\.sticker-lightbox img\{[^}]*object-fit:contain/);
  assert.match(sw,/sticker-images\.css\?v=5/);
- assert.match(sw,/images-5-composites-2-lightbox-fit/);
+ assert.match(sw,/20261027-figurine5-v1/);
 });
 
 
 test('Le nuove figurine multi-parte hanno i gruppi A/B/C/D corretti, senza riutilizzi',()=>{
  const expected4=['541','544','550','556'];
- const expected2=['509','510','513','514','516','542','545','551','555','557','567','576'];
+ const expected2=['509','510','513','514','516','521','542','545','546','551','555','557','567','569','576','578'];
  const singles=['580','584','588'];
  assert.deepEqual([...STICKER_LANDSCAPE_IMAGE_IDS].sort(),[...expected2].sort());
- const previousOtherEntries=manifest.filter(x=>x.documento!=='figurine3.pdf' && x.documento!=='figurine4.pdf').length;
- assert.equal(previousOtherEntries,72);
+ const previousOtherEntries=manifest.filter(x=>x.documento!=='figurine3.pdf' && x.documento!=='figurine4.pdf' && x.documento!=='figurine5.pdf').length;
+ assert.equal(previousOtherEntries,37); // 35 fotografie sostituite da figurine5.pdf
  assert.equal(manifest.filter(x=>x.documento==='figurine4.pdf').length,88);
  const newEntries=manifest.filter(x=>x.documento==='figurine3.pdf');
  assert.equal(newEntries.length,19);
@@ -88,7 +88,7 @@ test('Le nuove figurine multi-parte hanno i gruppi A/B/C/D corretti, senza riuti
  const css=readFileSync(local('assets/sticker-images.css'),'utf8');
  assert.match(css,/\.has-sticker-image\.sticker-image-landscape \.sticker-photo\{[^}]*object-fit:contain/);
  const html=readFileSync(local('index.html'),'utf8');
- assert.match(html,/app\.mjs\?v=13/);
+ assert.match(html,/app\.mjs\?v=14/);
 });
 
 
@@ -102,9 +102,9 @@ test('Ingrandimento PC di 2/4 parti: foto intera senza scrollbar, singole e mobi
  assert.match(css,/\.sticker-lightbox\.sticker-lightbox-composite \{[^}]*overflow:hidden/);
  assert.match(css,/\.sticker-lightbox\.sticker-lightbox-composite img \{[^}]*max-height:calc\(100dvh - 156px\);[^}]*object-fit:contain/);
  assert.match(html,/sticker-images\.css\?v=5/);
- assert.match(html,/app\.mjs\?v=13/);
+ assert.match(html,/app\.mjs\?v=14/);
  assert.match(sw,/sticker-images\.css\?v=5/);
- assert.match(sw,/app\.mjs\?v=13/);
+ assert.match(sw,/app\.mjs\?v=14/);
  // I popup normali restano regolati dal CSS originale fuori dalla media query.
  assert.match(css,/\.sticker-lightbox\{[^}]*overflow:auto/);
  assert.match(css,/\.sticker-lightbox img\{[^}]*object-fit:contain/);
@@ -130,6 +130,28 @@ test('Figurine4: 88 associazioni certe, 73 nuove e 15 sostituzioni, solo giocato
  const html=readFileSync(local('index.html'),'utf8');
  assert.match(serviceWorker,/STICKER_IMAGE_CACHE_PREFIX/);
  assert.match(serviceWorker,/cache:'reload'/);
- assert.match(app,/sticker-images\.mjs\?v=3/);
- assert.match(html,/app\.mjs\?v=13/);
+ assert.match(app,/sticker-images\.mjs\?v=4/);
+ assert.match(html,/app\.mjs\?v=14/);
+});
+
+
+test('Figurine5: 190 fotografie, 14 pagine, 4 figurine multi-parte conservate intere e nomi corretti',()=>{
+ const fresh=manifest.filter(x=>x.documento==='figurine5.pdf');
+ assert.equal(fresh.length,190);
+ assert.equal(new Set(fresh.map(x=>x.numero)).size,190);
+ assert.ok(fresh.every(x=>x.pagina>=1 && x.pagina<=14 && x.posizione>0));
+ for(const id of ['521','546','569','578','571','574']){
+  const x=fresh.find(y=>y.numero===id);
+  assert.ok(x,`Figurina composta mancante ${id}`);
+  assert.ok(x.larghezza>0 && x.altezza>0);
+  assert.match(x.nota,/mantenuta intera/);
+ }
+ for(const [id,title] of Object.entries({'73':'Robert Sánchez','182':'Guglielmo Vicario','199':'Kenan Yildiz','260':'Ruben Loftus-Cheek'})){
+  assert.equal(byId.get(id).title,title);
+  assert.equal(fresh.find(x=>x.numero===id).nome,title);
+ }
+ const app=readFileSync(local('assets/app.mjs'),'utf8');
+ assert.match(app,/function correctedCatalogItem/);
+ assert.match(app,/\.map\(correctedCatalogItem\)/);
+ assert.doesNotMatch(app,/updateDoc\(.*catalog/);
 });
