@@ -21,5 +21,5 @@ test('Menu mobile ha altezza dinamica e scorrimento indipendente',()=>{
 test('Risorse aggiornate e nuova cache per installazioni PWA precedenti',()=>{
  assert.match(html,/assets\/refined\.css\?v=4/);
  assert.match(sw,/assets\/refined\.css\?v=4/);
- assert.match(sw,/const CACHE_VERSION='stadium2-bacheca-percentuali-20261027-figurine5-v1'/);
+ assert.match(sw,/const CACHE_VERSION='stadium2-bacheca-percentuali-20261028-figurine6-v1'/);
 });
