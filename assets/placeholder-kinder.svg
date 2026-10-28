@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="500" viewBox="0 0 360 500">
+<defs>
+<linearGradient id="red" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b51330"/><stop offset=".22" stop-color="#d62b48"/><stop offset=".45" stop-color="#eb8493"/><stop offset=".60" stop-color="#f6ceca"/><stop offset=".72" stop-color="#e26475"/><stop offset="1" stop-color="#ab1230"/></linearGradient>
+<radialGradient id="softLight" cx=".45" cy=".43" r=".57"><stop stop-color="#fff5ee" stop-opacity=".27"/><stop offset=".40" stop-color="#fff4eb" stop-opacity=".12"/><stop offset="1" stop-color="#ffecec" stop-opacity="0"/></radialGradient>
+<linearGradient id="glassSweep" x1="0" y1="0" x2="1" y2="0">
+ <stop offset="0" stop-color="#e9fff7" stop-opacity="0"/>
+ <stop offset=".25" stop-color="#ecffff" stop-opacity=".01"/>
+ <stop offset=".40" stop-color="#f7ffff" stop-opacity=".135"/>
+ <stop offset=".48" stop-color="#ffffff" stop-opacity=".23"/>
+ <stop offset=".53" stop-color="#ffffff" stop-opacity=".10"/>
+ <stop offset=".62" stop-color="#c5fff2" stop-opacity=".025"/>
+ <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+ </linearGradient>
+ <linearGradient id="shimmer" x1="0" y1="0" x2="1" y2="1">
+ <stop offset="0" stop-color="#ffffff" stop-opacity="0"/>
+ <stop offset=".44" stop-color="#ffffff" stop-opacity=".04"/>
+ <stop offset=".50" stop-color="#ffffff" stop-opacity=".24"/>
+ <stop offset=".56" stop-color="#ffffff" stop-opacity=".03"/>
+ <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+ </linearGradient>
+ <linearGradient id="iris" x1="0" y1="0" x2=".9" y2="1">
+ <stop offset="0" stop-color="#3cb4d8" stop-opacity="0"/>
+ <stop offset=".37" stop-color="#c9fff0" stop-opacity=".1"/>
+ <stop offset=".58" stop-color="#e8b9fb" stop-opacity=".11"/>
+ <stop offset=".74" stop-color="#fff5b7" stop-opacity=".10"/>
+ <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+ </linearGradient>
+ <radialGradient id="cornerGleam" cx="0" cy="0" r="1">
+ <stop offset="0" stop-color="#ffffff" stop-opacity=".25"/>
+ <stop offset=".25" stop-color="#d9fff4" stop-opacity=".18"/>
+ <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+ </radialGradient>
+ 
+</defs>
+<rect width="360" height="500" fill="url(#red)"/>
+<rect width="360" height="500" fill="url(#softLight)"/>
+<g pointer-events="none">
+  <path d="M-52 175 L164 -42 L233 -42 L-52 300 Z" fill="url(#glassSweep)" opacity=".62"/>
+  <path d="M112 550 L410 130 L410 205 L188 550 Z" fill="url(#glassSweep)" opacity=".50"/>
+  <path d="M-80 365 L285 -40 L336 -40 L-15 452 Z" fill="url(#iris)" opacity=".58"/>
+  <path d="M0 480 L359 88 L359 104 L0 497Z" fill="url(#shimmer)" opacity=".36"/>
+  <ellipse cx="317" cy="30" rx="130" ry="115" fill="url(#cornerGleam)" opacity=".33"/>
+ </g>
+<path d="M-10 372 L380 240 L380 282 L-10 417Z" fill="#fff2ec" opacity=".10"/>
+<path d="M-10 133 L380 28 L380 53 L-10 166Z" fill="#fff4ed" opacity=".09"/>
+<g fill="none" stroke="#ffe3dc"><rect x="18" y="18" width="324" height="464" rx="7" stroke-width="2.3" opacity=".82"/><rect x="29" y="29" width="302" height="442" rx="3" stroke-width="1" opacity=".7"/></g>
+<text x="180" y="71" font-family="DejaVu Sans" font-size="11.6" font-weight="bold" fill="#fffef9" stroke="#b82445" stroke-width=".28" paint-order="stroke fill" letter-spacing="5.2" text-anchor="middle">SPECIAL COLLECTION</text>
+<text x="180" y="349" font-family="DejaVu Sans" font-weight="900" font-size="254" stroke="#06090e" stroke-width="17.5" stroke-linejoin="round" paint-order="stroke fill" fill="#fffdfa" text-anchor="middle">K</text>
+<path d="M75 382 H285" stroke="#fff8ed" stroke-width="2.3" opacity=".95"/>
+<text x="180" y="419" font-family="DejaVu Sans" font-size="13.5" fill="#fffefa" font-weight="bold" letter-spacing="6.4" text-anchor="middle" stroke="#81172a" stroke-width=".95" paint-order="stroke fill">KINDER</text>
+<text x="180" y="451" font-family="DejaVu Sans" font-size="9" fill="#fff3eb" letter-spacing="3.3" text-anchor="middle">FIGURINE CLUB</text>
+<g pointer-events="none">
+ <path d="M-90 240 L226 -60" stroke="#ffffff" stroke-opacity=".16" stroke-width="2"/>
+ <path d="M-80 245 L236 -55" stroke="#d0faff" stroke-opacity=".08" stroke-width="5"/>
+ <path d="M130 520 L416 211" stroke="#ffffff" stroke-opacity=".14" stroke-width="1.7"/>
+ <path d="M120 526 L406 217" stroke="#cefff9" stroke-opacity=".08" stroke-width="6"/>
+ <path d="M286 16 H330" stroke="#fff6cd" stroke-opacity=".31" stroke-width="1.1"/>
+ </g>
+</svg>

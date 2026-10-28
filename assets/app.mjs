@@ -1,5 +1,5 @@
 import { firebaseConfig, albumEdition } from '../config.js';
-import { STICKER_IMAGES, STICKER_LANDSCAPE_IMAGE_IDS } from './sticker-images.mjs?v=5';
+import { STICKER_IMAGES, STICKER_LANDSCAPE_IMAGE_IDS } from './sticker-images.mjs?v=6';
 import { computeStats, exchangeMatch, parseCSV, sectionsFor, clampQty, compareStickerNumbers } from './core.mjs';
 import { deriveSyncState } from './offline-state.mjs';
 import { computeAchievements, ACHIEVEMENTS } from './achievements.mjs';
@@ -19,7 +19,7 @@ const $$=(s,root=document)=>[...root.querySelectorAll(s)];
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const icon=(name)=>`<svg class="icon" aria-hidden="true"><use href="./assets/icons.svg#${name}"></use></svg>`;
 // Correzioni visibili della grafia dei nomi stampati sulle figurine, senza scrivere su Firestore.
-const CATALOG_NAME_CORRECTIONS=Object.freeze({'73':'Robert Sánchez','76':'Jacobo Ramón','79':'Álex Valle','88':'Jesús Rodríguez','170':'Piotr Zieliński','182':'Guglielmo Vicario','189':'Jhon Lucumí','197':'Francisco Conceição','199':'Kenan Yildiz','212':'Alfonso Pedraza','255':'Alphadjo Cissé','257':'Luka Modrić','260':'Ruben Loftus-Cheek','267':'Gonçalo Ramos','311':'Rasmus Højlund','477':'Mathis Mout','485':'Glenn Peter Stromberg'});
+const CATALOG_NAME_CORRECTIONS=Object.freeze({'73':'Robert Sánchez','76':'Jacobo Ramón','79':'Álex Valle','88':'Jesús Rodríguez','170':'Piotr Zieliński','182':'Guglielmo Vicario','189':'Jhon Lucumí','197':'Francisco Conceição','199':'Kenan Yildiz','212':'Alfonso Pedraza','255':'Alphadjo Cissé','257':'Luka Modrić','260':'Ruben Loftus-Cheek','267':'Gonçalo Ramos','311':'Rasmus Højlund','477':'Mathis Mout','485':'Glenn Peter Stromberg','128':'Florian Grillitsch','390':'Emirhan Ilkhan'});
 function correctedCatalogItem(item){
   const title=CATALOG_NAME_CORRECTIONS[String(item.number)];
   return title&&item.title!==title?{...item,title}:item;

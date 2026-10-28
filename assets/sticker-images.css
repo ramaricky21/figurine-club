@@ -65,3 +65,26 @@
     overflow-wrap:break-word;
   }
 }
+
+/* Placeholder editoriali per figurine ancora prive di foto reali.
+   Se una WebP è presente, la classe has-sticker-image rende queste regole inapplicabili. */
+.sticker-card[data-sticker^="UPG"] .sticker-visual:not(.has-sticker-image),
+.sticker-card[data-sticker^="C"] .sticker-visual:not(.has-sticker-image),
+.sticker-card[data-sticker^="K"]:not([data-sticker^="Kit"]) .sticker-visual:not(.has-sticker-image){height:252px;padding:11px;background-size:cover;background-position:center center;background-repeat:no-repeat}
+.sticker-card[data-sticker^="UPG"] .sticker-visual:not(.has-sticker-image){background-image:url('./placeholder-upgrade.svg')}
+.sticker-card[data-sticker^="C"] .sticker-visual:not(.has-sticker-image){background-image:url('./placeholder-celebration.svg')}
+.sticker-card[data-sticker^="K"]:not([data-sticker^="Kit"]) .sticker-visual:not(.has-sticker-image){background-image:url('./placeholder-kinder.svg')}
+.sticker-card[data-sticker^="UPG"] .sticker-visual:not(.has-sticker-image)::before,
+.sticker-card[data-sticker^="UPG"] .sticker-visual:not(.has-sticker-image)::after,
+.sticker-card[data-sticker^="C"] .sticker-visual:not(.has-sticker-image)::before,
+.sticker-card[data-sticker^="C"] .sticker-visual:not(.has-sticker-image)::after,
+.sticker-card[data-sticker^="K"]:not([data-sticker^="Kit"]) .sticker-visual:not(.has-sticker-image)::before,
+.sticker-card[data-sticker^="K"]:not([data-sticker^="Kit"]) .sticker-visual:not(.has-sticker-image)::after{display:none}
+.sticker-card[data-sticker^="UPG"] .sticker-visual:not(.has-sticker-image) .sticker-art,
+.sticker-card[data-sticker^="C"] .sticker-visual:not(.has-sticker-image) .sticker-art,
+.sticker-card[data-sticker^="K"]:not([data-sticker^="Kit"]) .sticker-visual:not(.has-sticker-image) .sticker-art{display:none}
+@media(max-width:470px){
+.sticker-card[data-sticker^="UPG"] .sticker-visual:not(.has-sticker-image),
+.sticker-card[data-sticker^="C"] .sticker-visual:not(.has-sticker-image),
+.sticker-card[data-sticker^="K"]:not([data-sticker^="Kit"]) .sticker-visual:not(.has-sticker-image){height:min(201px,55vw)}
+}
