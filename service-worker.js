@@ -3,11 +3,11 @@
  * Non memorizzare mai qui risposte Firestore, token o dati personali.
  */
 'use strict';
-const CACHE_VERSION='stadium2-bacheca-percentuali-20261028-figurine7-grafiche-finali-v2';
+const CACHE_VERSION='stadium2-bacheca-percentuali-20261028-figurine7-croci-fix-v1';
 const STATIC_CACHE='figurine-club-static-'+CACHE_VERSION;
 const CACHE_PREFIX='figurine-club-static-';
 const STICKER_IMAGE_CACHE_PREFIX='figurine-club-sticker-images-v';
-const STICKER_IMAGE_CACHE=STICKER_IMAGE_CACHE_PREFIX+'5';
+const STICKER_IMAGE_CACHE=STICKER_IMAGE_CACHE_PREFIX+'6';
 const APP_SCOPE=self.registration.scope;
 const INDEX_URL=new URL('./index.html',APP_SCOPE).href;
 const OFFLINE_URL=new URL('./offline.html',APP_SCOPE).href;
