@@ -8,14 +8,14 @@ const items=parseCSV(readFileSync(local('catalogo_2026_2027.csv'),'utf8'));
 const byId=new Map(items.map(x=>[String(x.number),x]));
 const manifest=JSON.parse(readFileSync(local('assets/stickers/associazioni.json'),'utf8'));
 
-test('Sono presenti 485 figurine univoche e tutte appartengono al catalogo già esistente',()=>{
- assert.equal(STICKER_IMAGE_IDS.length,485);
- assert.equal(new Set(STICKER_IMAGE_IDS).size,485);
- assert.equal(Object.keys(STICKER_IMAGES).length,485);
- assert.equal(manifest.length,485);
+test('Sono presenti 607 figurine univoche e tutte appartengono al catalogo già esistente',()=>{
+ assert.equal(STICKER_IMAGE_IDS.length,607);
+ assert.equal(new Set(STICKER_IMAGE_IDS).size,607);
+ assert.equal(Object.keys(STICKER_IMAGES).length,607);
+ assert.equal(manifest.length,607);
  for(const id of STICKER_IMAGE_IDS)assert.ok(byId.has(id),`Id fuori catalogo: ${id}`);
 });
-test('Le 485 immagini corrispondono ai file WebP e al titolo del catalogo',()=>{
+test('Le 607 immagini corrispondono ai file WebP e al titolo del catalogo',()=>{
  for(const match of manifest){
   const id=match.numero;
   assert.equal(match.nome,byId.get(id)?.title,match.file);
@@ -39,7 +39,7 @@ test('Le foto non modificano la composizione dell album o i progressi delle figu
 test('GitHub Pages e cache offline includono solo foto pubbliche, e non Firestore',()=>{
  const html=readFileSync(local('index.html'),'utf8');
  const sw=readFileSync(local('service-worker.js'),'utf8');
- assert.match(html,/sticker-images\.css\?v=5/);
+ assert.match(html,/sticker-images\.css\?v=6/);
  assert.match(html,/id="sticker-image-dialog"/);
  assert.match(sw,/STICKER_IMAGE_CACHE/);
  assert.match(sw,/sticker-images\.mjs/);
@@ -57,8 +57,8 @@ test('Anteprima completa dall alto al basso e margini esclusivamente laterali, l
  assert.match(css,/@media\(max-width:470px\)\{[^}]*height:min\(201px,55vw\)/);
  // Le regole dell'ingrandimento non cambiano.
  assert.match(css,/\.sticker-lightbox img\{[^}]*object-fit:contain/);
- assert.match(sw,/sticker-images\.css\?v=5/);
- assert.match(sw,/20261028-figurine6-v1/);
+ assert.match(sw,/sticker-images\.css\?v=6/);
+ assert.match(sw,/20261028-figurine7-grafiche-finali-v2/);
 });
 
 
@@ -68,7 +68,7 @@ test('Le nuove figurine multi-parte hanno i gruppi A/B/C/D corretti, senza riuti
  const singles=['580','584','588'];
  assert.ok(expected2.every(id=>STICKER_LANDSCAPE_IMAGE_IDS.includes(id)));
  const previousOtherEntries=manifest.filter(x=>x.documento!=='figurine3.pdf' && x.documento!=='figurine4.pdf' && x.documento!=='figurine5.pdf').length;
- assert.equal(previousOtherEntries,189); // Include fotografi­e della sesta integrazione
+ assert.equal(previousOtherEntries,311); // Include foto della sesta e settima integrazione
  assert.equal(manifest.filter(x=>x.documento==='figurine4.pdf').length,88);
  const newEntries=manifest.filter(x=>x.documento==='figurine3.pdf');
  assert.equal(newEntries.length,19);
@@ -88,7 +88,7 @@ test('Le nuove figurine multi-parte hanno i gruppi A/B/C/D corretti, senza riuti
  const css=readFileSync(local('assets/sticker-images.css'),'utf8');
  assert.match(css,/\.has-sticker-image\.sticker-image-landscape \.sticker-photo\{[^}]*object-fit:contain/);
  const html=readFileSync(local('index.html'),'utf8');
- assert.match(html,/app\.mjs\?v=15/);
+ assert.match(html,/app\.mjs\?v=16/);
 });
 
 
@@ -101,10 +101,10 @@ test('Ingrandimento PC di 2/4 parti: foto intera senza scrollbar, singole e mobi
  assert.match(css,/@media \(min-width:700px\) and \(pointer:fine\)/);
  assert.match(css,/\.sticker-lightbox\.sticker-lightbox-composite \{[^}]*overflow:hidden/);
  assert.match(css,/\.sticker-lightbox\.sticker-lightbox-composite img \{[^}]*max-height:calc\(100dvh - 156px\);[^}]*object-fit:contain/);
- assert.match(html,/sticker-images\.css\?v=5/);
- assert.match(html,/app\.mjs\?v=15/);
- assert.match(sw,/sticker-images\.css\?v=5/);
- assert.match(sw,/app\.mjs\?v=15/);
+ assert.match(html,/sticker-images\.css\?v=6/);
+ assert.match(html,/app\.mjs\?v=16/);
+ assert.match(sw,/sticker-images\.css\?v=6/);
+ assert.match(sw,/app\.mjs\?v=16/);
  // I popup normali restano regolati dal CSS originale fuori dalla media query.
  assert.match(css,/\.sticker-lightbox\{[^}]*overflow:auto/);
  assert.match(css,/\.sticker-lightbox img\{[^}]*object-fit:contain/);
@@ -130,8 +130,8 @@ test('Figurine4: 88 associazioni certe, 73 nuove e 15 sostituzioni, solo giocato
  const html=readFileSync(local('index.html'),'utf8');
  assert.match(serviceWorker,/STICKER_IMAGE_CACHE_PREFIX/);
  assert.match(serviceWorker,/cache:'reload'/);
- assert.match(app,/sticker-images\.mjs\?v=5/);
- assert.match(html,/app\.mjs\?v=15/);
+ assert.match(app,/sticker-images\.mjs\?v=6/);
+ assert.match(html,/app\.mjs\?v=16/);
 });
 
 
@@ -173,4 +173,27 @@ test('Figurine6: tutte le 153 fotografie uniche del nuovo PDF sono associate agl
  for(const id of ['520','529','508','523','511','526','517','532','577','559','565','538','547','553','562','535']){
    assert.ok(updated.some(x=>x.numero===id),`Composizione mancante: ${id}`);
  }
+});
+
+
+test('Figurine7: 140 fotografie esistenti nel catalogo, compresi Pisa/Sampdoria e Inter rettificato',()=>{
+ const latest=manifest.filter(x=>x.documento==='figurine7.pdf');
+ assert.equal(latest.length,140);
+ assert.equal(new Set(latest.map(x=>x.numero)).size,140);
+ assert.ok(latest.every(x=>x.pagina>=1&&x.pagina<=11&&x.posizione>=1));
+ for(const id of ['530','505','568','469','452','494'])assert.ok(latest.some(x=>x.numero===id),`ID richiesto assente: ${id}`);
+ const inter=readFileSync(local('assets/stickers/159.webp'));
+ assert.equal(inter.toString('ascii',0,4),'RIFF');
+ assert.equal(inter.toString('ascii',8,12),'WEBP');
+ assert.equal(byId.get('128')?.title,'Florian Grillitsch');
+ assert.equal(byId.get('390')?.title,'Emirhan Ilkhan');
+ const app=readFileSync(local('assets/app.mjs'),'utf8');
+ assert.match(app,/'128':'Florian Grillitsch'/);
+ assert.match(app,/'390':'Emirhan Ilkhan'/);
+ const css=readFileSync(local('assets/sticker-images.css'),'utf8');
+ for(const label of ['upgrade','celebration','kinder']){
+  assert.ok(existsSync(local(`assets/placeholder-${label}.svg`)));
+  assert.match(css,new RegExp(`placeholder-${label}\\.svg`));
+ }
+ assert.match(css,/\.sticker-visual:not\(\.has-sticker-image\)/);
 });
