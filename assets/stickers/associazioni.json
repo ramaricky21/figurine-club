@@ -5168,8 +5168,8 @@
     "documento": "figurine7.pdf",
     "pagina": 10,
     "posizione": 2,
-    "larghezza": 429,
-    "altezza": 600
+    "larghezza": 500,
+    "altezza": 705
   },
   {
     "numero": "470",
@@ -7176,5 +7176,27 @@
     "posizione": 4,
     "larghezza": 284,
     "altezza": 406
+  },
+  {
+    "numero": "413",
+    "squadra": "Udinese",
+    "nome": "Oier Zarraga",
+    "file": "assets/stickers/413.webp",
+    "documento": "immagini ricevute in chat il 28-10-2026",
+    "pagina": 1,
+    "posizione": 1,
+    "larghezza": 510,
+    "altezza": 719
+  },
+  {
+    "numero": "444",
+    "squadra": "Venezia",
+    "nome": "Giovanni Stroppa",
+    "file": "assets/stickers/444.webp",
+    "documento": "immagini ricevute in chat il 28-10-2026",
+    "pagina": 1,
+    "posizione": 2,
+    "larghezza": 520,
+    "altezza": 742
   }
 ]
