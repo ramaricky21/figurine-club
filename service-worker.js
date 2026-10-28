@@ -3,11 +3,11 @@
  * Non memorizzare mai qui risposte Firestore, token o dati personali.
  */
 'use strict';
-const CACHE_VERSION='stadium2-bacheca-percentuali-20261028-figurine6-v1';
+const CACHE_VERSION='stadium2-bacheca-percentuali-20261028-figurine7-grafiche-finali-v2';
 const STATIC_CACHE='figurine-club-static-'+CACHE_VERSION;
 const CACHE_PREFIX='figurine-club-static-';
 const STICKER_IMAGE_CACHE_PREFIX='figurine-club-sticker-images-v';
-const STICKER_IMAGE_CACHE=STICKER_IMAGE_CACHE_PREFIX+'4';
+const STICKER_IMAGE_CACHE=STICKER_IMAGE_CACHE_PREFIX+'5';
 const APP_SCOPE=self.registration.scope;
 const INDEX_URL=new URL('./index.html',APP_SCOPE).href;
 const OFFLINE_URL=new URL('./offline.html',APP_SCOPE).href;
@@ -15,11 +15,12 @@ const STATIC_PATHS=[
   './index.html','./offline.html','./manifest.webmanifest','./config.js',
   './assets/style.css','./assets/extra.css','./assets/refined.css?v=4',
   './assets/achievements.css?v=2','./assets/club.css?v=1',
-  './assets/dashboard-stadium.css?v=1','./assets/sticker-images.css?v=5','./assets/stadium-night.jpg',
-  './assets/app.mjs?v=15','./assets/sticker-images.mjs?v=5','./assets/core.mjs','./assets/offline-state.mjs',
+  './assets/dashboard-stadium.css?v=1','./assets/sticker-images.css?v=6','./assets/stadium-night.jpg',
+  './assets/app.mjs?v=16','./assets/sticker-images.mjs?v=6','./assets/core.mjs','./assets/offline-state.mjs',
   './assets/achievements.mjs','./assets/club.mjs',
   './assets/icons.svg','./assets/favicon.svg','./assets/asterisk.svg',
   './assets/sparkle.svg','./assets/pwa-register.js',
+  './assets/placeholder-upgrade.svg','./assets/placeholder-celebration.svg','./assets/placeholder-kinder.svg',
   './assets/pwa/icon.svg','./assets/pwa/icon-192.png','./assets/pwa/icon-512.png',
   './assets/pwa/icon-maskable-512.png','./assets/pwa/apple-touch-icon.png'
 ];
