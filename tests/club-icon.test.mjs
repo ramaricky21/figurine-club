@@ -11,5 +11,5 @@ test('Il Club: icona menu disegnata nello stesso HTML anche se lo sprite esterno
   assert.match(nav[1], /<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">/);
   assert.match(nav[1], /<path d="M16 20v-2/);
   assert.doesNotMatch(nav[1], /<use\b/);
-  assert.match(sw, /stadium2-bacheca-percentuali-20261028-figurine7-grafiche-finali-v2/);
+  assert.match(sw, /stadium2-bacheca-percentuali-20261028-figurine8-completa-v1/);
 });

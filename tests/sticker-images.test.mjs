@@ -8,14 +8,14 @@ const items=parseCSV(readFileSync(local('catalogo_2026_2027.csv'),'utf8'));
 const byId=new Map(items.map(x=>[String(x.number),x]));
 const manifest=JSON.parse(readFileSync(local('assets/stickers/associazioni.json'),'utf8'));
 
-test('Sono presenti 607 figurine univoche e tutte appartengono al catalogo già esistente',()=>{
- assert.equal(STICKER_IMAGE_IDS.length,607);
- assert.equal(new Set(STICKER_IMAGE_IDS).size,607);
- assert.equal(Object.keys(STICKER_IMAGES).length,607);
- assert.equal(manifest.length,607);
+test('Sono presenti 609 figurine univoche e tutte appartengono al catalogo già esistente',()=>{
+ assert.equal(STICKER_IMAGE_IDS.length,609);
+ assert.equal(new Set(STICKER_IMAGE_IDS).size,609);
+ assert.equal(Object.keys(STICKER_IMAGES).length,609);
+ assert.equal(manifest.length,609);
  for(const id of STICKER_IMAGE_IDS)assert.ok(byId.has(id),`Id fuori catalogo: ${id}`);
 });
-test('Le 607 immagini corrispondono ai file WebP e al titolo del catalogo',()=>{
+test('Le 609 immagini corrispondono ai file WebP e al titolo del catalogo',()=>{
  for(const match of manifest){
   const id=match.numero;
   assert.equal(match.nome,byId.get(id)?.title,match.file);
@@ -58,7 +58,7 @@ test('Anteprima completa dall alto al basso e margini esclusivamente laterali, l
  // Le regole dell'ingrandimento non cambiano.
  assert.match(css,/\.sticker-lightbox img\{[^}]*object-fit:contain/);
  assert.match(sw,/sticker-images\.css\?v=6/);
- assert.match(sw,/20261028-figurine7-grafiche-finali-v2/);
+ assert.match(sw,/20261028-figurine8-completa-v1/);
 });
 
 
@@ -68,7 +68,7 @@ test('Le nuove figurine multi-parte hanno i gruppi A/B/C/D corretti, senza riuti
  const singles=['580','584','588'];
  assert.ok(expected2.every(id=>STICKER_LANDSCAPE_IMAGE_IDS.includes(id)));
  const previousOtherEntries=manifest.filter(x=>x.documento!=='figurine3.pdf' && x.documento!=='figurine4.pdf' && x.documento!=='figurine5.pdf').length;
- assert.equal(previousOtherEntries,311); // Include foto della sesta e settima integrazione
+ assert.equal(previousOtherEntries,313); // Include foto della sesta e settima integrazione
  assert.equal(manifest.filter(x=>x.documento==='figurine4.pdf').length,88);
  const newEntries=manifest.filter(x=>x.documento==='figurine3.pdf');
  assert.equal(newEntries.length,19);
@@ -196,4 +196,18 @@ test('Figurine7: 140 fotografie esistenti nel catalogo, compresi Pisa/Sampdoria 
   assert.match(css,new RegExp(`placeholder-${label}\\.svg`));
  }
  assert.match(css,/\.sticker-visual:not\(\.has-sticker-image\)/);
+});
+
+
+test('Figurine8: Zarraga e Stroppa collegati, Croci aggiornato, nessuna voce nuova nel catalogo',()=>{
+ for (const [id,name,team] of [['413','Oier Zarraga','Udinese'],['444','Giovanni Stroppa','Venezia']]){
+  assert.equal(byId.get(id)?.title,name);
+  assert.equal(byId.get(id)?.team,team);
+  assert.ok(STICKER_IMAGE_IDS.includes(id));
+  assert.ok(manifest.some(x=>x.numero===id&&x.nome===name&&x.squadra===team));
+  assert.ok(existsSync(local(`assets/stickers/${id}.webp`)));
+ }
+ assert.ok(existsSync(local('assets/stickers/469.webp')));
+ assert.ok(manifest.some(x=>x.numero==='469'&&x.larghezza===500&&x.altezza===705));
+ assert.equal(items.length,775);
 });
