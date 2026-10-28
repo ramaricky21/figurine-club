@@ -314,6 +314,28 @@
     "altezza": 325
   },
   {
+    "numero": "29",
+    "squadra": "Bologna",
+    "nome": "Massimo Pessina",
+    "file": "assets/stickers/29.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 1,
+    "posizione": 2,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "30",
+    "squadra": "Bologna",
+    "nome": "Lorenzo De Silvestri",
+    "file": "assets/stickers/30.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 1,
+    "posizione": 3,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "31",
     "squadra": "Bologna",
     "nome": "Emil Holm",
@@ -347,6 +369,17 @@
     "altezza": 325
   },
   {
+    "numero": "34",
+    "squadra": "Bologna",
+    "nome": "Martin Vitik",
+    "file": "assets/stickers/34.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 1,
+    "posizione": 4,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "35",
     "squadra": "Bologna",
     "nome": "Juan Miranda",
@@ -369,15 +402,26 @@
     "altezza": 325
   },
   {
+    "numero": "37",
+    "squadra": "Bologna",
+    "nome": "Mikel Amondarain",
+    "file": "assets/stickers/37.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 1,
+    "posizione": 5,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "38",
     "squadra": "Bologna",
     "nome": "Lewis Ferguson",
     "file": "assets/stickers/38.webp",
-    "documento": "Document 11.pdf",
-    "pagina": 2,
-    "posizione": 1,
-    "larghezza": 252,
-    "altezza": 363
+    "documento": "figurine7.pdf",
+    "pagina": 1,
+    "posizione": 6,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "39",
@@ -426,6 +470,17 @@
     "altezza": 325
   },
   {
+    "numero": "43",
+    "squadra": "Bologna",
+    "nome": "Jens Odgaard",
+    "file": "assets/stickers/43.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 1,
+    "posizione": 8,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "44",
     "squadra": "Bologna",
     "nome": "Federico Bernardeschi",
@@ -435,6 +490,17 @@
     "posizione": 16,
     "larghezza": 229,
     "altezza": 325
+  },
+  {
+    "numero": "45",
+    "squadra": "Bologna",
+    "nome": "Samuel Mbangula",
+    "file": "assets/stickers/45.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 1,
+    "posizione": 7,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "46",
@@ -492,6 +558,17 @@
     "altezza": 325
   },
   {
+    "numero": "51",
+    "squadra": "Cagliari",
+    "nome": "Boris Radunovic",
+    "file": "assets/stickers/51.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 1,
+    "posizione": 9,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "52",
     "squadra": "Cagliari",
     "nome": "Adam Obert",
@@ -501,6 +578,17 @@
     "posizione": 5,
     "larghezza": 229,
     "altezza": 325
+  },
+  {
+    "numero": "53",
+    "squadra": "Cagliari",
+    "nome": "Zé Pedro",
+    "file": "assets/stickers/53.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 1,
+    "posizione": 11,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "54",
@@ -537,15 +625,26 @@
     "sostituisce": "Document 11.pdf"
   },
   {
+    "numero": "57",
+    "squadra": "Cagliari",
+    "nome": "Ryad Idrissi",
+    "file": "assets/stickers/57.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 1,
+    "posizione": 10,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "58",
     "squadra": "Cagliari",
     "nome": "Yanis Massolin",
     "file": "assets/stickers/58.webp",
-    "documento": "Document 11.pdf",
+    "documento": "figurine7.pdf",
     "pagina": 2,
-    "posizione": 5,
-    "larghezza": 261,
-    "altezza": 362
+    "posizione": 2,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "59",
@@ -563,11 +662,11 @@
     "squadra": "Cagliari",
     "nome": "Alessandro Deiola",
     "file": "assets/stickers/60.webp",
-    "documento": "Document 11.pdf",
-    "pagina": 2,
-    "posizione": 6,
-    "larghezza": 255,
-    "altezza": 364
+    "documento": "figurine7.pdf",
+    "pagina": 1,
+    "posizione": 12,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "61",
@@ -581,6 +680,17 @@
     "altezza": 325
   },
   {
+    "numero": "62",
+    "squadra": "Cagliari",
+    "nome": "Harry Winks",
+    "file": "assets/stickers/62.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 2,
+    "posizione": 3,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "63",
     "squadra": "Cagliari",
     "nome": "Jacopo Fazzini",
@@ -590,6 +700,28 @@
     "posizione": 8,
     "larghezza": 230,
     "altezza": 325
+  },
+  {
+    "numero": "64",
+    "squadra": "Cagliari",
+    "nome": "Alieu Fadera",
+    "file": "assets/stickers/64.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 1,
+    "posizione": 13,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "65",
+    "squadra": "Cagliari",
+    "nome": "M'Bala Nzola",
+    "file": "assets/stickers/65.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 2,
+    "posizione": 4,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "66",
@@ -623,6 +755,17 @@
     "posizione": 9,
     "larghezza": 226,
     "altezza": 321
+  },
+  {
+    "numero": "69",
+    "squadra": "Cagliari",
+    "nome": "Mattia Felici",
+    "file": "assets/stickers/69.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 2,
+    "posizione": 1,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "70",
@@ -673,11 +816,11 @@
     "squadra": "Como",
     "nome": "Ivan Smolcic",
     "file": "assets/stickers/74.webp",
-    "documento": "Document 11.pdf",
+    "documento": "figurine7.pdf",
     "pagina": 2,
-    "posizione": 7,
-    "larghezza": 262,
-    "altezza": 368
+    "posizione": 5,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "75",
@@ -746,6 +889,17 @@
     "altezza": 325
   },
   {
+    "numero": "81",
+    "squadra": "Como",
+    "nome": "Samuele Ricci",
+    "file": "assets/stickers/81.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 2,
+    "posizione": 7,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "82",
     "squadra": "Como",
     "nome": "Lucas Da Cunha",
@@ -805,11 +959,11 @@
     "squadra": "Como",
     "nome": "Mattia Liberali",
     "file": "assets/stickers/87.webp",
-    "documento": "Document 11.pdf",
+    "documento": "figurine7.pdf",
     "pagina": 2,
-    "posizione": 9,
-    "larghezza": 263,
-    "altezza": 366
+    "posizione": 6,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "88",
@@ -889,6 +1043,17 @@
     "altezza": 325
   },
   {
+    "numero": "95",
+    "squadra": "Fiorentina",
+    "nome": "Oliver Christensen",
+    "file": "assets/stickers/95.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 2,
+    "posizione": 8,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "96",
     "squadra": "Fiorentina",
     "nome": "Dodò",
@@ -905,11 +1070,22 @@
     "squadra": "Fiorentina",
     "nome": "Joao Mario",
     "file": "assets/stickers/97.webp",
-    "documento": "Document 11.pdf",
+    "documento": "figurine7.pdf",
+    "pagina": 2,
+    "posizione": 9,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "98",
+    "squadra": "Fiorentina",
+    "nome": "Luca Ranieri",
+    "file": "assets/stickers/98.webp",
+    "documento": "figurine7.pdf",
     "pagina": 2,
     "posizione": 11,
-    "larghezza": 260,
-    "altezza": 371
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "99",
@@ -921,6 +1097,17 @@
     "posizione": 18,
     "larghezza": 230,
     "altezza": 320
+  },
+  {
+    "numero": "100",
+    "squadra": "Fiorentina",
+    "nome": "Marin Pongracic",
+    "file": "assets/stickers/100.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 2,
+    "posizione": 10,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "101",
@@ -944,6 +1131,17 @@
     "larghezza": 229,
     "altezza": 325,
     "sostituisce": "Document 11.pdf"
+  },
+  {
+    "numero": "103",
+    "squadra": "Fiorentina",
+    "nome": "Marco Brescianini",
+    "file": "assets/stickers/103.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 2,
+    "posizione": 12,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "104",
@@ -980,6 +1178,28 @@
     "sostituisce": "Document 11.pdf"
   },
   {
+    "numero": "107",
+    "squadra": "Fiorentina",
+    "nome": "Christ Inao Oulai",
+    "file": "assets/stickers/107.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 2,
+    "posizione": 15,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "108",
+    "squadra": "Fiorentina",
+    "nome": "Cher Ndour",
+    "file": "assets/stickers/108.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 2,
+    "posizione": 13,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "109",
     "squadra": "Fiorentina",
     "nome": "Franco Mastantuono",
@@ -995,11 +1215,11 @@
     "squadra": "Fiorentina",
     "nome": "Alieu Njie",
     "file": "assets/stickers/110.webp",
-    "documento": "Document 11.pdf",
-    "pagina": 3,
-    "posizione": 1,
-    "larghezza": 269,
-    "altezza": 381
+    "documento": "figurine7.pdf",
+    "pagina": 2,
+    "posizione": 14,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "111",
@@ -1069,6 +1289,17 @@
     "altezza": 323
   },
   {
+    "numero": "117",
+    "squadra": "Frosinone",
+    "nome": "Sebastiano Desplanches",
+    "file": "assets/stickers/117.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 3,
+    "posizione": 1,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "118",
     "squadra": "Frosinone",
     "nome": "Anthony Oyono",
@@ -1091,6 +1322,17 @@
     "altezza": 325
   },
   {
+    "numero": "120",
+    "squadra": "Frosinone",
+    "nome": "Gabriele Calvani",
+    "file": "assets/stickers/120.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 3,
+    "posizione": 2,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "121",
     "squadra": "Frosinone",
     "nome": "Gabriele Bracaglia",
@@ -1102,15 +1344,37 @@
     "altezza": 321
   },
   {
+    "numero": "122",
+    "squadra": "Frosinone",
+    "nome": "Giorgio Cittadini",
+    "file": "assets/stickers/122.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 3,
+    "posizione": 3,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "123",
+    "squadra": "Frosinone",
+    "nome": "Aleksa Terzic",
+    "file": "assets/stickers/123.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 3,
+    "posizione": 4,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "124",
     "squadra": "Frosinone",
     "nome": "Patrizio Masini",
     "file": "assets/stickers/124.webp",
-    "documento": "Document 11.pdf",
+    "documento": "figurine7.pdf",
     "pagina": 3,
-    "posizione": 3,
-    "larghezza": 266,
-    "altezza": 376
+    "posizione": 8,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "125",
@@ -1135,15 +1399,26 @@
     "altezza": 321
   },
   {
-    "numero": "128",
+    "numero": "127",
     "squadra": "Frosinone",
-    "nome": "Florian Grilltsch",
-    "file": "assets/stickers/128.webp",
-    "documento": "Document 11.pdf",
+    "nome": "Matteo Cichella",
+    "file": "assets/stickers/127.webp",
+    "documento": "figurine7.pdf",
     "pagina": 3,
     "posizione": 5,
-    "larghezza": 259,
-    "altezza": 369
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "128",
+    "squadra": "Frosinone",
+    "nome": "Florian Grillitsch",
+    "file": "assets/stickers/128.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 3,
+    "posizione": 6,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "129",
@@ -1155,6 +1430,28 @@
     "posizione": 3,
     "larghezza": 227,
     "altezza": 324
+  },
+  {
+    "numero": "130",
+    "squadra": "Frosinone",
+    "nome": "Luis Hasa",
+    "file": "assets/stickers/130.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 3,
+    "posizione": 7,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "131",
+    "squadra": "Frosinone",
+    "nome": "Daniel Birligea",
+    "file": "assets/stickers/131.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 3,
+    "posizione": 9,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "132",
@@ -1235,6 +1532,28 @@
     "altezza": 323
   },
   {
+    "numero": "139",
+    "squadra": "Genoa",
+    "nome": "Franz Stolz",
+    "file": "assets/stickers/139.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 3,
+    "posizione": 10,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "140",
+    "squadra": "Genoa",
+    "nome": "Stefano Sabelli",
+    "file": "assets/stickers/140.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 3,
+    "posizione": 12,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "141",
     "squadra": "Genoa",
     "nome": "Johan Vasquez",
@@ -1268,6 +1587,17 @@
     "altezza": 325
   },
   {
+    "numero": "144",
+    "squadra": "Genoa",
+    "nome": "Mario Mitaj",
+    "file": "assets/stickers/144.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 3,
+    "posizione": 11,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "145",
     "squadra": "Genoa",
     "nome": "Sebastian Otoa",
@@ -1277,6 +1607,17 @@
     "posizione": 10,
     "larghezza": 231,
     "altezza": 320
+  },
+  {
+    "numero": "146",
+    "squadra": "Genoa",
+    "nome": "Junior Messias",
+    "file": "assets/stickers/146.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 3,
+    "posizione": 16,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "147",
@@ -1290,26 +1631,59 @@
     "altezza": 323
   },
   {
+    "numero": "148",
+    "squadra": "Genoa",
+    "nome": "Amorim",
+    "file": "assets/stickers/148.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 3,
+    "posizione": 13,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "149",
+    "squadra": "Genoa",
+    "nome": "Mikael Egil Ellertsson",
+    "file": "assets/stickers/149.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 3,
+    "posizione": 14,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "150",
+    "squadra": "Genoa",
+    "nome": "Dybril Sow",
+    "file": "assets/stickers/150.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 3,
+    "posizione": 17,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "151",
     "squadra": "Genoa",
     "nome": "Franz-Ethan Meichtry",
     "file": "assets/stickers/151.webp",
-    "documento": "Document 11.pdf",
+    "documento": "figurine7.pdf",
     "pagina": 3,
-    "posizione": 8,
-    "larghezza": 265,
-    "altezza": 380
+    "posizione": 15,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "152",
     "squadra": "Genoa",
     "nome": "Hamed Traorè",
     "file": "assets/stickers/152.webp",
-    "documento": "Document 11.pdf",
+    "documento": "figurine7.pdf",
     "pagina": 3,
-    "posizione": 9,
-    "larghezza": 269,
-    "altezza": 374
+    "posizione": 18,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "153",
@@ -1488,6 +1862,17 @@
     "altezza": 319
   },
   {
+    "numero": "169",
+    "squadra": "Inter",
+    "nome": "Benjamin Pavard",
+    "file": "assets/stickers/169.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 4,
+    "posizione": 1,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "170",
     "squadra": "Inter",
     "nome": "Piotr Zieliński",
@@ -1600,6 +1985,17 @@
     "altezza": 325
   },
   {
+    "numero": "180",
+    "squadra": "Inter",
+    "nome": "Christian Chivu",
+    "file": "assets/stickers/180.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 4,
+    "posizione": 2,
+    "larghezza": 418,
+    "altezza": 600
+  },
+  {
     "numero": "181",
     "squadra": "Juventus",
     "nome": "Scudetto Juventus",
@@ -1710,6 +2106,17 @@
     "altezza": 325
   },
   {
+    "numero": "191",
+    "squadra": "Juventus",
+    "nome": "Teun Koopmeiners",
+    "file": "assets/stickers/191.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 4,
+    "posizione": 3,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "192",
     "squadra": "Juventus",
     "nome": "Weston McKennie",
@@ -1730,6 +2137,17 @@
     "posizione": 7,
     "larghezza": 229,
     "altezza": 325
+  },
+  {
+    "numero": "194",
+    "squadra": "Juventus",
+    "nome": "Khéphren Thuram",
+    "file": "assets/stickers/194.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 4,
+    "posizione": 4,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "195",
@@ -1853,6 +2271,17 @@
     "altezza": 321
   },
   {
+    "numero": "206",
+    "squadra": "Lazio",
+    "nome": "Josip Sutalo",
+    "file": "assets/stickers/206.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 4,
+    "posizione": 6,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "207",
     "squadra": "Lazio",
     "nome": "Adam Marusic",
@@ -1885,6 +2314,17 @@
     "larghezza": 229,
     "altezza": 325,
     "sostituisce": "Document 11.pdf"
+  },
+  {
+    "numero": "210",
+    "squadra": "Lazio",
+    "nome": "Oliver Provstgaard",
+    "file": "assets/stickers/210.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 4,
+    "posizione": 5,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "211",
@@ -1920,15 +2360,26 @@
     "altezza": 321
   },
   {
+    "numero": "214",
+    "squadra": "Lazio",
+    "nome": "Danilo Cataldi",
+    "file": "assets/stickers/214.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 4,
+    "posizione": 7,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "215",
     "squadra": "Lazio",
     "nome": "Nicolò Rovella",
     "file": "assets/stickers/215.webp",
-    "documento": "Document 11.pdf",
+    "documento": "figurine7.pdf",
     "pagina": 4,
-    "posizione": 3,
-    "larghezza": 268,
-    "altezza": 381
+    "posizione": 10,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "216",
@@ -1953,6 +2404,17 @@
     "altezza": 323
   },
   {
+    "numero": "218",
+    "squadra": "Lazio",
+    "nome": "Fisayo Dele-Bashiru",
+    "file": "assets/stickers/218.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 4,
+    "posizione": 8,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "219",
     "squadra": "Lazio",
     "nome": "Andrea Pinamonti",
@@ -1974,6 +2436,17 @@
     "posizione": 2,
     "larghezza": 229,
     "altezza": 325
+  },
+  {
+    "numero": "221",
+    "squadra": "Lazio",
+    "nome": "Gustav Isaksen",
+    "file": "assets/stickers/221.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 4,
+    "posizione": 9,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "222",
@@ -2031,6 +2504,39 @@
     "altezza": 325
   },
   {
+    "numero": "227",
+    "squadra": "Lecce",
+    "nome": "Marco Bleve",
+    "file": "assets/stickers/227.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 5,
+    "posizione": 1,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "228",
+    "squadra": "Lecce",
+    "nome": "Danilo Veiga",
+    "file": "assets/stickers/228.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 5,
+    "posizione": 6,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "229",
+    "squadra": "Lecce",
+    "nome": "Ali Dembélé",
+    "file": "assets/stickers/229.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 5,
+    "posizione": 2,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "230",
     "squadra": "Lecce",
     "nome": "Tiago Gabriel",
@@ -2042,6 +2548,28 @@
     "altezza": 325
   },
   {
+    "numero": "231",
+    "squadra": "Lecce",
+    "nome": "Kialonda Gaspar",
+    "file": "assets/stickers/231.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 5,
+    "posizione": 3,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "232",
+    "squadra": "Lecce",
+    "nome": "Jamil Siebert",
+    "file": "assets/stickers/232.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 5,
+    "posizione": 5,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "233",
     "squadra": "Lecce",
     "nome": "Antonio Gallo",
@@ -2051,6 +2579,28 @@
     "posizione": 12,
     "larghezza": 229,
     "altezza": 325
+  },
+  {
+    "numero": "234",
+    "squadra": "Lecce",
+    "nome": "Corrie Ndaba",
+    "file": "assets/stickers/234.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 5,
+    "posizione": 4,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "235",
+    "squadra": "Lecce",
+    "nome": "Ivan Ilic",
+    "file": "assets/stickers/235.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 5,
+    "posizione": 9,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "236",
@@ -2077,6 +2627,39 @@
     "sostituisce": "Document 11.pdf"
   },
   {
+    "numero": "238",
+    "squadra": "Lecce",
+    "nome": "Oumar Ngom",
+    "file": "assets/stickers/238.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 5,
+    "posizione": 11,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "239",
+    "squadra": "Lecce",
+    "nome": "Olaf Gorter",
+    "file": "assets/stickers/239.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 5,
+    "posizione": 8,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "240",
+    "squadra": "Lecce",
+    "nome": "Omri Gandelman",
+    "file": "assets/stickers/240.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 5,
+    "posizione": 7,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "241",
     "squadra": "Lecce",
     "nome": "Konan N’Dri",
@@ -2092,11 +2675,22 @@
     "squadra": "Lecce",
     "nome": "Joel Monteiro",
     "file": "assets/stickers/242.webp",
-    "documento": "Document 11.pdf",
-    "pagina": 4,
-    "posizione": 7,
-    "larghezza": 268,
-    "altezza": 381
+    "documento": "figurine7.pdf",
+    "pagina": 5,
+    "posizione": 10,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "243",
+    "squadra": "Lecce",
+    "nome": "Santiago Pierotti",
+    "file": "assets/stickers/243.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 5,
+    "posizione": 12,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "244",
@@ -2164,6 +2758,17 @@
     "posizione": 15,
     "larghezza": 229,
     "altezza": 325
+  },
+  {
+    "numero": "250",
+    "squadra": "Milan",
+    "nome": "Matteo Gabbia",
+    "file": "assets/stickers/250.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 5,
+    "posizione": 13,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "251",
@@ -2241,6 +2846,28 @@
     "posizione": 13,
     "larghezza": 229,
     "altezza": 325
+  },
+  {
+    "numero": "258",
+    "squadra": "Milan",
+    "nome": "Yunus Musah",
+    "file": "assets/stickers/258.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 5,
+    "posizione": 15,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "259",
+    "squadra": "Milan",
+    "nome": "Ardon Jashari",
+    "file": "assets/stickers/259.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 5,
+    "posizione": 14,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "260",
@@ -2355,6 +2982,50 @@
     "altezza": 399
   },
   {
+    "numero": "270",
+    "squadra": "Monza",
+    "nome": "Noel Tornqvist",
+    "file": "assets/stickers/270.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 6,
+    "posizione": 2,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "271",
+    "squadra": "Monza",
+    "nome": "Demba Thiam",
+    "file": "assets/stickers/271.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 6,
+    "posizione": 1,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "272",
+    "squadra": "Monza",
+    "nome": "Samuele Birindelli",
+    "file": "assets/stickers/272.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 6,
+    "posizione": 4,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "273",
+    "squadra": "Monza",
+    "nome": "Eddy Kouadio",
+    "file": "assets/stickers/273.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 6,
+    "posizione": 6,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "274",
     "squadra": "Monza",
     "nome": "Ricardo Mangas",
@@ -2377,6 +3048,39 @@
     "altezza": 325
   },
   {
+    "numero": "276",
+    "squadra": "Monza",
+    "nome": "Andrea Carboni",
+    "file": "assets/stickers/276.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 6,
+    "posizione": 5,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "277",
+    "squadra": "Monza",
+    "nome": "Adam Bakoune",
+    "file": "assets/stickers/277.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 6,
+    "posizione": 3,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "278",
+    "squadra": "Monza",
+    "nome": "Lorenzo Lucchesi",
+    "file": "assets/stickers/278.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 6,
+    "posizione": 7,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "279",
     "squadra": "Monza",
     "nome": "Ebenezer Akinsanmiro",
@@ -2386,6 +3090,28 @@
     "posizione": 14,
     "larghezza": 229,
     "altezza": 321
+  },
+  {
+    "numero": "280",
+    "squadra": "Monza",
+    "nome": "Matteo Pessina",
+    "file": "assets/stickers/280.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 6,
+    "posizione": 10,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "281",
+    "squadra": "Monza",
+    "nome": "Manga Foe Ondoa",
+    "file": "assets/stickers/281.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 6,
+    "posizione": 9,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "282",
@@ -2408,6 +3134,39 @@
     "posizione": 15,
     "larghezza": 229,
     "altezza": 320
+  },
+  {
+    "numero": "284",
+    "squadra": "Monza",
+    "nome": "Leonardo Colombo",
+    "file": "assets/stickers/284.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 6,
+    "posizione": 8,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "285",
+    "squadra": "Monza",
+    "nome": "Jay Robinson",
+    "file": "assets/stickers/285.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 6,
+    "posizione": 11,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "286",
+    "squadra": "Monza",
+    "nome": "Exequiel Zeballos",
+    "file": "assets/stickers/286.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 6,
+    "posizione": 12,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "287",
@@ -2510,6 +3269,39 @@
     "altezza": 325
   },
   {
+    "numero": "296",
+    "squadra": "Napoli",
+    "nome": "Sam Beukema",
+    "file": "assets/stickers/296.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 6,
+    "posizione": 13,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "297",
+    "squadra": "Napoli",
+    "nome": "Alessandro Buongiorno",
+    "file": "assets/stickers/297.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 6,
+    "posizione": 14,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "298",
+    "squadra": "Napoli",
+    "nome": "Mathias Olivera",
+    "file": "assets/stickers/298.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 6,
+    "posizione": 15,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "299",
     "squadra": "Napoli",
     "nome": "Leonardo Spinazzola",
@@ -2530,6 +3322,17 @@
     "posizione": 5,
     "larghezza": 229,
     "altezza": 325
+  },
+  {
+    "numero": "301",
+    "squadra": "Napoli",
+    "nome": "Billy Gilmour",
+    "file": "assets/stickers/301.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 6,
+    "posizione": 16,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "302",
@@ -2609,6 +3412,17 @@
     "altezza": 325
   },
   {
+    "numero": "309",
+    "squadra": "Napoli",
+    "nome": "Giovane",
+    "file": "assets/stickers/309.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 6,
+    "posizione": 17,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "310",
     "squadra": "Napoli",
     "nome": "Matteo Politano",
@@ -2666,6 +3480,17 @@
     "altezza": 325
   },
   {
+    "numero": "315",
+    "squadra": "Parma",
+    "nome": "Giovanni Daffara",
+    "file": "assets/stickers/315.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 7,
+    "posizione": 1,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "316",
     "squadra": "Parma",
     "nome": "Enrico Delprato",
@@ -2675,6 +3500,17 @@
     "posizione": 17,
     "larghezza": 229,
     "altezza": 325
+  },
+  {
+    "numero": "317",
+    "squadra": "Parma",
+    "nome": "Sasha Britschgi",
+    "file": "assets/stickers/317.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 7,
+    "posizione": 2,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "318",
@@ -2699,6 +3535,28 @@
     "altezza": 320
   },
   {
+    "numero": "320",
+    "squadra": "Parma",
+    "nome": "Lautaro Valenti",
+    "file": "assets/stickers/320.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 7,
+    "posizione": 4,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "321",
+    "squadra": "Parma",
+    "nome": "Abdoul Ndiaye",
+    "file": "assets/stickers/321.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 7,
+    "posizione": 3,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "322",
     "squadra": "Parma",
     "nome": "Diego Carlos",
@@ -2709,6 +3567,28 @@
     "larghezza": 229,
     "altezza": 325,
     "sostituisce": "Document 11.pdf"
+  },
+  {
+    "numero": "323",
+    "squadra": "Parma",
+    "nome": "Mandela Keita",
+    "file": "assets/stickers/323.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 7,
+    "posizione": 7,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "324",
+    "squadra": "Parma",
+    "nome": "Hans Nicolussi Caviglia",
+    "file": "assets/stickers/324.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 7,
+    "posizione": 8,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "325",
@@ -2722,15 +3602,48 @@
     "altezza": 325
   },
   {
+    "numero": "326",
+    "squadra": "Parma",
+    "nome": "Christian Ordonez",
+    "file": "assets/stickers/326.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 7,
+    "posizione": 9,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "327",
     "squadra": "Parma",
     "nome": "Benjamin Cremaschi",
     "file": "assets/stickers/327.webp",
-    "documento": "Document 11.pdf",
-    "pagina": 5,
+    "documento": "figurine7.pdf",
+    "pagina": 7,
     "posizione": 5,
-    "larghezza": 252,
-    "altezza": 364
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "328",
+    "squadra": "Parma",
+    "nome": "Giovanni Fabbian",
+    "file": "assets/stickers/328.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 7,
+    "posizione": 6,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "329",
+    "squadra": "Parma",
+    "nome": "Matija Frigan",
+    "file": "assets/stickers/329.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 7,
+    "posizione": 10,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "330",
@@ -2786,6 +3699,17 @@
     "posizione": 3,
     "larghezza": 245,
     "altezza": 343
+  },
+  {
+    "numero": "335",
+    "squadra": "Roma",
+    "nome": "Scudetto Roma",
+    "file": "assets/stickers/335.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 1,
+    "posizione": 1,
+    "larghezza": 421,
+    "altezza": 600
   },
   {
     "numero": "336",
@@ -3045,6 +3969,17 @@
     "altezza": 325
   },
   {
+    "numero": "359",
+    "squadra": "Sassuolo",
+    "nome": "Stefano Turati",
+    "file": "assets/stickers/359.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 7,
+    "posizione": 11,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "360",
     "squadra": "Sassuolo",
     "nome": "Duje Caleta-Car",
@@ -3067,6 +4002,17 @@
     "altezza": 325
   },
   {
+    "numero": "362",
+    "squadra": "Sassuolo",
+    "nome": "Sebastian Walukiewicz",
+    "file": "assets/stickers/362.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 7,
+    "posizione": 15,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "363",
     "squadra": "Sassuolo",
     "nome": "Jay Idzes",
@@ -3076,6 +4022,50 @@
     "posizione": 7,
     "larghezza": 229,
     "altezza": 325
+  },
+  {
+    "numero": "364",
+    "squadra": "Sassuolo",
+    "nome": "Josh Doig",
+    "file": "assets/stickers/364.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 7,
+    "posizione": 12,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "365",
+    "squadra": "Sassuolo",
+    "nome": "Ignace Van Der Brempt",
+    "file": "assets/stickers/365.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 7,
+    "posizione": 14,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "366",
+    "squadra": "Sassuolo",
+    "nome": "Rafael Obrador",
+    "file": "assets/stickers/366.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 7,
+    "posizione": 13,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "367",
+    "squadra": "Sassuolo",
+    "nome": "Ismael Koné",
+    "file": "assets/stickers/367.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 7,
+    "posizione": 17,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "368",
@@ -3109,6 +4099,28 @@
     "posizione": 8,
     "larghezza": 229,
     "altezza": 325
+  },
+  {
+    "numero": "371",
+    "squadra": "Sassuolo",
+    "nome": "Darryl Bakola",
+    "file": "assets/stickers/371.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 7,
+    "posizione": 16,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "372",
+    "squadra": "Sassuolo",
+    "nome": "Luca Lipani",
+    "file": "assets/stickers/372.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 7,
+    "posizione": 18,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "373",
@@ -3212,6 +4224,39 @@
     "altezza": 325
   },
   {
+    "numero": "382",
+    "squadra": "Torino",
+    "nome": "Adrian Ismajili",
+    "file": "assets/stickers/382.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 8,
+    "posizione": 3,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "383",
+    "squadra": "Torino",
+    "nome": "Saul Coco",
+    "file": "assets/stickers/383.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 8,
+    "posizione": 1,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "384",
+    "squadra": "Torino",
+    "nome": "Eray Comert",
+    "file": "assets/stickers/384.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 8,
+    "posizione": 2,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "385",
     "squadra": "Torino",
     "nome": "Pietro Comuzzo",
@@ -3233,6 +4278,17 @@
     "posizione": 16,
     "larghezza": 229,
     "altezza": 325
+  },
+  {
+    "numero": "387",
+    "squadra": "Torino",
+    "nome": "Ricardo Rodriguez",
+    "file": "assets/stickers/387.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 8,
+    "posizione": 4,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "388",
@@ -3257,6 +4313,28 @@
     "altezza": 325
   },
   {
+    "numero": "390",
+    "squadra": "Torino",
+    "nome": "Emirhan Ilkhan",
+    "file": "assets/stickers/390.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 8,
+    "posizione": 7,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "391",
+    "squadra": "Torino",
+    "nome": "Gvidas Gineitis",
+    "file": "assets/stickers/391.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 8,
+    "posizione": 6,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "392",
     "squadra": "Torino",
     "nome": "Nikola Vlasic",
@@ -3277,6 +4355,17 @@
     "posizione": 16,
     "larghezza": 229,
     "altezza": 321
+  },
+  {
+    "numero": "394",
+    "squadra": "Torino",
+    "nome": "Daniel Braganca",
+    "file": "assets/stickers/394.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 8,
+    "posizione": 5,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "395",
@@ -3390,6 +4479,17 @@
     "altezza": 325
   },
   {
+    "numero": "405",
+    "squadra": "Udinese",
+    "nome": "Juan Arizala",
+    "file": "assets/stickers/405.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 8,
+    "posizione": 9,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "406",
     "squadra": "Udinese",
     "nome": "Oumar Solet",
@@ -3399,6 +4499,28 @@
     "posizione": 2,
     "larghezza": 229,
     "altezza": 325
+  },
+  {
+    "numero": "407",
+    "squadra": "Udinese",
+    "nome": "Alessandro Zanoli",
+    "file": "assets/stickers/407.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 8,
+    "posizione": 11,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "408",
+    "squadra": "Udinese",
+    "nome": "Nicolò Bertola",
+    "file": "assets/stickers/408.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 8,
+    "posizione": 10,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "409",
@@ -3423,15 +4545,37 @@
     "altezza": 325
   },
   {
+    "numero": "411",
+    "squadra": "Udinese",
+    "nome": "James Abankwah",
+    "file": "assets/stickers/411.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 8,
+    "posizione": 8,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "412",
     "squadra": "Udinese",
     "nome": "Jakub Piotrowski",
     "file": "assets/stickers/412.webp",
-    "documento": "Document 1.docx.pdf",
-    "pagina": 2,
-    "posizione": 7,
-    "larghezza": 269,
-    "altezza": 377
+    "documento": "figurine7.pdf",
+    "pagina": 8,
+    "posizione": 14,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "414",
+    "squadra": "Udinese",
+    "nome": "Unai Gomez",
+    "file": "assets/stickers/414.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 8,
+    "posizione": 15,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "415",
@@ -3443,6 +4587,28 @@
     "posizione": 5,
     "larghezza": 227,
     "altezza": 321
+  },
+  {
+    "numero": "416",
+    "squadra": "Udinese",
+    "nome": "Lennon Miller",
+    "file": "assets/stickers/416.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 8,
+    "posizione": 13,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "417",
+    "squadra": "Udinese",
+    "nome": "Giorgi Chakvetadze",
+    "file": "assets/stickers/417.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 8,
+    "posizione": 12,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "418",
@@ -3511,26 +4677,48 @@
     "altezza": 398
   },
   {
+    "numero": "424",
+    "squadra": "Venezia",
+    "nome": "Filip Stankovic",
+    "file": "assets/stickers/424.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 9,
+    "posizione": 2,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
     "numero": "425",
     "squadra": "Venezia",
     "nome": "Lorenzo Montipò",
     "file": "assets/stickers/425.webp",
-    "documento": "Document 1.docx.pdf",
-    "pagina": 2,
-    "posizione": 8,
-    "larghezza": 263,
-    "altezza": 372
+    "documento": "figurine7.pdf",
+    "pagina": 9,
+    "posizione": 1,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "426",
     "squadra": "Venezia",
     "nome": "Joel Schingtienne",
     "file": "assets/stickers/426.webp",
-    "documento": "Document 1.docx.pdf",
-    "pagina": 2,
-    "posizione": 9,
-    "larghezza": 268,
-    "altezza": 378
+    "documento": "figurine7.pdf",
+    "pagina": 9,
+    "posizione": 10,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "427",
+    "squadra": "Venezia",
+    "nome": "Redouane Halhal",
+    "file": "assets/stickers/427.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 9,
+    "posizione": 5,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "428",
@@ -3548,11 +4736,55 @@
     "squadra": "Venezia",
     "nome": "Juan Jesus",
     "file": "assets/stickers/429.webp",
-    "documento": "Document 1.docx.pdf",
-    "pagina": 2,
-    "posizione": 11,
-    "larghezza": 257,
-    "altezza": 370
+    "documento": "figurine7.pdf",
+    "pagina": 9,
+    "posizione": 7,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "430",
+    "squadra": "Venezia",
+    "nome": "Ridgeciano Haps",
+    "file": "assets/stickers/430.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 9,
+    "posizione": 6,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "431",
+    "squadra": "Venezia",
+    "nome": "Matias Moreno",
+    "file": "assets/stickers/431.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 9,
+    "posizione": 8,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "432",
+    "squadra": "Venezia",
+    "nome": "Thierry Correia",
+    "file": "assets/stickers/432.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 9,
+    "posizione": 3,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "433",
+    "squadra": "Venezia",
+    "nome": "Antoine Hainaut",
+    "file": "assets/stickers/433.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 9,
+    "posizione": 4,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "434",
@@ -3564,6 +4796,39 @@
     "posizione": 6,
     "larghezza": 227,
     "altezza": 320
+  },
+  {
+    "numero": "435",
+    "squadra": "Venezia",
+    "nome": "Richie Sagrado",
+    "file": "assets/stickers/435.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 9,
+    "posizione": 9,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "436",
+    "squadra": "Venezia",
+    "nome": "Matteo Dagasso",
+    "file": "assets/stickers/436.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 9,
+    "posizione": 11,
+    "larghezza": 419,
+    "altezza": 600
+  },
+  {
+    "numero": "437",
+    "squadra": "Venezia",
+    "nome": "Kike Perez",
+    "file": "assets/stickers/437.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 9,
+    "posizione": 12,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "438",
@@ -3608,6 +4873,17 @@
     "posizione": 7,
     "larghezza": 227,
     "altezza": 320
+  },
+  {
+    "numero": "442",
+    "squadra": "Venezia",
+    "nome": "Andrea Adorante",
+    "file": "assets/stickers/442.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 9,
+    "posizione": 13,
+    "larghezza": 419,
+    "altezza": 600
   },
   {
     "numero": "443",
@@ -3696,6 +4972,17 @@
     "posizione": 2,
     "larghezza": 254,
     "altezza": 357
+  },
+  {
+    "numero": "452",
+    "squadra": "Nuove Firme in Città",
+    "nome": "John Stones",
+    "file": "assets/stickers/452.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 10,
+    "posizione": 3,
+    "larghezza": 418,
+    "altezza": 600
   },
   {
     "numero": "453",
@@ -3872,6 +5159,17 @@
     "posizione": 15,
     "larghezza": 284,
     "altezza": 397
+  },
+  {
+    "numero": "469",
+    "squadra": "Rookie",
+    "nome": "Federico Croci",
+    "file": "assets/stickers/469.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 10,
+    "posizione": 2,
+    "larghezza": 429,
+    "altezza": 600
   },
   {
     "numero": "470",
@@ -4138,6 +5436,17 @@
     "altezza": 385
   },
   {
+    "numero": "494",
+    "squadra": "Time Capsule",
+    "nome": "Zinedine Zidane",
+    "file": "assets/stickers/494.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 11,
+    "posizione": 1,
+    "larghezza": 415,
+    "altezza": 600
+  },
+  {
     "numero": "495",
     "squadra": "Time Capsule",
     "nome": "Giuseppe Signori",
@@ -4246,6 +5555,17 @@
     "posizione": 6,
     "larghezza": 299,
     "altezza": 429
+  },
+  {
+    "numero": "505",
+    "squadra": "Serie BKT",
+    "nome": "Scudetti: Arezzo / Ascoli",
+    "file": "assets/stickers/505.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 9,
+    "posizione": 14,
+    "larghezza": 528,
+    "altezza": 766
   },
   {
     "numero": "506",
@@ -4633,6 +5953,17 @@
     "altezza": 271,
     "composizione": "two",
     "nota": "Figurina composta mantenuta intera, senza separare le due metà."
+  },
+  {
+    "numero": "530",
+    "squadra": "Serie BKT",
+    "nome": "Divise: Pisa / Sampdoria",
+    "file": "assets/stickers/530.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 9,
+    "posizione": 15,
+    "larghezza": 428,
+    "altezza": 300
   },
   {
     "numero": "531",
@@ -5312,6 +6643,17 @@
     ],
     "larghezza": 800,
     "altezza": 560
+  },
+  {
+    "numero": "568",
+    "squadra": "Serie C",
+    "nome": "Scudetti: Casarano / Casertana / Catania / Cavese",
+    "file": "assets/stickers/568.webp",
+    "documento": "figurine7.pdf",
+    "pagina": 10,
+    "posizione": 1,
+    "larghezza": 566,
+    "altezza": 804
   },
   {
     "numero": "569",
