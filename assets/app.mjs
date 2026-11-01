@@ -1,6 +1,7 @@
 import { firebaseConfig, albumEdition } from '../config.js';
 import { STICKER_IMAGES, STICKER_LANDSCAPE_IMAGE_IDS } from './sticker-images.mjs?v=6';
 import { computeStats, exchangeMatch, parseCSV, sectionsFor, clampQty, compareStickerNumbers } from './core.mjs';
+import { downloadCollectionPdf } from './pdf-export.mjs';
 import { deriveSyncState } from './offline-state.mjs';
 import { computeAchievements, ACHIEVEMENTS } from './achievements.mjs';
 import {publicSummary, mergeClubProfile, needsClubPublish, normalizeClubProfile, recentClubAchievements} from './club.mjs';
@@ -66,6 +67,25 @@ function updateOfflineSetting(){
   const btn=$('#enable-offline');if(btn)btn.hidden=offlineEnabled||!canStoreOffline();
 }
 function isCatalogAvailable(){return state.loaded.album && state.loaded.catalog && state.items.length>0;}
+function updatePdfButtons(){
+  const catalog=state.accessGranted && state.loaded.catalog && state.items.length>0;
+  const personal=catalog && state.loaded.album;
+  const all=$('#download-catalog-pdf'),found=$('#download-found-pdf'),duplicates=$('#download-duplicates-pdf');
+  if(all)all.disabled=!catalog;
+  if(found)found.disabled=!personal;
+  if(duplicates)duplicates.disabled=!personal;
+}
+function exportPdf(mode){
+  if(!state.user||!state.accessGranted||!state.loaded.catalog||!state.items.length||(mode!=='catalogo'&&!state.loaded.album)){
+    toast('Attendi il caricamento del catalogo e del tuo album.',true);return;
+  }
+  try{
+    // Le modifiche ancora in attesa di sincronizzazione compaiono gia' nell'album:
+    // esportiamo gli stessi valori che l'utente vede in quel momento.
+    downloadCollectionPdf(state.items,{...state.counts,...state.pending},mode);
+    toast('PDF creato. Controlla la cartella Download del dispositivo.');
+  }catch(error){console.error('Esportazione PDF:',error);toast('Impossibile creare il PDF: '+errorText(error),true);}
+}
 window.addEventListener('online',updateSyncUI);
 window.addEventListener('online',()=>queueClubPublish());
 window.addEventListener('offline',updateSyncUI);
@@ -81,7 +101,7 @@ function authMode(register){registerMode=register;$('#auth-eyebrow').textContent
 const signedIn=()=>!!state.user;
 function clearListeners(){clearTimeout(clubPublishTimer);state.unsubs.forEach(fn=>fn());state.unsubs=[];if(state.peerUnsub){state.peerUnsub();state.peerUnsub=null;}}
 function clearMembershipListener(){if(state.memberUnsub){state.memberUnsub();state.memberUnsub=null;}}
-function resetState(){clearListeners();clearMembershipListener();state.user=null;state.profile=null;state.admin=false;state.accessGranted=false;state.accessRequests=[];state.memberships=[];state.items=[];state.counts={};state.pending={};state.pendingTokens={};state.peers=[];state.loaded={album:false,catalog:false};state.metadata={albumCache:true,catalogCache:true,albumPending:false,albumError:false,catalogError:false};state.achievementKey=null;state.achievementBaseline=null;state.achievementNotified=new Set();state.clubProfiles=[];state.clubSelected=null;state.clubLoaded=false;state.clubError="";state.clubFromCache=true;updateSyncUI();}
+function resetState(){clearListeners();clearMembershipListener();state.user=null;state.profile=null;state.admin=false;state.accessGranted=false;state.accessRequests=[];state.memberships=[];state.items=[];state.counts={};state.pending={};state.pendingTokens={};state.peers=[];state.loaded={album:false,catalog:false};state.metadata={albumCache:true,catalogCache:true,albumPending:false,albumError:false,catalogError:false};state.achievementKey=null;state.achievementBaseline=null;state.achievementNotified=new Set();state.clubProfiles=[];state.clubSelected=null;state.clubLoaded=false;state.clubError="";state.clubFromCache=true;updateSyncUI();updatePdfButtons();}
 function getProfileRef(){return doc(db,'users',state.user.uid);}
 function getAlbumRef(){return doc(db,'users',state.user.uid,'album','main');}
 function stats(){return computeStats(state.items, {...state.counts,...state.pending});}
@@ -223,7 +243,7 @@ function renderAchievements(){
       ?'Stai vedendo progressi locali o non ancora confermati: eventuali nuovi premi saranno confermati alla sincronizzazione.':
       'Premi calcolati sulle figurine del catalogo attualmente importato.';
 }
-function renderEverything(){renderStats();renderTeams();renderDashboardClub();renderAchievements();if(state.view==='album')renderAlbum();if(state.view==='scambi')renderTrades();queueClubPublish();}
+function renderEverything(){updatePdfButtons();renderStats();renderTeams();renderDashboardClub();renderAchievements();if(state.view==='album')renderAlbum();if(state.view==='scambi')renderTrades();queueClubPublish();}
 function mark(number,next){
   if(!state.user||!state.accessGranted)return;
   if(!isCatalogAvailable()){
@@ -471,6 +491,9 @@ function demoItems(){const names=['Atalanta','Bologna','Como','Fiorentina','Geno
 async function handleImport(items){if(!state.admin)throw new Error('Non hai permessi di amministratore.');if(!navigator.onLine)throw new Error('L’importazione del catalogo richiede Internet.');if(!confirm(`Aggiornare il catalogo condiviso con ${items.length} figurine? Le figurine non presenti nel file scompariranno dalla lista, ma le quantità personali non verranno cancellate.`))return;$('#import-catalog').disabled=true;$('#load-demo').disabled=true;try{await importCatalog(items);toast(`Importate ${items.length} figurine. Catalogo aggiornato.`);}finally{$('#import-catalog').disabled=false;$('#load-demo').disabled=false;}}
 function exportCatalog(){if(!state.items.length){toast('Catalogo vuoto.',true);return;}const fields=['numero','squadra','sezione','titolo','sottotitolo','tipo'];const csv=[fields.join(','),...state.items.map(s=>[s.number,s.team,s.section,s.title,s.subtitle,s.kind].map(v=>'"'+String(v??'').replaceAll('"','""')+'"').join(','))].join('\r\n');const url=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='figurine_club_catalogo.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 function wireUI(){
+  $('#download-catalog-pdf').addEventListener('click',()=>exportPdf('catalogo'));
+  $('#download-found-pdf').addEventListener('click',()=>exportPdf('trovate'));
+  $('#download-duplicates-pdf').addEventListener('click',()=>exportPdf('doppioni'));
   $('#enable-offline').addEventListener('click',()=>{saveDeviceChoice('yes');location.reload();});
   window.addEventListener('hashchange',()=>{if(signedIn()&&state.accessGranted)route();});$('#menu-button').addEventListener('click',()=>document.documentElement.classList.toggle('menu-open'));$('#menu-overlay').addEventListener('click',()=>document.documentElement.classList.remove('menu-open'));document.addEventListener('keydown',e=>{if(e.key==='Escape')document.documentElement.classList.remove('menu-open');});
 $('#switch-auth').addEventListener('click',()=>authMode(!registerMode));$('#toggle-password').addEventListener('click',()=>{const input=$('#auth-password');input.type=input.type==='password'?'text':'password';});

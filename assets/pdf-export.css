@@ -1,0 +1,32 @@
+/* Esportazioni PDF - dashboard e album. Mantiene la grafica e la responsivita' originali. */
+.pdf-export-dashboard-actions{display:flex;align-items:center;justify-content:flex-end;gap:11px;flex-wrap:wrap}
+.pdf-download-button{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:12px 15px;min-height:42px;border-radius:11px;font-size:11px;letter-spacing:0;font-weight:850;text-align:center;white-space:normal;line-height:1.35;box-shadow:0 8px 22px #142c210d}
+.pdf-download-button .icon{width:16px;height:16px;flex:0 0 16px}
+.pdf-download-button:disabled{opacity:.52;cursor:wait;transform:none;box-shadow:none}
+.pdf-download-button:focus-visible{outline:3px solid #739f46;outline-offset:3px}
+.pdf-download-catalog{background:#c5f477;color:#18321e;border-color:#c5f477}
+.pdf-download-catalog:not(:disabled):hover{background:#b2e661;border-color:#b2e661}
+.pdf-export-album-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.pdf-download-found{background:#fff;color:#25442f;border:1px solid #cbdcce}
+.pdf-download-found:not(:disabled):hover{background:#f1f8ea;border-color:#95bc92}
+.pdf-download-duplicates{background:#173a2a;color:#fff;border:1px solid #173a2a}
+.pdf-download-duplicates:not(:disabled):hover{background:#28523b;border-color:#28523b}
+#view-album>.page-head{align-items:center}
+@media(max-width:1130px){
+  #view-dashboard .stadium-welcome{align-items:flex-start}
+  .pdf-export-dashboard-actions{max-width:300px}
+  .pdf-export-album-actions{max-width:320px}
+}
+@media(max-width:760px){
+  #view-album>.page-head{display:flex;flex-direction:column;align-items:stretch;gap:14px}
+  .pdf-export-album-actions{max-width:none;justify-content:stretch}
+  .pdf-export-album-actions>.btn{flex:1 1 160px}
+  #view-dashboard .stadium-welcome{display:flex;flex-direction:column;align-items:stretch;gap:13px}
+  .pdf-export-dashboard-actions{max-width:none;justify-content:flex-start}
+  .pdf-download-catalog{width:100%}
+}
+@media(max-width:450px){
+  .pdf-export-album-actions{flex-direction:column;align-items:stretch;gap:8px}
+  .pdf-export-album-actions>.btn{width:100%;flex:auto;min-height:43px}
+  .pdf-download-button{font-size:11px;padding:11px 12px}
+}
