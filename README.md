@@ -28,3 +28,15 @@ MIT per il codice. Sono incluse 87 fotografie estratte dai PDF forniti dall'uten
 Sono state integrate 87 immagini nel catalogo esistente, senza modificare Firebase.
 Vedi [AGGIORNAMENTO_IMMAGINI_GITHUB_FIREBASE.md](AGGIORNAMENTO_IMMAGINI_GITHUB_FIREBASE.md)
 per i file modificati e le istruzioni di pubblicazione.
+
+## Esportazione PDF (novembre 2026)
+
+Puoi scaricare il **catalogo completo** dalla Panoramica; dalla pagina **Il mio album**
+puoi scaricare le **figurine trovate** (una riga per figurina, senza quantità) e
+le **figurine doppie** (con il solo numero di copie scambiabili: totale meno una).
+I PDF includono numero, nome, squadra, sezione, tipologia e dettagli presenti nel
+catalogo, nell'ordine dell'app. Vengono creati localmente dal browser, senza
+nuove scritture su Firebase. Il generatore e gli stili sono precaricati nella PWA.
+
+Per i file da aggiornare su GitHub e le istruzioni, vedi
+[AGGIORNAMENTO_PDF_GITHUB.md](AGGIORNAMENTO_PDF_GITHUB.md).
