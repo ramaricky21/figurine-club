@@ -40,3 +40,9 @@ nuove scritture su Firebase. Il generatore e gli stili sono precaricati nella PW
 
 Per i file da aggiornare su GitHub e le istruzioni, vedi
 [AGGIORNAMENTO_PDF_GITHUB.md](AGGIORNAMENTO_PDF_GITHUB.md).
+
+## Scambi programmati (novembre 2026)
+
+La sezione **Scambi** consente ora di scegliere più figurine da offrire e ricevere, inviare proposte agli amici, accettare o rifiutare e creare controproposte **manuali**. Le prenotazioni appaiono accanto alle figurine nel confronto, senza modificare gli album. Le richieste sono private fra i due partecipanti e vengono salvate su Firestore nella raccolta `tradeProposals`.
+
+**Prima di pubblicare i nuovi file su GitHub Pages è obbligatorio aggiornare le regole di Firebase** usando `firestore.rules`. Leggi [AGGIORNAMENTO_SCAMBI_PROGRAMMATI_GITHUB_FIREBASE.md](AGGIORNAMENTO_SCAMBI_PROGRAMMATI_GITHUB_FIREBASE.md) per le istruzioni.

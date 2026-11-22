@@ -48,6 +48,66 @@ service cloud.firestore {
         && request.resource.data.missing.size() <= 5000;
     }
 
+    // Nuovi scambi: visibili solo ai due partecipanti, mai all'intero Club.
+    // La raccolta tradeProposals e' separata da album/main e da tradeSheets.
+    function validTradeProposal() {
+      let d = request.resource.data;
+      return d.keys().hasOnly(['partyIds','initiatorId','recipientId','initiatorName','recipientName',
+                  'fromInitiator','fromRecipient','pendingFor','lastActor','status',
+                  'revision','createdAt','updatedAt'])
+        && d.keys().hasAll(['partyIds','initiatorId','recipientId','initiatorName','recipientName',
+                  'fromInitiator','fromRecipient','pendingFor','lastActor','status',
+                  'revision','createdAt','updatedAt'])
+        && d.initiatorId is string && d.initiatorId.size() > 0
+        && d.recipientId is string && d.recipientId.size() > 0
+        && d.initiatorId != d.recipientId
+        && d.partyIds is list && d.partyIds.size() == 2
+        && d.partyIds[0] == d.initiatorId && d.partyIds[1] == d.recipientId
+        && d.initiatorName is string && d.initiatorName.size() >= 2 && d.initiatorName.size() <= 40
+        && d.recipientName is string && d.recipientName.size() >= 2 && d.recipientName.size() <= 40
+        && d.fromInitiator is list && d.fromInitiator.size() > 0 && d.fromInitiator.size() <= 50
+        && d.fromRecipient is list && d.fromRecipient.size() > 0 && d.fromRecipient.size() <= 50
+        && d.pendingFor is string && d.lastActor is string
+        && d.status in ['pending','confirmed','rejected','cancelled','completed']
+        && d.revision is int && d.revision >= 1 && d.revision <= 1000
+        && d.createdAt is timestamp && d.updatedAt is timestamp
+        && d.createdAt <= request.time && d.updatedAt == request.time;
+    }
+    function sameTradeLists() {
+      return request.resource.data.fromInitiator == resource.data.fromInitiator
+        && request.resource.data.fromRecipient == resource.data.fromRecipient;
+    }
+    function tradeTransition() {
+      let old = resource.data;
+      let newer = request.resource.data;
+      let isRecipientTurn = old.status == 'pending' && old.pendingFor == request.auth.uid;
+      let stableRevision = newer.revision == old.revision;
+      return (
+        // Accettazione o rifiuto: SOLO chi deve rispondere. Il contenuto e' immutabile.
+        (isRecipientTurn && stableRevision && sameTradeLists()
+          && newer.pendingFor == '' && newer.status in ['confirmed','rejected'])
+        // Controproposta manuale: cambia almeno una lista, inverte il turno.
+        || (isRecipientTurn && newer.status == 'pending'
+          && newer.pendingFor == old.lastActor
+          && newer.revision == old.revision + 1
+          && (newer.fromInitiator != old.fromInitiator || newer.fromRecipient != old.fromRecipient))
+        // Il proponente puo' correggere la propria richiesta prima della risposta;
+        // il destinatario deve approvare la versione aggiornata.
+        || (old.status == 'pending' && old.lastActor == request.auth.uid
+          && newer.status == 'pending' && newer.pendingFor == old.pendingFor
+          && newer.revision == old.revision + 1
+          && (newer.fromInitiator != old.fromInitiator || newer.fromRecipient != old.fromRecipient))
+        // Ritiro della proposta da parte dell'ultimo proponente, oppure
+        // annullamento di una prenotazione gia' confermata da uno dei due.
+        || (newer.status == 'cancelled' && newer.pendingFor == ''
+          && stableRevision && sameTradeLists()
+          && (old.status == 'confirmed' || (old.status == 'pending' && old.lastActor == request.auth.uid)))
+        // Segnare come effettuato non aggiorna mai l'album.
+        || (old.status == 'confirmed' && newer.status == 'completed'
+          && newer.pendingFor == '' && stableRevision && sameTradeLists())
+      );
+    }
+
     // Percentuali pubbliche per 15 traguardi: solamente interi da 0 a 100.
     // Le vecchie schede vengono aggiornate automaticamente dal nuovo client.
     function validAwardPercent(progress,id) {
@@ -182,6 +242,33 @@ service cloud.firestore {
         ((owner(uid) && canUseClub()) || adminSeedForApproved(uid));
       allow update: if owner(uid) && canUseClub() && validClubProfile();
       allow delete: if owner(uid) && canUseClub() || admin();
+    }
+
+    match /tradeProposals/{proposalId} {
+      // Le query del client usano where('partyIds','array-contains',auth.uid).
+      allow get, list: if canUseClub() && request.auth.uid in resource.data.partyIds;
+      allow create: if canUseClub() && validTradeProposal()
+        && request.auth.uid == request.resource.data.initiatorId
+        && request.resource.data.lastActor == request.auth.uid
+        && request.resource.data.status == 'pending'
+        && request.resource.data.pendingFor == request.resource.data.recipientId
+        && request.resource.data.revision == 1
+        && request.resource.data.createdAt == request.time
+        && (exists(/databases/$(database)/documents/admins/$(request.resource.data.recipientId))
+          || (exists(/databases/$(database)/documents/memberships/$(request.resource.data.recipientId))
+            && get(/databases/$(database)/documents/memberships/$(request.resource.data.recipientId)).data.approved == true));
+      allow update: if canUseClub()
+        && request.auth.uid in resource.data.partyIds
+        && validTradeProposal()
+        && request.resource.data.partyIds == resource.data.partyIds
+        && request.resource.data.initiatorId == resource.data.initiatorId
+        && request.resource.data.recipientId == resource.data.recipientId
+        && request.resource.data.initiatorName == resource.data.initiatorName
+        && request.resource.data.recipientName == resource.data.recipientName
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.lastActor == request.auth.uid
+        && tradeTransition();
+      allow delete: if false;
     }
 
     match /tradeSheets/{uid} {
