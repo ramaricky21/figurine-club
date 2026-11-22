@@ -21,5 +21,5 @@ test('Menu mobile ha altezza dinamica e scorrimento indipendente',()=>{
 test('Risorse aggiornate e nuova cache per installazioni PWA precedenti',()=>{
  assert.match(html,/assets\/refined\.css\?v=4/);
  assert.match(sw,/assets\/refined\.css\?v=4/);
- assert.match(sw,/const CACHE_VERSION='stadium2-pdf-export-20261101-v1'/);
+ assert.match(sw,/const CACHE_VERSION='stadium2-trade-proposals-20261122-v1'/);
 });
