@@ -4,3 +4,7 @@
 
 /* Solo figurine composte: tutti i componenti A/B/C/D leggibili anche sul telefono. */
 .sticker-card.is-composite .sticker-details h3,.sticker-card.is-composite .sticker-details p{white-space:normal;overflow:visible;text-overflow:clip}
+
+/* Navigazione superiore dell’album: stessa grafica e pulsanti del piè di pagina. */
+.pagination-top{margin:0 0 24px;}
+.pagination-top[hidden]{display:none;}
