@@ -5,6 +5,7 @@ import { downloadCollectionPdf } from './pdf-export.mjs';
 import { deriveSyncState } from './offline-state.mjs';
 import { computeAchievements, ACHIEVEMENTS } from './achievements.mjs';
 import {publicSummary, mergeClubProfile, needsClubPublish, normalizeClubProfile, recentClubAchievements} from './club.mjs';
+import {tradeActive,tradeOtherId,tradeOtherName,ownSides,tradeAvailability,validateTradeSelection,proposalPayload,changesFromMyView,sameStickers} from './trade-proposals.mjs';
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
 import {
   getAuth, onAuthStateChanged, createUserWithEmailAndPassword,
@@ -25,7 +26,7 @@ function correctedCatalogItem(item){
   const title=CATALOG_NAME_CORRECTIONS[String(item.number)];
   return title&&item.title!==title?{...item,title}:item;
 }
-const state={user:null,profile:null,admin:false,accessGranted:false,memberUnsub:null,accessRequests:[],memberships:[],items:[],counts:{},pending:{},pendingTokens:{},peers:[],filters:{q:'',team:'',section:'',status:''},page:1,pageSize:24,loaded:{album:false,catalog:false},metadata:{albumCache:true,catalogCache:true,albumPending:false,albumError:false,catalogError:false},unsubs:[],peerUnsub:null,view:'dashboard',busy:false,achievementKey:null,achievementBaseline:null,achievementNotified:new Set(),clubProfiles:[],clubSelected:null,clubLoaded:false,clubError:"",clubFromCache:true};
+const state={user:null,profile:null,admin:false,accessGranted:false,memberUnsub:null,accessRequests:[],memberships:[],items:[],counts:{},pending:{},pendingTokens:{},peers:[],filters:{q:'',team:'',section:'',status:''},page:1,pageSize:24,loaded:{album:false,catalog:false},metadata:{albumCache:true,catalogCache:true,albumPending:false,albumError:false,catalogError:false},unsubs:[],peerUnsub:null,view:'dashboard',busy:false,achievementKey:null,achievementBaseline:null,achievementNotified:new Set(),clubProfiles:[],clubSelected:null,clubLoaded:false,clubError:"",clubFromCache:true,proposals:[],proposalsLoaded:false,proposalUnsub:null,tradeTab:'find',tradePartnerId:'',tradeComparing:false,tradeSelected:{offer:new Set(),receive:new Set()},tradeEditing:'',tradeEditSelected:{offer:new Set(),receive:new Set()},proposalBusy:false};
 let auth,db;
 let offlineEnabled=false;
 const DEVICE_KEY='figurine-club:trusted-offline-device:v1';
@@ -99,9 +100,9 @@ function authError(message){const el=$('#auth-error');el.textContent=message;el.
 let registerMode=false;
 function authMode(register){registerMode=register;$('#auth-eyebrow').textContent=register?'IL TUO ALBUM COMINCIA QUI':'BENTORNATO, COLLEZIONISTA';$('#auth-title').innerHTML=register?'Crea il tuo album<span class="heading-period">.</span>':'Accedi al tuo album<span class="heading-period">.</span>';$('#auth-subtitle').textContent=register?'Registrati ora; potrai entrare dopo l’approvazione dell’amministratore.':'Riprendi da dove avevi lasciato.';$('#name-fields').hidden=!register;$('#display-name').required=register;$('#auth-password').autocomplete=register?'new-password':'current-password';$('#auth-submit').textContent=register?'Richiedi l’accesso →':'Entra nel mio album →';$('#auth-switch').firstChild.textContent=register?'Hai già un account? ':'Non hai un account? ';$('#switch-auth').textContent=register?'Accedi ↗':'Registrati gratis ↗';authError('');}
 const signedIn=()=>!!state.user;
-function clearListeners(){clearTimeout(clubPublishTimer);state.unsubs.forEach(fn=>fn());state.unsubs=[];if(state.peerUnsub){state.peerUnsub();state.peerUnsub=null;}}
+function clearListeners(){clearTimeout(clubPublishTimer);state.unsubs.forEach(fn=>fn());state.unsubs=[];if(state.peerUnsub){state.peerUnsub();state.peerUnsub=null;}if(state.proposalUnsub){state.proposalUnsub();state.proposalUnsub=null;}}
 function clearMembershipListener(){if(state.memberUnsub){state.memberUnsub();state.memberUnsub=null;}}
-function resetState(){clearListeners();clearMembershipListener();state.user=null;state.profile=null;state.admin=false;state.accessGranted=false;state.accessRequests=[];state.memberships=[];state.items=[];state.counts={};state.pending={};state.pendingTokens={};state.peers=[];state.loaded={album:false,catalog:false};state.metadata={albumCache:true,catalogCache:true,albumPending:false,albumError:false,catalogError:false};state.achievementKey=null;state.achievementBaseline=null;state.achievementNotified=new Set();state.clubProfiles=[];state.clubSelected=null;state.clubLoaded=false;state.clubError="";state.clubFromCache=true;updateSyncUI();updatePdfButtons();}
+function resetState(){clearListeners();clearMembershipListener();state.user=null;state.profile=null;state.admin=false;state.accessGranted=false;state.accessRequests=[];state.memberships=[];state.items=[];state.counts={};state.pending={};state.pendingTokens={};state.peers=[];state.loaded={album:false,catalog:false};state.metadata={albumCache:true,catalogCache:true,albumPending:false,albumError:false,catalogError:false};state.achievementKey=null;state.achievementBaseline=null;state.achievementNotified=new Set();state.clubProfiles=[];state.clubSelected=null;state.clubLoaded=false;state.clubError="";state.clubFromCache=true;state.proposals=[];state.proposalsLoaded=false;state.tradeTab='find';state.tradePartnerId='';state.tradeComparing=false;state.tradeSelected={offer:new Set(),receive:new Set()};state.tradeEditing='';state.tradeEditSelected={offer:new Set(),receive:new Set()};state.proposalBusy=false;updateSyncUI();updatePdfButtons();}
 function getProfileRef(){return doc(db,'users',state.user.uid);}
 function getAlbumRef(){return doc(db,'users',state.user.uid,'album','main');}
 function stats(){return computeStats(state.items, {...state.counts,...state.pending});}
@@ -382,9 +383,228 @@ async function bootstrapClubMembers(){
   }catch(e){console.warn('Il Club: inizializzazione elenco membri incompleta.',e);}
   finally{clubBootstrapBusy=false;}
 }
-function renderTrades(){const shared=!!state.profile?.shareTrades;$('#trade-disabled').hidden=shared;$('#trade-enabled').hidden=!shared;if(!shared)return;const select=$('#partner');const selected=select.value;select.innerHTML='<option value="">Seleziona un amico...</option>'+state.peers.map(p=>`<option value="${esc(p.id)}">${esc(p.displayName)}</option>`).join('');select.value=state.peers.some(p=>p.id===selected)?selected:'';if(!state.peers.length)$('#trade-results').innerHTML='<div class="section-card"><p class="muted-copy">Nessun altro amico ha ancora attivato la partecipazione agli scambi.</p></div>';
-else if(!select.value)$('#trade-results').innerHTML='<div class="empty-small">Seleziona un amico per confrontare i doppioni.</div>';}
-function compareTrades(){const peer=state.peers.find(p=>p.id===$('#partner').value);if(!peer){toast('Seleziona un amico.',true);return;}const match=exchangeMatch(state.items,{...state.counts,...state.pending},peer);const list=items=>items.length?items.map(s=>`<div class="match-item"><div class="match-number">#${String(s.number).padStart(3,'0')}</div><div><strong>${esc(s.title)}</strong><span>${esc(s.team)} · ${esc(s.section)}</span></div></div>`).join(''):'<div class="empty-small">Nessuna corrispondenza per il momento.</div>';$('#trade-results').innerHTML=`<div class="trade-match-header"><div class="avatar peer-avatar">${esc(peer.displayName?.[0]?.toUpperCase()||'F')}</div><div><span class="eyebrow">CONFRONTO CON</span><h2>${esc(peer.displayName)}</h2></div></div><div class="match-grid"><div class="section-card"><div class="section-heading"><div><span class="eyebrow">L’AMICO HA, TU CERCHI</span><h2>Puoi ricevere <span class="small-count">${match.receive.length}</span></h2></div></div><div class="match-list">${list(match.receive)}</div></div><div class="section-card"><div class="section-heading"><div><span class="eyebrow">TU HAI, L’AMICO CERCA</span><h2>Puoi offrire <span class="small-count">${match.offer.length}</span></h2></div></div><div class="match-list">${list(match.offer)}</div></div></div><p class="trade-footnote">I confronti indicano possibili scambi, senza trasferire automaticamente figurine. Accordatevi direttamente.</p>`;}
+function tradeCounts(){return {...state.counts,...state.pending};}
+function tradeMatchFor(peer){return exchangeMatch(state.items,tradeCounts(),peer);}
+function tradeItem(number){return state.items.find(s=>String(s.number)===String(number));}
+function tradeCode(number){return '#'+String(number).padStart(3,'0');}
+function tradePhoto(number,title){const src=STICKER_IMAGES[String(number)];return src?`<img class="sticker-thumb" loading="lazy" decoding="async" src="${esc(src)}" alt="Figurina ${esc(title||number)}">`:`<span class="match-number">${esc(tradeCode(number))}</span>`;}
+function tradeOwnAvailability(number,side,excludeId=''){
+  return tradeAvailability(state.proposals,state.user?.uid,tradeCounts(),String(number),side,excludeId);
+}
+function tradeBookedText(number,side,excludeId=''){
+  const info=tradeOwnAvailability(number,side,excludeId);
+  if(!info.reserved.length)return side==='offer'?`${info.free} doppione${info.free===1?'':'i'} disponibile${info.free===1?'':'i'}`:'Figurina mancante · disponibile per lo scambio';
+  const names=[...new Set(info.reserved.map(p=>tradeOtherName(p,state.user.uid)))].join(', ');
+  const stage=info.reserved.some(p=>p.status==='confirmed')?'confermato':'in attesa di risposta';
+  if(side==='offer')return info.free?`${info.reserved.length} copia/e prenotata/e con ${names} (${stage}) · ${info.free} libera/e`:`Già prenotata per uno scambio con ${names} (${stage})`;
+  return `Già in arrivo da ${names} · scambio ${stage}`;
+}
+function tradeSelectionRow(item,side,editor=false,excludeId=''){
+  const n=String(item.number),info=tradeOwnAvailability(n,side,excludeId);
+  const sel=editor?state.tradeEditSelected[side]:state.tradeSelected[side];
+  const checked=sel.has(n);
+  const blocked=info.blocked&&!checked;
+  const extra=editor?(checked?'Inclusa nella proposta':blocked?tradeBookedText(n,side,excludeId):'Seleziona per aggiungere alla proposta'):tradeBookedText(n,side);
+  return `<div class="match-item trade-selectable ${checked?'is-selected':''} ${blocked?'is-unavailable':''}" data-trade-select="${esc(side)}" data-trade-item="${esc(n)}" data-trade-editor="${editor?'1':'0'}" role="checkbox" tabindex="${blocked?'-1':'0'}" aria-checked="${checked}" aria-disabled="${blocked}" aria-label="${esc(tradeCode(n)+' '+item.title+(blocked?', già prenotata':''))}">
+    <div class="sticker-thumb-wrap">${tradePhoto(n,item.title)}</div>
+    <div class="match-content"><strong><span class="match-number-inline">${esc(tradeCode(n))}</span> ${esc(item.title)}</strong><span class="match-subline">${esc(item.team||'')} · ${esc(item.section||'')}</span><span class="match-extra ${info.reserved.length?'is-booked':'is-available'}">${esc(extra)}</span></div>
+    <span class="trade-check" aria-hidden="true">${checked?'<svg viewBox="0 0 28 28"><path d="M3.2 14.5 L11 22.2 L24.5 5.3"/></svg>':''}</span>
+  </div>`;
+}
+function tradeSelectionGrid(receiveItems,offerItems,editor=false,excludeId=''){
+  const labels=editor?['LA PROPOSTA AGGIORNATA','DA RICEVERE','DA OFFRIRE']:['L’AMICO HA, TU CERCHI','PUOI RICEVERE','PUOI OFFRIRE'];
+  const panel=(side,items)=>`<div class="section-card"><div class="section-heading"><div><span class="eyebrow">${side==='receive'?labels[0]:editor?labels[0]:'TU HAI, L’AMICO CERCA'}</span><h2>${side==='receive'?(editor?'Da ricevere':'Puoi ricevere'):(editor?'Da offrire':'Puoi offrire')} <span class="small-count">${items.length}</span></h2></div><span class="${side==='receive'?'pill-green':'pill-blue'}">${side==='receive'?'↓ Ricevi':'↑ Offri'}</span></div><div class="match-list">${items.length?items.map(item=>tradeSelectionRow(item,side,editor,excludeId)).join(''):'<div class="empty-small">Nessuna figurina disponibile.</div>'}</div></div>`;
+  return `<div class="match-grid">${panel('receive',receiveItems)}${panel('offer',offerItems)}</div>`;
+}
+function renderTradeComparison(){
+  const root=$('#trade-results');if(!state.tradeComparing){root.innerHTML=state.peers.length?'<div class="empty-small">Seleziona un amico per confrontare i doppioni.</div>':'<div class="section-card"><p class="muted-copy">Nessun altro amico ha ancora attivato la partecipazione agli scambi.</p></div>';return;}
+  const peer=state.peers.find(p=>p.id===state.tradePartnerId);
+  if(!peer){root.innerHTML='<div class="empty-small">L’amico selezionato non è più disponibile per gli scambi.</div>';return;}
+  const match=tradeMatchFor(peer);
+  for(const side of ['offer','receive'])for(const n of [...state.tradeSelected[side]]){
+    if(!match[side].some(item=>String(item.number)===n)||tradeOwnAvailability(n,side).blocked)state.tradeSelected[side].delete(n);
+  }
+  const a=state.tradeSelected.receive.size,b=state.tradeSelected.offer.size;
+  root.innerHTML=`<div class="trade-match-header"><div class="avatar peer-avatar">${esc(peer.displayName?.[0]?.toUpperCase()||'F')}</div><div><span class="eyebrow">CONFRONTO CON</span><h2>${esc(peer.displayName)}</h2></div></div>
+    <div class="trade-hint-row"><span class="trade-select-hint">Seleziona ogni figurina da ricevere e offrire. Quelle già prenotate non sono selezionabili.</span><span class="trade-selection-count">${a} da ricevere · ${b} da offrire</span></div>
+    ${tradeSelectionGrid(match.receive,match.offer)}
+    <div class="trade-actionbar"><div><strong>${a} da ricevere · ${b} da offrire</strong><p>Le prenotazioni non modificano la quantità nell’album.</p></div><button type="button" class="btn btn-primary" data-trade-action="send" ${a&&b&&state.proposalsLoaded?'':'disabled'}>Conferma e invia proposta →</button></div>
+    <p class="trade-footnote">Le figurine restano nel tuo album: le prenotazioni sono promemoria per organizzare lo scambio.</p>`;
+}
+function tradeStatus(p){
+  if(p.status==='pending')return p.pendingFor===state.user.uid?['Richiesta da valutare','status-modified']:['In attesa di risposta','status-wait'];
+  return {confirmed:['Confermato','status-confirmed'],rejected:['Rifiutato','status-rejected'],cancelled:['Annullato','status-rejected'],completed:['Effettuato','status-confirmed']}[p.status]||['Stato sconosciuto','status-wait'];
+}
+function tradeProgramItem(number){const item=tradeItem(number);return `<div class="program-item">${tradePhoto(number,item?.title).replace('class="sticker-thumb"','class="sticker-thumb"')}<span><strong>${esc(tradeCode(number))} ${esc(item?.title||'Figurina')}</strong><small>${esc(item?.team||'')} ${item?.section?'· '+esc(item.section):''}</small></span></div>`;}
+function tradeEditorOptions(p){
+  const original=ownSides(p,state.user.uid),peer=state.peers.find(x=>x.id===tradeOtherId(p,state.user.uid));
+  const match=peer?tradeMatchFor(peer):{receive:[],offer:[]};
+  const result={};
+  for(const side of ['offer','receive']){
+    const ids=[...new Set([...original[side],...match[side].map(s=>String(s.number))])];
+    result[side]=ids.map(tradeItem).filter(Boolean);
+  }
+  return result;
+}
+function tradeEditorMarkup(p){
+  if(state.tradeEditing!==p.id)return '';
+  const items=tradeEditorOptions(p),a=state.tradeEditSelected.receive.size,b=state.tradeEditSelected.offer.size,ownPending=p.lastActor===state.user.uid;
+  return `<div class="proposal-editor" id="trade-editor-${esc(p.id)}"><div class="editor-title">Modifica manualmente lo scambio</div><p class="editor-description">Scegli tu quali figurine mantenere, aggiungere o togliere in entrambe le liste. Nessuna modifica viene eseguita automaticamente. La controproposta sarà inviata soltanto dopo la conferma.</p>
+    ${tradeSelectionGrid(items.receive,items.offer,true,p.id)}
+    <div class="editor-summary"><span>${a} da ricevere · ${b} da offrire</span><div class="editor-buttons"><button class="btn btn-outline" type="button" data-trade-action="close-edit">Annulla</button><button class="btn btn-primary" type="button" data-trade-action="counter" data-trade-id="${esc(p.id)}" ${a&&b?'':'disabled'}>${ownPending?'Salva e reinvia proposta →':'Invia controproposta →'}</button></div></div></div>`;
+}
+function renderTradePlans(){
+  const active=state.proposals.filter(tradeActive).length;
+  $('#trade-planned-count').textContent=String(active);
+  const root=$('#trade-planned-list');
+  if(!state.proposalsLoaded){root.innerHTML='<div class="empty-small">Caricamento delle proposte…</div>';return;}
+  if(!state.proposals.length){root.innerHTML='<div class="empty-small">Non ci sono ancora scambi programmati. Crea una proposta da “Trova uno scambio”.</div>';return;}
+  const ordered=[...state.proposals].sort((a,b)=>(b.updatedAt?.seconds||0)-(a.updatedAt?.seconds||0));
+  root.innerHTML=ordered.map(p=>{
+    const other=tradeOtherName(p,state.user.uid)||'Collezionista';const side=ownSides(p,state.user.uid);
+    const [status,css]=tradeStatus(p);const incoming=p.status==='pending'&&p.pendingFor===state.user.uid;
+    let actions='';
+    if(incoming)actions=`<button type="button" class="btn btn-primary" data-trade-action="accept" data-trade-id="${esc(p.id)}">Accetta proposta</button><button type="button" class="btn btn-outline" data-trade-action="edit" data-trade-id="${esc(p.id)}">Proponi modifica</button><button type="button" class="button-danger" data-trade-action="reject" data-trade-id="${esc(p.id)}">Rifiuta</button>`;
+    else if(p.status==='pending')actions=`<span class="trade-available-note">In attesa che ${esc(other)} risponda. Potrà accettare, modificare o rifiutare.</span><button type="button" class="btn btn-outline" data-trade-action="edit" data-trade-id="${esc(p.id)}">Modifica proposta</button><button type="button" class="btn btn-outline" data-trade-action="cancel" data-trade-id="${esc(p.id)}">Ritira proposta</button>`;
+    else if(p.status==='confirmed')actions=`<span class="trade-available-note">Entrambi avete approvato la stessa proposta.</span><button type="button" class="btn btn-outline" data-trade-action="complete" data-trade-id="${esc(p.id)}">Segna come effettuato</button><button type="button" class="button-danger" data-trade-action="cancel" data-trade-id="${esc(p.id)}">Annulla prenotazione</button>`;
+    else actions='<span class="trade-available-note">Scambio concluso · queste figurine non sono più prenotate.</span>';
+    return `<div class="section-card program-card" data-trade-card="${esc(p.id)}"><div class="program-head"><div class="program-person"><div class="program-avatar">${esc(other[0]?.toUpperCase()||'F')}</div><div><strong>${esc(other)}</strong><small>SCAMBIO #${esc(p.id.slice(0,7).toUpperCase())} · ${p.initiatorId===state.user.uid?'Inviato':'Ricevuto'} · Versione ${Number(p.revision)||1}</small></div></div><span class="program-status ${css}">${status}</span></div>
+      <div class="program-columns"><div class="program-col"><div class="program-col-head">↓ DA RICEVERE <span>${side.receive.length} figurine</span></div>${side.receive.map(tradeProgramItem).join('')||'<span class="program-empty">Nessuna</span>'}</div><div class="program-col"><div class="program-col-head offer">↑ DA OFFRIRE <span>${side.offer.length} figurine</span></div>${side.offer.map(tradeProgramItem).join('')||'<span class="program-empty">Nessuna</span>'}</div></div>
+      <div class="program-actions">${actions}</div>${tradeEditorMarkup(p)}<p class="program-footnote">Le quantità dell’album non cambiano automaticamente, neppure quando lo scambio viene confermato o segnato come effettuato.</p></div>`;
+  }).join('');
+}
+function renderTrades(){
+  if(!$('#trade-enabled'))return;
+  const shared=!!state.profile?.shareTrades;
+  $('#trade-disabled').hidden=shared;
+  $('#trade-enabled').hidden=false;
+  if(!shared)state.tradeTab='planned';
+  $('#trade-find-panel').hidden=!shared||state.tradeTab!=='find';
+  $('#trade-planned-panel').hidden=state.tradeTab!=='planned';
+  $$('#trade-enabled [data-trade-tab]').forEach(btn=>{const active=btn.dataset.tradeTab===state.tradeTab;btn.classList.toggle('active',active);btn.setAttribute('aria-selected',String(active));if(btn.dataset.tradeTab==='find')btn.disabled=!shared;});
+  if(shared){
+    const select=$('#partner'),desired=state.tradePartnerId;
+    select.innerHTML='<option value="">Seleziona un amico...</option>'+state.peers.map(p=>`<option value="${esc(p.id)}">${esc(p.displayName)}</option>`).join('');
+    select.value=state.peers.some(p=>p.id===desired)?desired:'';
+    if(select.value!==desired){state.tradeComparing=false;state.tradePartnerId='';}
+    if(state.tradeTab==='find')renderTradeComparison();
+  }
+  renderTradePlans();
+}
+function compareTrades(){
+  const id=$('#partner').value;
+  if(!state.peers.some(p=>p.id===id)){toast('Seleziona un amico.',true);return;}
+  state.tradePartnerId=id;state.tradeComparing=true;
+  state.tradeSelected={receive:new Set(),offer:new Set()};renderTrades();
+}
+function subscribeTradeProposals(){
+  if(state.proposalUnsub){state.proposalUnsub();state.proposalUnsub=null;}
+  state.proposals=[];state.proposalsLoaded=false;
+  if(!state.user)return;
+  state.proposalUnsub=onSnapshot(query(collection(db,'tradeProposals'),where('partyIds','array-contains',state.user.uid),limit(250)),snap=>{
+    state.proposals=snap.docs.map(d=>({id:d.id,...d.data()}));state.proposalsLoaded=true;renderTrades();
+  },e=>{state.proposalsLoaded=false;$('#trade-planned-list').innerHTML='<div class="empty-small">Errore nel caricamento delle proposte: '+esc(errorText(e))+'</div>';toast('Scambi programmati: '+errorText(e),true);});
+}
+async function sendTradeProposal(){
+  if(!navigator.onLine){toast('Per inviare uno scambio è necessaria una connessione Internet.',true);return;}
+  if(!state.proposalsLoaded){toast('Attendi il caricamento delle prenotazioni.',true);return;}
+  const peer=state.peers.find(p=>p.id===state.tradePartnerId);
+  if(!peer||!state.tradeComparing){toast('Confronta prima le figurine con un amico.',true);return;}
+  const offer=[...state.tradeSelected.offer],receive=[...state.tradeSelected.receive];
+  const error=validateTradeSelection(state.proposals,state.user.uid,tradeCounts(),offer,receive);
+  if(error){toast(error,true);renderTrades();return;}
+  const match=tradeMatchFor(peer);
+  if(offer.some(n=>!match.offer.some(x=>String(x.number)===n))||receive.some(n=>!match.receive.some(x=>String(x.number)===n))){toast('Il confronto è cambiato: aggiorna la selezione.',true);compareTrades();return;}
+  state.proposalBusy=true;
+  try{
+    const payload=proposalPayload(state.user.uid,state.profile?.displayName||'Collezionista',peer.id,peer.displayName,offer,receive);
+    await setDoc(doc(collection(db,'tradeProposals')),{...payload,createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
+    state.tradeSelected={receive:new Set(),offer:new Set()};state.tradeComparing=false;state.tradeTab='planned';toast('Proposta inviata: l’amico può accettarla o modificarla.');renderTrades();
+  }catch(e){toast('Impossibile inviare: '+errorText(e),true);}finally{state.proposalBusy=false;}
+}
+function openTradeEditor(id){
+  const p=state.proposals.find(x=>x.id===id);
+  if(!p||p.status!=='pending'||(p.pendingFor!==state.user.uid&&p.lastActor!==state.user.uid)){toast('Questa proposta non è più modificabile.',true);return;}
+  const own=ownSides(p,state.user.uid);
+  state.tradeEditing=id;state.tradeEditSelected={offer:new Set(own.offer),receive:new Set(own.receive)};
+  renderTrades();
+}
+async function actOnTrade(id,action){
+  if(!navigator.onLine){toast('Per rispondere a uno scambio è necessaria una connessione Internet.',true);return;}
+  if(state.proposalBusy)return;
+  const p=state.proposals.find(x=>x.id===id);if(!p){toast('Proposta non trovata.',true);return;}
+  if(action==='cancel'&&!confirm('Vuoi annullare questa prenotazione? Le figurine torneranno disponibili per altri scambi.'))return;
+  if(action==='complete'&&!confirm('Segnare lo scambio come effettuato? Le quantità dell’album NON saranno modificate.'))return;
+  if(action==='reject'&&!confirm('Rifiutare questa proposta di scambio?'))return;
+  if(action==='counter'){
+    const offer=[...state.tradeEditSelected.offer],receive=[...state.tradeEditSelected.receive];
+    const error=validateTradeSelection(state.proposals,state.user.uid,tradeCounts(),offer,receive,id);
+    if(error){toast(error,true);return;}
+    const allowed=tradeEditorOptions(p);
+    if(offer.some(n=>!allowed.offer.some(s=>String(s.number)===n))||receive.some(n=>!allowed.receive.some(s=>String(s.number)===n))){toast('Figurine non più disponibili nel confronto.',true);return;}
+  }
+  state.proposalBusy=true;renderTrades();
+  try{
+    const uid=state.user.uid,ref=doc(db,'tradeProposals',id);
+    await runTransaction(db,async tx=>{
+      const snap=await tx.get(ref);if(!snap.exists())throw new Error('Proposta non trovata.');
+      const cur=snap.data();if(![cur.initiatorId,cur.recipientId].includes(uid))throw new Error('Non puoi modificare questo scambio.');
+      const waiting=cur.status==='pending'&&cur.pendingFor===uid;
+      let patch={updatedAt:serverTimestamp(),lastActor:uid};
+      if(action==='accept'){
+        if(!waiting)throw new Error('Questa proposta non è più in attesa di te.');
+        const sides=ownSides(cur,uid),error=validateTradeSelection(state.proposals,uid,tradeCounts(),sides.offer,sides.receive,id);
+        if(error)throw new Error(error);
+        patch={...patch,status:'confirmed',pendingFor:''};
+      }else if(action==='reject'){
+        if(!waiting)throw new Error('Puoi rifiutare soltanto una proposta ricevuta.');
+        patch={...patch,status:'rejected',pendingFor:''};
+      }else if(action==='counter'){
+        if(!waiting&&!(cur.status==='pending'&&cur.lastActor===uid))throw new Error('La proposta è cambiata: riaprila prima di rispondere.');
+        const offer=[...state.tradeEditSelected.offer],receive=[...state.tradeEditSelected.receive];
+        const error=validateTradeSelection(state.proposals,uid,tradeCounts(),offer,receive,id);if(error)throw new Error(error);
+        const changed=changesFromMyView(cur,uid,offer,receive);
+        if(sameStickers(changed.fromInitiator,cur.fromInitiator)&&sameStickers(changed.fromRecipient,cur.fromRecipient))throw new Error('Scegli almeno una modifica prima di inviare la controproposta.');
+        patch={...patch,...changed,status:'pending',pendingFor:waiting?tradeOtherId(cur,uid):cur.pendingFor,revision:cur.revision+1};
+      }else if(action==='cancel'){
+        if(!(cur.status==='confirmed'||(cur.status==='pending'&&cur.lastActor===uid)))throw new Error('Non puoi ritirare questa proposta.');
+        patch={...patch,status:'cancelled',pendingFor:''};
+      }else if(action==='complete'){
+        if(cur.status!=='confirmed')throw new Error('Lo scambio non è ancora confermato.');
+        patch={...patch,status:'completed',pendingFor:''};
+      }else throw new Error('Azione non valida.');
+      tx.update(ref,patch);
+    });
+    state.tradeEditing='';state.tradeEditSelected={offer:new Set(),receive:new Set()};
+    toast({accept:'Scambio confermato da entrambi.',reject:'Proposta rifiutata.',counter:'Controproposta inviata per approvazione.',cancel:'Prenotazione annullata.',complete:'Scambio segnato come effettuato. Aggiorna manualmente l’album.'}[action]);
+  }catch(e){toast(errorText(e),true);}finally{state.proposalBusy=false;renderTrades();}
+}
+function handleTradeSelect(row){
+  if(!row||row.getAttribute('aria-disabled')==='true'||state.proposalBusy)return;
+  const editor=row.dataset.tradeEditor==='1',side=row.dataset.tradeSelect,n=row.dataset.tradeItem;
+  const selection=editor?state.tradeEditSelected:state.tradeSelected;
+  const info=tradeOwnAvailability(n,side,editor?state.tradeEditing:'');
+  if(!selection[side].has(n)&&info.blocked){toast('Questa figurina è già prenotata.',true);return;}
+  const scrollPositions=$$('#view-scambi .match-list').map(el=>el.scrollTop);
+  if(selection[side].has(n))selection[side].delete(n);else selection[side].add(n);
+  renderTrades();
+  $$('#view-scambi .match-list').forEach((el,i)=>{el.scrollTop=scrollPositions[i]||0;});
+  if(row===document.activeElement){
+    const target=$$('#view-scambi [data-trade-select]').find(el=>el.dataset.tradeEditor===(editor?'1':'0')&&el.dataset.tradeSelect===side&&el.dataset.tradeItem===n);
+    target?.focus({preventScroll:true});
+  }
+}
+function handleTradeClick(e){
+  const tab=e.target.closest('[data-trade-tab]');if(tab){if(tab.disabled)return;state.tradeTab=tab.dataset.tradeTab;state.tradeEditing='';renderTrades();return;}
+  const row=e.target.closest('[data-trade-select]');if(row){handleTradeSelect(row);return;}
+  const button=e.target.closest('[data-trade-action]');if(!button||button.disabled||state.proposalBusy)return;
+  const action=button.dataset.tradeAction,id=button.dataset.tradeId;
+  if(action==='send')sendTradeProposal();
+  else if(action==='edit')openTradeEditor(id);
+  else if(action==='close-edit'){state.tradeEditing='';renderTrades();}
+  else if(['accept','reject','counter','cancel','complete'].includes(action))actOnTrade(id,action);
+}
+
 function renderRequests(){
   const pending=state.accessRequests.filter(x=>x.status==='pending');
   const active=state.memberships.filter(x=>x.approved===true);
@@ -459,7 +679,7 @@ async function enterClub(user){
       profileSnap=await getDoc(profileRef);
     }
     if(!state.user||!state.accessGranted)return;
-    state.profile=profileSnap.data();renderChrome();liveData();subscribePeers();subscribeApprovals();subscribeClub();show('app-screen');route();
+    state.profile=profileSnap.data();renderChrome();liveData();subscribePeers();subscribeTradeProposals();subscribeApprovals();subscribeClub();show('app-screen');route();
   }catch(e){show('pending-screen');$('#pending-title').textContent='Accesso momentaneamente non disponibile.';$('#pending-description').textContent='Non è stato possibile caricare il tuo profilo: '+errorText(e);}
 }
 async function onUser(user){
@@ -539,7 +759,9 @@ $('#club-members').addEventListener('click',e=>{const card=e.target.closest('[da
   $('#club-back').addEventListener('click',()=>{state.clubSelected=null;renderClub();});
   $('#profile-form').addEventListener('submit',async e=>{e.preventDefault();if(!navigator.onLine){toast('Per aggiornare il profilo è necessaria una connessione Internet.',true);return;}const name=$('#profile-name').value.trim();if(name.length<2||name.length>40){toast('Nome da 2 a 40 caratteri.',true);return;}try{await updateDoc(getProfileRef(),{displayName:name});toast('Nome aggiornato.');queueTradePublish();}catch(err){toast(errorText(err),true);}});
 $('#share-trades').addEventListener('change',async e=>{if(!navigator.onLine){e.target.checked=!e.target.checked;toast('Per cambiare la condivisione degli scambi è necessaria una connessione Internet.',true);return;}const on=e.target.checked;e.target.disabled=true;try{await updateDoc(getProfileRef(),{shareTrades:on});state.profile.shareTrades=on;if(on){await publishTradeSheet();toast('Condivisione per gli scambi attivata.');}else{await deleteDoc(doc(db,'tradeSheets',state.user.uid));toast('Riepilogo scambi rimosso.');}subscribePeers();}catch(err){e.target.checked=!on;toast(errorText(err),true);}finally{e.target.disabled=false;}});
-$('#compare-button').addEventListener('click',compareTrades);$('#partner').addEventListener('change',()=>{$('#trade-results').innerHTML='';});
+$('#compare-button').addEventListener('click',compareTrades);$('#partner').addEventListener('change',e=>{state.tradePartnerId=e.target.value;state.tradeComparing=false;state.tradeSelected={offer:new Set(),receive:new Set()};renderTrades();});
+$('#view-scambi').addEventListener('click',handleTradeClick);
+$('#view-scambi').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('[data-trade-select]')){e.preventDefault();handleTradeSelect(e.target);}});
 $('#load-demo').addEventListener('click',async()=>{try{await handleImport(demoItems());}catch(e){toast(errorText(e),true);}});
 $('#import-catalog').addEventListener('click',async()=>{const file=$('#catalog-file').files?.[0];if(!file){toast('Seleziona un file CSV.',true);return;}try{const contents=await file.text();const rows=parseCSV(contents);await handleImport(rows);}catch(e){toast(errorText(e),true);}});
 $('#export-catalog').addEventListener('click',exportCatalog);
